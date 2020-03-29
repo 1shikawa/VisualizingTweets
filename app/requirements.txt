@@ -1,0 +1,15 @@
+Django<2.3
+django-pandas
+django-bootstrap4
+django-forms-bootstrap
+pandas
+tweepy
+humanize
+numpy
+pytz==2018.4
+psycopg2-binary==2.8.2
+requests==2.21.0
+urllib3==1.24.1
+certifi==2019.3.9
+chardet==3.0.4
+idna==2.8
