@@ -62,7 +62,7 @@ div{
         </div>
     </div>
     {% endif %}
-    
+
         <div class="col-md-12">
             <h1><a href="{% url 'VisualizingTweets:Index' %}">VisualizingTweets</a></h1>
             <p>ツイッターのIDを入れると、直近のいいね数とリツイート数、最もリツイートされたツイートが一覧できます。</p>
@@ -78,6 +78,7 @@ div{
             <canvas id="chart"></canvas>
         </div>
     </div>
+    <br>
     <div class="row">
         <!-- プロフィール -->
         <div class="col-md-4">
@@ -109,14 +110,14 @@ div{
         <!-- 一覧 -->
         <div class="col-md-8">
             {% if profile %}
-            <div>もっともリツイート・いいねされたツイート</div>
+            <h4>直近{{display_number}}ツイートでリツイート・いいねされたツイート一覧</h5>
             {% for index, row in sorted_df.iterrows %}
             <div class="white-container">
                 <div>{{row.created_at}}</div>
                 <div id="tweet-text">{{row.text}}</div>
                 <div>
                     <span><i class="far fa-heart"></i>  {{row.fav}}</span> <span><i class="fas fa-retweet"></i> {{row.retweets}}</span>
-                    <a class="pull-right" href="{{ row.url }}">ツイートを見る</a>
+                    <a class="pull-right" href="{{ row.url }}" target="_blank">ツイートを見る</a>
                 </div>
             </div>
             {% endfor %}

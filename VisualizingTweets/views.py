@@ -22,14 +22,18 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 # APIインスタンスを作成
 api = tweepy.API(auth)
 
+# Twitter URL
+# URL = 'https://twitter.com/neet_se/status/1244213277145460737'
+URL = 'https://twitter.com/'
+
 # Viewの処理
 columns = [
     "tweet_id",
     "created_at",
     "text",
     "fav",
-    "retweets"
-    # ,"url"
+    "retweets",
+    "url"
 ]
 
 
@@ -38,18 +42,18 @@ class Index(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = SearchForm(self.request.GET or None, initial={'number_display': 30})
+        form = SearchForm(self.request.GET or None, initial={'display_number': 30})
         if form.is_valid():
             # 入力フォームからuser_id取得
             user_id = form.cleaned_data.get('user_id')
-            number_display = int(form.cleaned_data.get('number_display'))
+            display_number = int(form.cleaned_data.get('display_number'))
         context['form'] = form
         # columns定義したDataFrameを作成
         tweets_df = pd.DataFrame(columns=columns)
         try:
-            if user_id and number_display:
-                    # Tweepy,Statusオブジェクトから各値取得
-                for tweet in tweepy.Cursor(api.user_timeline, screen_name=user_id, exclude_replies=True).items(number_display):
+            if user_id and display_number:
+                # Tweepy,Statusオブジェクトから各値取得
+                for tweet in tweepy.Cursor(api.user_timeline, screen_name=user_id, exclude_replies=True).items(display_number):
                     try:
                         if not "RT @" in tweet.text:
                             se = pd.Series([
@@ -57,8 +61,8 @@ class Index(TemplateView):
                                 tweet.created_at,
                                 tweet.text.replace('\n', ''),
                                 tweet.favorite_count,
-                                tweet.retweet_count
-                                # ,tweet.url
+                                tweet.retweet_count,
+                                URL+user_id +'/status/'+tweet.id_str #ツイートリンクURL
                             ], columns
                             )
                         tweets_df = tweets_df.append(
@@ -94,10 +98,11 @@ class Index(TemplateView):
                     'user_id': user_id,
                     'tweets_df': tweets_df,
                     'grouped_df': grouped_df,
-                    'sorted_df': sorted_df[:100],
+                    'sorted_df': sorted_df,
                     'sorted_df_MaxFav': sorted_df_MaxFav,
-                    'sorted_df_created_at' : sorted_df_created_at[:100],
+                    'sorted_df_created_at' : sorted_df_created_at,
                     'profile': profile,
+                    'display_number': display_number,
                 }
                 return context
 
