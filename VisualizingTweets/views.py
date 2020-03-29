@@ -42,7 +42,7 @@ class Index(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = SearchForm(self.request.GET or None, initial={'display_number': 30})
+        form = SearchForm(self.request.GET or None, initial={'display_number': 500})
         if form.is_valid():
             # 入力フォームからuser_id取得
             user_id = form.cleaned_data.get('user_id')
