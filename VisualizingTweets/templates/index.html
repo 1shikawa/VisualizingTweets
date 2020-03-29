@@ -87,15 +87,18 @@ div{
                 <div>
                     <img src="{{profile.image}}" width="100px">
                     <a href="https://twitter.com/{{profile.user_id}}">@{{profile.user_id}}</a>
+                    <p>{{ profile.user_name }}</p>
                 </div>
-                <div>{{ profile.user_name }}</div>
-                <div>フォロワー数:{{ profile.followers_count }}</div>
-                <div>{{profile.description}}</div>
+                <div>ツイート数：{{ profile.statuses_count }}</div>
+                <div>フォロワー数：{{ profile.followers_count }}</div>
+                <p>登録日：{{ profile.created_at }}</p>
+                <div>{{ profile.description }}</div>
             </div>
             {% endif %}
             {% if profile %}
             <div class="white-container">
                 <div>
+                    <p>日別の被リツイート＆いいね数の合計</p>
                     {% for index, row in grouped_df.iterrows %}
                     <div>
                         {{index}}

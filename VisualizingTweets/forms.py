@@ -3,7 +3,7 @@ from django import forms
 
 class SearchForm(forms.Form):
     user_id = forms.CharField(label='ユーザーID', required=True,)
-    display_number = forms.ChoiceField(label='表示件数',
+    display_number = forms.ChoiceField(label='取得件数',
         choices=(
             ('10', 10),
             ('30', 30),
