@@ -123,6 +123,6 @@ class Index(TemplateView):
 
 
         except:
-            messages.error(self.request, 'エラーが発生しました。')
+            # messages.error(self.request, 'エラーが発生しました。')
             return context
 
