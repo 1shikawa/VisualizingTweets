@@ -21,8 +21,10 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth)
 
 # Twitter URL
-# URL = 'https://twitter.com/neet_se/status/1244213277145460737'
 URL = 'https://twitter.com/'
+
+# ツイート取得件数
+display_number = 300
 
 # Viewの処理
 columns = [
@@ -40,7 +42,7 @@ class Index(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = SearchForm(self.request.GET or None, initial={'display_number': 200})
+        form = SearchForm(self.request.GET or None, initial={'display_number': display_number})
         if form.is_valid():
             # 入力フォームからuser_id取得
             user_id = form.cleaned_data.get('user_id')
