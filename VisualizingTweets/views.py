@@ -108,7 +108,7 @@ class Index(TemplateView):
                 sorted_df_MaxFav = max(sorted_df['fav'])
 
                 context = {
-                    'form': form,
+                    'form': SearchForm(initial={'display_number': default_display_number}), # フォーム初期化
                     'user_id': user_id,
                     'tweets_df': tweets_df,
                     'grouped_df': grouped_df,
