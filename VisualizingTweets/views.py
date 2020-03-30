@@ -6,6 +6,7 @@ from django.conf import settings
 from .forms import SearchForm
 import tweepy
 import pandas as pd
+import requests
 
 # 各種Twitterーのキーをセット
 CONSUMER_KEY = settings.CONSUMER_KEY
@@ -52,6 +53,27 @@ class Index(TemplateView):
         tweets_df = pd.DataFrame(columns=columns)
         try:
             if user_id and display_number:
+                res = requests.get(URL + user_id)
+                # Userオブジェクトからプロフィール情報取得
+                if res.status_code == 200:
+                    user = api.get_user(screen_name=user_id)
+                    profile = {
+                        'id': user.id,
+                        'user_id': user_id,
+                        'user_name': user.name,
+                        'statuses_count': user.statuses_count,
+                        'followers_count': user.followers_count,
+                        'created_at': user.created_at,
+                        'image': user.profile_image_url,
+                        'description': user.description
+                    }
+                    messages.success(self.request, f'{user_id}のツイート情報を表示します。')
+
+                else:
+                    messages.warning(self.request, f'{user_id}が見つかりません。')
+                    form = SearchForm()
+                    return redirect('Visualizing:Index', form)
+
                 # Tweepy,Statusオブジェクトから各値取得
                 for tweet in tweepy.Cursor(api.user_timeline, screen_name=user_id, exclude_replies=True, include_entities=True, include_rts=False).items(display_number):
                     try:
@@ -85,19 +107,6 @@ class Index(TemplateView):
                 # 縦軸調整のため最大のfav数取得
                 sorted_df_MaxFav = max(sorted_df['fav'])
 
-                # Userオブジェクトからプロフィール情報取得
-                user = api.get_user(screen_name=user_id)
-                profile = {
-                    'id': user.id,
-                    'user_id': user_id,
-                    'user_name': user.name,
-                    'statuses_count': user.statuses_count,
-                    'followers_count': user.followers_count,
-                    'created_at': user.created_at,
-                    'image': user.profile_image_url,
-                    'description': user.description
-                }
-
                 context = {
                     'form': form,
                     'user_id': user_id,
@@ -109,9 +118,11 @@ class Index(TemplateView):
                     'profile': profile,
                     'display_number': display_number,
                 }
+
                 return context
 
+
         except:
-            context['message'] = 'エラーが発生しました。'
+            messages.error(self.request, 'エラーが発生しました。')
             return context
 
