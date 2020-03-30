@@ -23,8 +23,8 @@ api = tweepy.API(auth)
 # Twitter URL
 URL = 'https://twitter.com/'
 
-# ツイート取得件数
-display_number = 300
+# デフォルトツイート取得件数
+default_display_number = 300
 
 # Viewの処理
 columns = [
@@ -42,7 +42,7 @@ class Index(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = SearchForm(self.request.GET or None, initial={'display_number': display_number})
+        form = SearchForm(self.request.GET or None, initial={'display_number': default_display_number})
         if form.is_valid():
             # 入力フォームからuser_id取得
             user_id = form.cleaned_data.get('user_id')
