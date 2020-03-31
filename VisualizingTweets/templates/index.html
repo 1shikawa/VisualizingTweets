@@ -86,7 +86,7 @@ div{
     <br>
     <div class="row">
         <!-- プロフィール -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             {% if profile %}
             <div class="white-container">
                 <div>
@@ -116,7 +116,7 @@ div{
             </div>
         </div>
         <!-- 一覧 -->
-        <div class="col-md-8">
+        <div class="col-md-9">
             {% if profile %}
             <h4>直近{{display_number}}ツイートでリツイート・いいねされたツイート一覧</h5>
             {% for index, row in sorted_df.iterrows %}
@@ -128,12 +128,6 @@ div{
                     <a class="pull-right" href="{{ row.url }}" target="_blank">ツイートを見る</a>
                 </div>
             </div>
-            <div class="container">
-                <blockquote class="twitter-tweet" data-width="550" data-align="center" width="550">
-                            <p lang="ja" dir="ltr">{{ row.text }}</p>&mdash; {{profile.user_name }})
-                        </blockquote>
-                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div>
             {% endfor %}
             {% endif %}
         </div>
@@ -190,18 +184,5 @@ div{
   {% endif %}
 
     </script>
-
-{% if profile %}
-    <div class="container">
-                    {% for index, row in sorted_df.iterrows %}
-        <blockquote class="twitter-tweet" data-width="550" data-align="center" width="550">
-            <p lang="ja" dir="ltr">{{ row.text }}</p>&mdash; {{profile.user_name }})<a
-                href='https://twitter.com/{{ profile.user_id }}/status/{{ row.tweet_id }}'>{{ row.created_at }}</a>
-        </blockquote>
-        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-          {% endfor %}
-    </div>
-{% endif %}
-
 </body>
 </html>
