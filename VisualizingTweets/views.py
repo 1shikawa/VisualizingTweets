@@ -77,7 +77,7 @@ class Index(TemplateView):
                 # Tweepy,Statusオブジェクトから各値取得
                 for tweet in tweepy.Cursor(api.user_timeline, screen_name=user_id, exclude_replies=True, include_entities=True, include_rts=False).items(display_number):
                     try:
-                        if not "RT @" in tweet.text:
+                        if not "RT @" in tweet.text and tweet.favorite_count != 0:
                             se = pd.Series([
                                 tweet.id,
                                 tweet.created_at,

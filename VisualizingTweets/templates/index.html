@@ -1,4 +1,5 @@
 {% load bootstrap4 %}
+{% load humanize %}
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -93,8 +94,8 @@ div{
                     <a href="https://twitter.com/{{profile.user_id}}">@{{profile.user_id}}</a>
                     <p>{{ profile.user_name }}</p>
                 </div>
-                <div>ツイート数：{{ profile.statuses_count }}</div>
-                <div>フォロワー数：{{ profile.followers_count }}</div>
+                <div>ツイート数：{{ profile.statuses_count | intcomma }}</div>
+                <div>フォロワー数：{{ profile.followers_count | intcomma }}</div>
                 <p>登録日：{{ profile.created_at }}</p>
                 <div>{{ profile.description }}</div>
             </div>
@@ -106,8 +107,8 @@ div{
                     {% for index, row in grouped_df.iterrows %}
                     <div>
                         {{index}}
-                        <i class="fas fa-retweet"></i> {{row.retweets}}
-                        <i class="far fa-heart"></i> {{row.fav}}
+                        <i class="fas fa-retweet"></i> {{row.retweets | intcomma }}}}
+                        <i class="far fa-heart"></i> {{row.fav | intcomma }}}}
                     </div>
                     {% endfor %}
                 </div>
@@ -123,7 +124,7 @@ div{
                 <div>{{row.created_at}}</div>
                 <div id="tweet-text">{{row.text}}</div>
                 <div>
-                    <span><i class="far fa-heart"></i>  {{row.fav}}</span> <span><i class="fas fa-retweet"></i> {{row.retweets}}</span>
+                    <span><i class="far fa-heart"></i>  {{row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{row.retweets | intcomma }}</span>
                     <a class="pull-right" href="{{ row.url }}" target="_blank">ツイートを見る</a>
                 </div>
             </div>
@@ -149,12 +150,12 @@ div{
            borderWidth:10,
            bezierCurve : false,
            data : [{% for index, row in sorted_df_created_at.iterrows %}
-                     {{row.retweets}},
+                     {{ row.retweets | intcomma }},
                    {% endfor %}]
      },{
            label: "Favorites",
            data : [{% for index, row in sorted_df_created_at.iterrows %}
-                     {{row.fav}},
+                     {{ row.fav | intcomma }},
                    {% endfor %}],
            type: 'line',
            borderColor: 'rgb(63, 127, 191)',
