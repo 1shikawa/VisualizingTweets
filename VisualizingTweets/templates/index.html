@@ -184,5 +184,18 @@ div{
   {% endif %}
 
     </script>
+
+{% if profile %}
+    <div class="thum">
+                    {% for index, row in sorted_df.iterrows %}
+        <blockquote class="twitter-tweet">
+            <p lang="ja" dir="ltr">{{ row.text }}</p>&mdash; {{profile.user_name }})<a
+                href='https://twitter.com/{{ profile.user_id }}/status/{{ row.tweet_id }}'>{{ row.created_at }}</a>
+        </blockquote>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          {% endfor %}
+    </div>
+{% endif %}
+
 </body>
 </html>
