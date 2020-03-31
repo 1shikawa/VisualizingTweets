@@ -107,8 +107,8 @@ div{
                     {% for index, row in grouped_df.iterrows %}
                     <div>
                         {{index}}
-                        <i class="fas fa-retweet"></i> {{row.retweets | intcomma }}}}
-                        <i class="far fa-heart"></i> {{row.fav | intcomma }}}}
+                        <i class="fas fa-retweet"></i> {{row.retweets | intcomma }}
+                        <i class="far fa-heart"></i> {{row.fav | intcomma }}
                     </div>
                     {% endfor %}
                 </div>
