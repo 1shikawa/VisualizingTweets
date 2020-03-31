@@ -123,15 +123,17 @@ div{
             <div class="white-container">
                 <div>{{row.created_at}}</div>
                 <div id="tweet-text">{{row.text}}</div>
-                    <blockquote class="twitter-tweet" data-width="550" data-align="center" width="550">
-                        <p lang="ja" dir="ltr">{{ row.text }}</p>&mdash; {{profile.user_name }})
-                    </blockquote>
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 <div>
                     <span><i class="far fa-heart"></i>  {{row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{row.retweets | intcomma }}</span>
                     <a class="pull-right" href="{{ row.url }}" target="_blank">ツイートを見る</a>
                 </div>
             </div>
+            <div class="container">
+                <blockquote class="twitter-tweet" data-width="550" data-align="center" width="550">
+                            <p lang="ja" dir="ltr">{{ row.text }}</p>&mdash; {{profile.user_name }})
+                        </blockquote>
+                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
             {% endfor %}
             {% endif %}
         </div>
