@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView
 from django.http import Http404
 from django.conf import settings
 from .forms import SearchForm
@@ -27,7 +27,7 @@ URL = 'https://twitter.com/'
 # デフォルトツイート取得件数
 default_display_number = 300
 
-# Viewの処理
+# dataframeのカラム定義
 columns = [
     'tweet_id',
     'created_at',
@@ -45,7 +45,7 @@ class Index(TemplateView):
         context = super().get_context_data(**kwargs)
         form = SearchForm(self.request.GET or None, initial={'display_number': default_display_number})
         if form.is_valid():
-            # 入力フォームからuser_id取得
+            # 入力フォームからuser_idとdisplay_number取得
             user_id = form.cleaned_data.get('user_id')
             display_number = int(form.cleaned_data.get('display_number'))
         context['form'] = form
@@ -53,9 +53,10 @@ class Index(TemplateView):
         tweets_df = pd.DataFrame(columns=columns)
         try:
             if user_id and display_number:
+                # 対象ユーザーが存在するかどうか確認
                 res = requests.get(URL + user_id)
-                # Userオブジェクトからプロフィール情報取得
                 if res.status_code == 200:
+                    # Userオブジェクトからプロフィール情報取得
                     user = api.get_user(screen_name=user_id)
                     profile = {
                         'id': user.id,
@@ -74,7 +75,7 @@ class Index(TemplateView):
                     form = SearchForm()
                     return redirect('Visualizing:Index', form)
 
-                # Tweepy,Statusオブジェクトから各値取得
+                # Tweepy,Statusオブジェクトからツイート情報取得
                 for tweet in tweepy.Cursor(api.user_timeline, screen_name=user_id, exclude_replies=True, include_entities=True, include_rts=False).items(display_number):
                     try:
                         if not "RT @" in tweet.text and tweet.favorite_count != 0:
@@ -103,8 +104,7 @@ class Index(TemplateView):
                 sorted_df = tweets_df.sort_values(['fav', 'retweets'], ascending=False)
                 # created_atをキーに昇順ソート
                 sorted_df_created_at = tweets_df.sort_values('created_at', ascending=True)
-                ## sorted_df = tweets_df.groupby('tweet_id').sum('fav').sort_values(['retweets','fav'], ascending=False)
-                # 縦軸調整のため最大のfav数取得
+                # チャート縦軸調整のためのfav最大数取得
                 sorted_df_MaxFav = max(sorted_df['fav'])
 
                 context = {
@@ -120,7 +120,6 @@ class Index(TemplateView):
                 }
 
                 return context
-
 
         except:
             # messages.error(self.request, 'エラーが発生しました。')
