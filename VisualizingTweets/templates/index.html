@@ -188,7 +188,7 @@ div{
 {% if profile %}
     <div class="thum">
                     {% for index, row in sorted_df.iterrows %}
-        <blockquote class="twitter-tweet" width="500" data-chrome="nofooter">
+        <blockquote class="twitter-tweet" data-width=”500” data-chrome=”noheader nofooter”>
             <p lang="ja" dir="ltr">{{ row.text }}</p>&mdash; {{profile.user_name }})<a
                 href='https://twitter.com/{{ profile.user_id }}/status/{{ row.tweet_id }}'>{{ row.created_at }}</a>
         </blockquote>
