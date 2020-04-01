@@ -7,7 +7,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
+    # env:
       # PG_PASS: ${{ secrets.PG_PASS }}
       # DATABASE_URL: postgresql://postgres:${{ secrets.SECRET_PASSWORD }}@postgres/postgres
       # DJANGO_SETTINGS_MODULE: config.local_settings
