@@ -121,7 +121,7 @@ div{
             {% for index, row in sorted_df.iterrows %}
             <div class="white-container">
                 <div>{{ row.created_at }}</div>
-                <div id="tweet-text">{{ row.text  | linebreaksbr }}</div>
+                <div id="tweet-text">{{ row.text | urlize | linebreaksbr }}</div>
                 <div>
                     <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
                     <a class="pull-right" href="{{ row.url }}" target="_blank">ツイートを見る</a>
