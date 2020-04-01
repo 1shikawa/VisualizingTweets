@@ -12,6 +12,10 @@ services:
     #  && gunicorn visualizingTweets.wsgi -b 0.0.0.0:8000"
     environment:
       - DJANGO_SETTINGS_MODULE=config.ci_settings
+      - CONSUMER_KEY
+      - CONSUMER_SECRET
+      - ACCESS_TOKEN
+      - ACCESS_TOKEN_SECRET
     env_file: .env
     volumes:
       - .:/code
