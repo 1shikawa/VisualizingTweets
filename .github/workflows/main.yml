@@ -7,10 +7,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    # env:
+    env:
       # PG_PASS: ${{ secrets.PG_PASS }}
       # DATABASE_URL: postgresql://postgres:${{ secrets.SECRET_PASSWORD }}@postgres/postgres
-      # DJANGO_SETTINGS_MODULE: config.local_settings
+      DJANGO_SETTINGS_MODULE: config.ci_settings
       # SECRET_KEY: ${{ secrets.SECRET_KEY }}
       # PORT: 8000
 
@@ -23,4 +23,4 @@ jobs:
     - name: Check logs
       run: docker logs visualizingTweets-django
     - name: Run test suite
-      run: docker exec visualizingTweets-django python local_manage.py test
+      run: docker exec visualizingTweets-django python manage.py test
