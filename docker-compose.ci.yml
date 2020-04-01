@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  app:
+    container_name: visualizingTweets-django
+    build: ./app
+    command: >
+     bash -c "python manage.py runserver 0.0.0.0:8080"
+    #  bash -c "python manage.py makemigrations
+    #  && python manage.py migrate
+    #  && python manage.py collectstatic --noinput
+    #  && gunicorn visualizingTweets.wsgi -b 0.0.0.0:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.ci_settings
+    env_file: .env
+    volumes:
+      - .:/code
+      - ./static:/opt/static
+    tty: true
+    ports:
+      - 8080:8080
+
+  # web:
+  #   container_name: visualizingTweets-nginx
+  #   restart: always
+  #   build: ./nginx
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     # - "./nginx/:/etc/nginx/"
+  #     - "./static:/opt/static/"
+  #   depends_on:
+  #     - app
+
+volumes:
+  static:
