@@ -82,7 +82,8 @@ class Index(TemplateView):
                             se = pd.Series([
                                 tweet.id,
                                 tweet.created_at,
-                                tweet.text.replace('\n', ''),
+                                # tweet.text.replace('\n', ''),
+                                tweet.text
                                 tweet.favorite_count,
                                 tweet.retweet_count,
                                 URL+user_id +'/status/'+tweet.id_str #ツイートリンクURL
