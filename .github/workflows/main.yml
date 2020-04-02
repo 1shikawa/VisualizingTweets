@@ -27,13 +27,6 @@ jobs:
     - name: Check logs
       run: docker logs visualizingTweets-django
 
-  test:
-    runs-on: ubuntu-latest
-    env:
-      DJANGO_SETTINGS_MODULE: config.ci_settings
-
-    needs: [build]
-    steps:
     - name: Run test suite
       run: docker exec visualizingTweets-django python manage.py test
 
@@ -42,7 +35,7 @@ jobs:
     # env:
     #   HEROKU_API_KEY: 
 
-    needs: [test]
+    needs: [build]
     steps:
     - uses: actions/checkout@v1
     - name: Push to Heroku
