@@ -26,5 +26,22 @@ jobs:
       run: docker ps -a
     - name: Check logs
       run: docker logs visualizingTweets-django
+
+  test:
+    env:
+      DJANGO_SETTINGS_MODULE: config.ci_settings
+
+    needs: [build]
+    steps:
     - name: Run test suite
       run: docker exec visualizingTweets-django python manage.py test
+
+  deploy:
+    # env:
+    #   HEROKU_API_KEY: 
+
+    needs: [test]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Push to Heroku
+      run: git push -f https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP }}.git origin/master:master
