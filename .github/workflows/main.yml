@@ -38,6 +38,7 @@ jobs:
       run: docker exec visualizingTweets-django python manage.py test
 
   deploy:
+    runs-on: ubuntu-latest
     # env:
     #   HEROKU_API_KEY: 
 
