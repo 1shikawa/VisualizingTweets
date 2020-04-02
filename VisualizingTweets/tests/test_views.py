@@ -18,4 +18,4 @@ class TestIndex(TestCase):
         self.assertEqual(response2.status_code, 200)
         self.assertContains(response2, 'Visualizing Tweets')
         self.assertTemplateUsed(template_name='index.html')
-        self.assertEqual(len(response2.context['profile']), 6)
+        self.assertEqual(response2.context['display_number'], 10 )
