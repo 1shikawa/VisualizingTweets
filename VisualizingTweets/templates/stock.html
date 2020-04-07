@@ -1,0 +1,82 @@
+{% load bootstrap4 %}
+{% load humanize %}
+{% load url_customize %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Visualizing Tweets</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" ;; rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>;;
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>;;
+    <![endif]-->
+<style>
+body{
+ background-color:#e6ecf0;
+}
+div{
+ line-height: 1.2;
+}
+.white-container{
+ border-bottom: 1px solid #e6ecf0;
+ padding:20px;
+ background-color:#ffffff;
+}
+#tweet-text{
+ font-size:20px;
+ padding:20px;
+ margin-bottom:10px;
+ line-height: 1.2;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+       <div class="col-md-12">
+            <h1><a href="{% url 'VisualizingTweets:Index' %}">Visualizing Tweets</a></h1>
+            <p>ツイッターのIDを入れると、直近のいいね数とリツイート数、最もリツイートされたツイートが一覧できます。</p>
+
+    <!-- メッセージフレームワーク-->
+    {% if messages %}
+    <div class="container" style="margin-top:1rem;">
+        <div class="message">
+            {% for message in messages %}
+                {% if message.tags == "success" %}
+                    <div class="alert alert-success" role="alert">
+                 {% elif message.tags == "warning" %}
+                    <div class="alert alert-warning" role="alert">
+                {% elif message.tags == "error" %}
+                    <div class="alert alert-danger" role="alert">
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                {% endif %}
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <!-- メッセージフレームワーク-->
+
+            <form method="POST" enctype='multipart/form-data'>
+                {% bootstrap_form form %}
+                <button class="btn btn-primary" type="submit">登録</button>
+                <a href="{% get_return_link request %}">戻る</a>
+                 {% csrf_token %}
+            </form>
+        </div>
+    </div>
+</body>
+</html>

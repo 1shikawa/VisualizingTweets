@@ -5,11 +5,6 @@ from django.shortcuts import resolve_url
 register = template.Library()
 
 
-@register.filter(is_safe=True)
-def url_target_blank(text):
-    return text.replace('<a ', '<a target="_blank" rel="nofollow" ')
-
-
 @register.simple_tag
 def get_return_link(request):
     top_page = resolve_url('VisualizingTweets:Index')  # Index

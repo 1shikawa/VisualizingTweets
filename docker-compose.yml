@@ -4,11 +4,13 @@ services:
   app:
     container_name: visualizingTweets-django
     build: ./app
-    command: >
-     bash -c "python manage.py runserver 0.0.0.0:8080"
-    #  bash -c "python manage.py makemigrations
-    #  && python manage.py migrate
-    #  && python manage.py collectstatic --noinput
+    restart: on-failure
+    command: bash -c "python local_manage.py runserver 0.0.0.0:8080"
+    # command: >
+    #  bash -c "python local_manage.py makemigrations
+    #  && python local_manage.py migrate
+    #  && python local_manage.py collectstatic --noinput
+    #  && python local_manage.py runserver 0.0.0.0:8080"
     #  && gunicorn visualizingTweets.wsgi -b 0.0.0.0:8000"
     environment:
       - DJANGO_SETTINGS_MODULE=config.local_settings
@@ -16,9 +18,24 @@ services:
     volumes:
       - .:/code
       - ./static:/opt/static
-    tty: true
     ports:
       - 8080:8080
+    depends_on:
+      - db
+
+  db:
+    container_name: visualizingTweets-db
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: visualizingTweets
+      MYSQL_PASSWORD: visualizingTweets
+      TZ: "Asia/Tokyo"
+    volumes:
+      - db_volume:/var/lib/mysql
+      - ./mysql/sql:/docker-entrypoint-initdb.d
 
   # web:
   #   container_name: visualizingTweets-nginx
@@ -34,3 +51,4 @@ services:
 
 volumes:
   static:
+  db_volume:

@@ -121,7 +121,9 @@ div{
             <h4>直近{{ display_number }}ツイートでリツイート・いいねされたツイート一覧</h5>
             {% for index, row in sorted_df.iterrows %}
             <div class="white-container">
-                <div>{{ row.created_at }}</div>
+                <div>{{ row.created_at }}
+                    <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:Stock' row.tweet_id %}">Stock</a>
+                </div>
                 <div id="tweet-text">{{ row.text | linebreaksbr | urlize | url_target_blank }}</div>
                 <div>
                     <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>

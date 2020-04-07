@@ -1,12 +1,14 @@
-from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
-from django.http import Http404
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.views.generic import TemplateView, CreateView
+from django.http import Http404, HttpResponse
 from django.conf import settings
-from .forms import SearchForm
-import tweepy
-import pandas as pd
+from .models import Stock
+from .forms import SearchForm, StockForm
 import requests
+import pandas as pd
+import tweepy
 
 # 各種Twitterーのキーをセット
 CONSUMER_KEY = settings.CONSUMER_KEY
@@ -126,3 +128,44 @@ class Index(TemplateView):
             # messages.error(self.request, 'エラーが発生しました。')
             return context
 
+
+# def Stock(request, tweet_id):
+#     tweet = api.get_status(id=tweet_id)
+#     return HttpResponse(f'ツイートIDは{tweet}です。')
+
+class StockCreateView(CreateView):
+    model = Stock
+    template_name = 'Stock.html'
+    form_class = StockForm
+    # success_url = reverse_lazy('VisualizingTweets:Index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tweet_id = self.kwargs['tweet_id']
+        tweet = api.get_status(id=tweet_id)
+        form = StockForm(
+            initial={'tweet_id': tweet_id,
+                     'user_id': tweet.user.id_str,
+                     'user_name': tweet.user.name,
+                     'tweet_text': tweet.text,
+                     'tweet_url': URL + tweet.user.id_str + '/status/' + tweet.id_str,
+                     'tweet_created_at': tweet.created_at,
+                     'favorite_count': tweet.favorite_count,
+                     'retweet_count': tweet.retweet_count,
+                     'expanded_url': tweet.entities['urls'][0]['expanded_url']
+                     })
+        context['form'] = form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        messages.success(self.request, 'ストックしました。')
+        return super().post(request, *args, **kwargs)
+
+    # def get_success_url(self, **kwargs):
+    #     if kwargs != None:
+    #         return reverse_lazy('VisualizingTweets:Stock', kwargs={'tweet_id': kwargs['tweet_id']})
+        # else:
+            # return reverse_lazy('detail', args=(self.object.id,))
+# リクエストがPOSTの場合
+# ツイートID（user_idも？）からツイート情報取得
+# ツイート情報からモデルインスタンス作成、登録
