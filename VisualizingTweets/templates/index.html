@@ -122,7 +122,7 @@ div{
             {% for index, row in sorted_df.iterrows %}
             <div class="white-container">
                 <div>{{ row.created_at }}
-                    <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:Stock' screen_name row.tweet_id %}" target="_blank">Stock</a>
+                    <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:Stock' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
                 </div>
                 <div id="tweet-text">{{ row.text | linebreaksbr | urlize | url_target_blank }}</div>
                 <div>
