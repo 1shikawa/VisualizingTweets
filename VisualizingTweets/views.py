@@ -31,6 +31,7 @@ default_display_number = 300
 
 # dataframeのカラム定義
 columns = [
+    'screen_name',
     'tweet_id',
     'created_at',
     'text',
@@ -48,21 +49,21 @@ class Index(TemplateView):
         form = SearchForm(self.request.GET or None, initial={'display_number': default_display_number})
         if form.is_valid():
             # 入力フォームからuser_idとdisplay_number取得
-            user_id = form.cleaned_data.get('user_id')
+            screen_name = form.cleaned_data.get('screen_name')
             display_number = int(form.cleaned_data.get('display_number'))
         context['form'] = form
         # columns定義したDataFrameを作成
         tweets_df = pd.DataFrame(columns=columns)
         try:
-            if user_id and display_number:
+            if screen_name and display_number:
                 # 対象ユーザーが存在するかどうか確認
-                res = requests.get(URL + user_id)
+                res = requests.get(URL + screen_name)
                 if res.status_code == 200:
                     # Userオブジェクトからプロフィール情報取得
-                    user = api.get_user(screen_name=user_id)
+                    user = api.get_user(screen_name=screen_name)
                     profile = {
                         'id': user.id,
-                        'user_id': user_id,
+                        'screen_name': user.screen_name,
                         'user_name': user.name,
                         'statuses_count': user.statuses_count,
                         'followers_count': user.followers_count,
@@ -70,25 +71,26 @@ class Index(TemplateView):
                         'image': user.profile_image_url,
                         'description': user.description
                     }
-                    messages.success(self.request, f'{user_id}のツイート情報を表示します。')
+                    messages.success(self.request, f'{screen_name}のツイート情報を表示します。')
 
                 else:
-                    messages.warning(self.request, f'{user_id}が見つかりません。')
+                    messages.warning(self.request, f'{screen_name}が見つかりません。')
                     form = SearchForm()
                     return redirect('Visualizing:Index', form)
 
                 # Tweepy,Statusオブジェクトからツイート情報取得
-                for tweet in tweepy.Cursor(api.user_timeline, screen_name=user_id, exclude_replies=True, include_entities=True, include_rts=False).items(display_number):
+                for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, include_entities=True, include_rts=False).items(display_number):
                     try:
                         if not "RT @" in tweet.text and tweet.favorite_count != 0:
                             se = pd.Series([
+                                screen_name,
                                 tweet.id,
                                 tweet.created_at,
                                 # tweet.text.replace('\n', ''),
                                 tweet.text,
                                 tweet.favorite_count,
                                 tweet.retweet_count,
-                                URL+user_id +'/status/'+tweet.id_str #ツイートリンクURL
+                                URL+screen_name + '/status/'+tweet.id_str  # ツイートリンクURL
                             ], columns
                             )
                         tweets_df = tweets_df.append(se, ignore_index=True)
@@ -112,7 +114,7 @@ class Index(TemplateView):
 
                 context = {
                     'form': SearchForm(initial={'display_number': default_display_number}), # フォーム初期化
-                    'user_id': user_id,
+                    'screen_name': screen_name,
                     'tweets_df': tweets_df,
                     'grouped_df': grouped_df,
                     'sorted_df': sorted_df,
@@ -143,16 +145,21 @@ class StockCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         tweet_id = self.kwargs['tweet_id']
         tweet = api.get_status(id=tweet_id)
+        if tweet.entities['urls']:
+            expanded_url = tweet.entities['urls'][0]['expanded_url']
+        else:
+            expanded_url = ''
         form = StockForm(
             initial={'tweet_id': tweet_id,
                      'user_id': tweet.user.id_str,
+                     'screen_name': tweet.user.screen_name,
                      'user_name': tweet.user.name,
                      'tweet_text': tweet.text,
                      'tweet_url': URL + tweet.user.id_str + '/status/' + tweet.id_str,
                      'tweet_created_at': tweet.created_at,
                      'favorite_count': tweet.favorite_count,
                      'retweet_count': tweet.retweet_count,
-                     'expanded_url': tweet.entities['urls'][0]['expanded_url']
+                     'expanded_url': expanded_url
                      })
         context['form'] = form
         return context
@@ -166,6 +173,3 @@ class StockCreateView(CreateView):
     #         return reverse_lazy('VisualizingTweets:Stock', kwargs={'tweet_id': kwargs['tweet_id']})
         # else:
             # return reverse_lazy('detail', args=(self.object.id,))
-# リクエストがPOSTの場合
-# ツイートID（user_idも？）からツイート情報取得
-# ツイート情報からモデルインスタンス作成、登録

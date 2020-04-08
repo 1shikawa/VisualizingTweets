@@ -4,7 +4,8 @@ from .models import Stock
 
 # Register your models here.
 class StockAdmin(admin.ModelAdmin):
-    list_display = ['tweet_id', 'user_id', 'user_name', 'tweet_text','expanded_url','tweet_created_at']
+    list_display = ['tweet_id', 'user_id', 'screen_name', 'user_name', 'tweet_created_at',
+                    'tweet_text', 'expanded_url', 'created_at',]
     list_display_links = ('tweet_id',)
     list_editable = ()
 

@@ -3,7 +3,7 @@ from .models import Stock
 
 
 class SearchForm(forms.Form):
-    user_id = forms.CharField(label='ユーザーID', required=True,)
+    screen_name = forms.CharField(label='ユーザー名', required=True,)
     display_number = forms.ChoiceField(label='取得件数',
         choices=(
             ('10', 10),
@@ -29,7 +29,7 @@ class SearchForm(forms.Form):
 class StockForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ['tweet_id', 'user_id', 'user_name', 'tweet_text',
+        fields = ['tweet_id', 'user_id', 'screen_name', 'user_name','tweet_text',
                   'tweet_url', 'tweet_created_at', 'favorite_count', 'retweet_count', 'expanded_url',]
 
     def __init__(self, *args, **kwargs):
