@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,7 +122,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 #####################
@@ -133,50 +135,20 @@ ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 
 LOGGING = {
-    # バージョンは「1」固定
     'version': 1,
-    # 既存のログ設定を無効化しない
     'disable_existing_loggers': False,
-    # ログフォーマット
-    'formatters': {
-        # 開発用
-        'develop': {
-            'format': '%(asctime)s [%(levelname)s] %(pathname)s:%(lineno)d '
-                      '%(message)s'
-        },
-    },
-    # ハンドラ
     'handlers': {
-        # コンソール出力用ハンドラ
         'console': {
-            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'develop',
         },
     },
-    # ロガー
     'loggers': {
-        # 自作アプリケーション全般のログを拾うロガー
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        # Django本体が出すログ全般を拾うロガー
         'django': {
             'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
         },
-        # 発行されるSQL文を出力するための設定
-        # 'django.db.backends': {
-        #     'handlers': ['console'],
-        #     'level': 'DEBUG',
-        #     'propagate': False,
-        # },
     },
 }
-
 
 # heroku settings
 import dj_database_url
@@ -193,3 +165,6 @@ except ImportError:
 
 # humanize settings
 NUMBER_GROUPING = 3
+
+import django_heroku
+django_heroku.settings(locals())
