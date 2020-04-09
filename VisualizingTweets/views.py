@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, ListView, CreateView
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from .models import Stock
 from .forms import SearchForm, StockForm
 import requests
+import logging
 import pandas as pd
 import tweepy
 
@@ -168,8 +169,16 @@ class StockCreateView(CreateView):
         messages.success(self.request, 'ストックしました。')
         return super().post(request, *args, **kwargs)
 
-    # def get_success_url(self, **kwargs):
-    #     if kwargs != None:
-    #         return reverse_lazy('VisualizingTweets:Stock', kwargs={'tweet_id': kwargs['tweet_id']})
-        # else:
-            # return reverse_lazy('detail', args=(self.object.id,))
+
+# class BulkStockView(ListView):
+#     template_name = 'BulkStock.html'
+#     model = Stock
+
+#     def post(self, request, *args, **kwargs):
+#         checks_value = request.POST.getlist('tweets')
+#         logger.debug("checks_value = " + str(checks_value))
+
+# def BulkStockView(request):
+#     checks_value = request.POST.getlist('tweets')
+#     print("checks_value = " + str(checks_value))
+#     return HttpResponse(checks_value)
