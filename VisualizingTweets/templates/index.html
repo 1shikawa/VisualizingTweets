@@ -25,7 +25,7 @@
             {% for message in messages %}
                 {% if message.tags == "success" %}
                     <div class="alert alert-success" role="alert">
-                 {% elif message.tags == "warning" %}
+                {% elif message.tags == "warning" %}
                     <div class="alert alert-warning" role="alert">
                 {% elif message.tags == "error" %}
                     <div class="alert alert-danger" role="alert">
@@ -94,7 +94,7 @@
                 <div id="tweet-text">{{ row.text | linebreaksbr | urlize | url_target_blank }}</div>
                 <div>
                     <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
-                    <a class="pull-right" href="{{ row.url }}" target="_blank">ツイートを見る</a>
+                    <a class="pull-right" href="{{ row.url }}" target="_blank" rel="noopener">ツイートを見る</a>
                 </div>
             </div>
             {% endfor %}
