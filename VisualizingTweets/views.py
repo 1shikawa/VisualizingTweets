@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic import TemplateView, ListView, CreateView
@@ -136,15 +136,23 @@ class Index(TemplateView):
 #     tweet = api.get_status(id=tweet_id)
 #     return HttpResponse(f'ツイートIDは{tweet}です。')
 
-class StockCreateView(CreateView):
+class StockList(ListView):
     model = Stock
-    template_name = 'Stock.html'
+    template_name = 'stock_list.html'
+    context_object_name = 'stock_list'
+
+class StockAdd(CreateView):
+    model = Stock
+    template_name = 'stock_add.html'
     form_class = StockForm
     # success_url = reverse_lazy('VisualizingTweets:Index')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tweet_id = self.kwargs['tweet_id']
+        if Stock.objects.filter(tweet_id=tweet_id).exists():
+            messages.warning(self.request, '既にストック済みです。')
+
         tweet = api.get_status(id=tweet_id)
         if tweet.entities['urls']:
             expanded_url = tweet.entities['urls'][0]['expanded_url']

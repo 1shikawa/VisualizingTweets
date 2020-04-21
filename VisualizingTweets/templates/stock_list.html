@@ -1,0 +1,79 @@
+{% extends './base.html' %}
+{% load humanize %}
+{% load url_customize %}
+
+{% block head %}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- linkタグでbootstrapのcssファイルを読み込む -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+<!-- linkタグでDataTableのcssファイルを読み込む -->
+<link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
+
+<style>
+    body{
+        background-color:#e6ecf0;
+        }
+    #stock_list{
+        background-color:#ffffff;
+        }
+    {% block css %}{% endblock %}
+</style>
+
+{% endblock %}
+
+{% block contents %}
+<h1>Stock一覧</h1>
+<table id=stock_list width="95%" class="table table-striped table-bordered table-hover">
+    <!-- 表の列の定義-->
+    <thead>
+        <tr>
+            <th class="text-center" width="5">ハンドルネーム</th>
+            <th class="text-center" width="5">ユーザー名</th>
+            <th class="text-center" width="80">ツイート内容</th>
+            <th class="text-center" width="5">ツイート日</th>
+            <th class="text-center" width="5">ストック日</th>
+        </tr>
+    </thead>
+    <!-- ここまでが表の列の定義-->
+    <!-- 表のデータ部分の表示-->
+    <tbody>
+        {% for stock in stock_list %}
+        <tr class="odd gradeX text-center">
+            <td class="text-center" width="10">{{ stock.screen_name }}</td>
+            <td class="text-center" width="10">{{ stock.user_name }}</td>
+            <td width="80">{{ stock.tweet_text }}</td>
+            <td class="text-center" width="10">{{ stock.tweet_created_at }}</td>
+            <td class="text-center" width="10">{{ stock.created_at }}</td>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <!-- ここまでが表のデータ部分の表示-->
+</table>
+<!-- ここまでがテーブル表の定義 -->
+<!-- bootstrapのjavascrit読み込み-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+<!-- DataTablesのjavascrit読み込み-->
+<script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+
+
+<!-- Databableの定義-->
+<script>
+    jQuery(function ($) {
+        // デフォルトの設定を変更
+        $.extend($.fn.dataTable.defaults, {
+            language: {
+                url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
+            }
+        });
+        $("#stock_list").DataTable({
+            "searching": true,     //検索機能
+            "paging": true,      //ページング機能
+            "ordering": true,      //ソート機能
+            "lengthChange": true,  //件数切り替え機能
+
+        }).columns.adjust().draw();
+    });
+</script>
+{% endblock %}

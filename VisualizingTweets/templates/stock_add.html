@@ -140,7 +140,7 @@
             {% endif %}
 
             <button class="btn btn-primary" type="submit">登録</button>
-            <a class="btn btn-success" href="{% get_return_link request %}">戻る</a>
+            <button class="btn btn-success" onclick="window.close();">閉じる</button>
             {% csrf_token %}
         </form>
     </div>

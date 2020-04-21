@@ -3,7 +3,8 @@
 {% load humanize %}
 {% load url_customize %}
 
-{% block head %}{% endblock %}
+{% block head %}
+{% endblock %}
 
 {% block contents %}
 <div class="container">
@@ -15,6 +16,7 @@
                 {% bootstrap_form form %}
                 <button type="submit" class="btn btn-primary">取得する</button>
             </form>
+            <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:stock_list' %}">Stock一覧</a>
         </div>
     </div>
 
@@ -89,7 +91,7 @@
             {% for index, row in sorted_df.iterrows %}
             <div class="white-container">
                 <div>{{ row.created_at }}
-                    <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:Stock' row.screen_name row.tweet_id %}" method="post" target="_blank">Stock</a>
+                    <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
                 </div>
                 <div id="tweet-text">{{ row.text | linebreaksbr | urlize | url_target_blank }}</div>
                 <div>

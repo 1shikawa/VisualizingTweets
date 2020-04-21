@@ -17,7 +17,7 @@ class Stock(models.Model):
     updated_at = models.DateTimeField('更新日', auto_now=True)
 
     def get_absolute_url(self):
-        return reverse_lazy("VisualizingTweets:Stock", kwargs={
+        return reverse_lazy("VisualizingTweets:stock_add", kwargs={
             'screen_name': self.screen_name,
             'tweet_id': self.tweet_id
          })
