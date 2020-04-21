@@ -16,10 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: docker-compose stack down
-      run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml down -v
     - name: Build the docker-compose stack
-      run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+      run: docker-compose -f docker-compose.ci.yml up -d
     - name: Check running containers
       run: docker ps -a
     - name: Check logs
