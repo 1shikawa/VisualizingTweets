@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import TemplateView, ListView, CreateView
+from django.views.generic import TemplateView, ListView, CreateView, DeleteView
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from .models import Stock
@@ -105,7 +105,7 @@ class Index(TemplateView):
                 tweets_df = tweets_df.drop_duplicates(subset='tweet_id')
                 # 日別のリツイート、いいね数の合計
                 grouped_df = tweets_df.groupby(tweets_df.created_at.dt.date).sum().sort_values(by='created_at',
-                                                                                               ascending=False)
+                                                                                            ascending=False)
                 # リツイート＆いいね数が多い順にソート
                 sorted_df = tweets_df.sort_values(['fav', 'retweets'], ascending=False)
                 # created_atをキーに昇順ソート
@@ -132,10 +132,6 @@ class Index(TemplateView):
             return context
 
 
-# def Stock(request, tweet_id):
-#     tweet = api.get_status(id=tweet_id)
-#     return HttpResponse(f'ツイートIDは{tweet}です。')
-
 class StockList(ListView):
     model = Stock
     template_name = 'stock_list.html'
@@ -160,22 +156,31 @@ class StockAdd(CreateView):
             expanded_url = ''
         form = StockForm(
             initial={'tweet_id': tweet_id,
-                     'user_id': tweet.user.id_str,
-                     'screen_name': tweet.user.screen_name,
-                     'user_name': tweet.user.name,
-                     'tweet_text': tweet.text,
-                     'tweet_url': URL + tweet.user.id_str + '/status/' + tweet.id_str,
-                     'tweet_created_at': tweet.created_at,
-                     'favorite_count': tweet.favorite_count,
-                     'retweet_count': tweet.retweet_count,
-                     'expanded_url': expanded_url
-                     })
+                    'user_id': tweet.user.id_str,
+                    'screen_name': tweet.user.screen_name,
+                    'user_name': tweet.user.name,
+                    'tweet_text': tweet.text,
+                    'tweet_url': URL + tweet.user.id_str + '/status/' + tweet.id_str,
+                    'tweet_created_at': tweet.created_at,
+                    'favorite_count': tweet.favorite_count,
+                    'retweet_count': tweet.retweet_count,
+                    'expanded_url': expanded_url
+                    })
         context['form'] = form
         return context
 
     def post(self, request, *args, **kwargs):
         messages.success(self.request, 'ストックしました。')
         return super().post(request, *args, **kwargs)
+
+class StockDelete(DeleteView):
+    model = Stock
+    success_url = reverse_lazy('VisualizingTweets:stock_list')
+
+    # 確認画面を省略するためにgetをpostにショートカット
+    def get(self, *args, **kwargs):
+        messages.success(self.request, '対象ツイートを削除しました。')
+        return self.post(*args, **kwargs)
 
 
 # class BulkStockView(ListView):

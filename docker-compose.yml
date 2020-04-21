@@ -1,17 +1,16 @@
 version: "3"
 
 services:
-  app:
+  webapp:
     container_name: visualizingTweets-django
     build: ./app
     # restart: on-failure
-    command: bash -c "python local_manage.py runserver 0.0.0.0:8080"
-    # command: >
-    #  bash -c "python local_manage.py makemigrations
-    #  && python local_manage.py migrate
-    #  && python local_manage.py collectstatic --noinput
-    #  && python local_manage.py runserver 0.0.0.0:8080"
-    #  && gunicorn visualizingTweets.wsgi -b 0.0.0.0:8000"
+    # command: bash -c "gunicorn config.local_wsgi -b 0.0.0.0:8080"
+    command: >
+      bash -c "python local_manage.py makemigrations
+      && python local_manage.py migrate
+      && python local_manage.py collectstatic --noinput
+      && gunicorn config.local_wsgi -b 0.0.0.0:8080"
     environment:
       - DJANGO_SETTINGS_MODULE=config.local_settings
     env_file: .env
@@ -37,17 +36,17 @@ services:
       - db_volume:/var/lib/mysql
       - ./mysql/sql:/docker-entrypoint-initdb.d
 
-  # web:
-  #   container_name: visualizingTweets-nginx
-  #   restart: always
-  #   build: ./nginx
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     # - "./nginx/:/etc/nginx/"
-  #     - "./static:/opt/static/"
-  #   depends_on:
-  #     - app
+  websrv:
+    container_name: visualizingTweets-nginx
+    # restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      # - "./nginx/:/etc/nginx/"
+      - "./static:/opt/static/"
+    depends_on:
+      - webapp
 
 volumes:
   static:

@@ -12,11 +12,13 @@
        <div class="col-md-12">
             <h1><a href="{% url 'VisualizingTweets:Index' %}">Visualizing Tweets</a></h1>
             <p>ツイッターのIDを入れると、直近のいいね数とリツイート数、最もリツイートされたツイートが一覧できます。</p>
+            <div class="float-right">
+                <a class="pull-right btn btn-success" href="{% url 'VisualizingTweets:stock_list' %}">Stock一覧</a>
+            </div>
             <form class="form-inline" method="GET" action="{% url 'VisualizingTweets:Index' %}">
                 {% bootstrap_form form %}
                 <button type="submit" class="btn btn-primary">取得する</button>
             </form>
-            <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:stock_list' %}">Stock一覧</a>
         </div>
     </div>
 
@@ -90,8 +92,9 @@
             <h4>直近{{ display_number }}ツイートでリツイート・いいねされたツイート一覧</h5>
             {% for index, row in sorted_df.iterrows %}
             <div class="white-container">
-                <div>{{ row.created_at }}
-                    <a class="pull-right btn btn-primary" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
+                {{ row.created_at }}
+                <div class="float-right">
+                    <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
                 </div>
                 <div id="tweet-text">{{ row.text | linebreaksbr | urlize | url_target_blank }}</div>
                 <div>
