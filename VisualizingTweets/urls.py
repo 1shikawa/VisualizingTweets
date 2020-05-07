@@ -7,5 +7,6 @@ urlpatterns = [
     path('', views.Index.as_view(), name='Index'),
     path('Stock/<str:screen_name>/<int:tweet_id>', views.StockAdd.as_view(), name='stock_add'),
     path('StockList/', views.StockList.as_view(), name='stock_list'),
+    path('StockUpdate/<int:pk>', views.StockUpdate.as_view(), name='stock_update'),
     path('StockDelete/<int:pk>', views.StockDelete.as_view(), name='stock_delete'),
     ]

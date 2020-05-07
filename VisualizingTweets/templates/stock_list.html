@@ -4,9 +4,7 @@
 
 {% block head %}
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<!-- linkタグでbootstrapのcssファイルを読み込む -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+
 <!-- linkタグでDataTableのcssファイルを読み込む -->
 <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
 
@@ -58,6 +56,7 @@
     <!-- 表の列の定義-->
     <thead>
         <tr>
+            <th class="text-center" width="5">ID</th>
             <th class="text-center" width="5">ハンドルネーム</th>
             <th class="text-center" width="5">ユーザー名</th>
             <th class="text-center" width="80">ツイート内容</th>
@@ -74,6 +73,7 @@
     <tbody>
         {% for stock in stock_list %}
         <tr class="odd gradeX text-center">
+            <td class="text-center" width="10">{{ stock.pk }}</td>
             <td class="text-center" width="10">{{ stock.screen_name }}</td>
             <td class="text-center" width="10">{{ stock.user_name }}</td>
             <td class="text-left" width="80">{{ stock.tweet_text }}</td>
@@ -86,7 +86,8 @@
             <td class="text-center" width="10"></td>
             {% endif %}
             <td class="text-center" width="10">{{ stock.created_at }}</td>
-            <td><a class="btn btn-danger" href="{% url 'VisualizingTweets:stock_delete' stock.pk %}">削除</a></td>
+            <td><a class="btn btn-primary" href="{% url 'VisualizingTweets:stock_update' stock.pk %}">更新</a>
+                <a class="btn btn-danger" href="{% url 'VisualizingTweets:stock_delete' stock.pk %}">削除</a></td>
         </tr>
         {% endfor %}
     </tbody>

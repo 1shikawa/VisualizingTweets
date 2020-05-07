@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import TemplateView, ListView, CreateView, DeleteView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from .models import Stock
-from .forms import SearchForm, StockForm
+from .forms import SearchForm, StockCreateForm, StockUpdateForm
 import requests
 import logging
 import pandas as pd
@@ -139,8 +139,8 @@ class StockList(ListView):
 
 class StockAdd(CreateView):
     model = Stock
+    form_class = StockCreateForm
     template_name = 'stock_add.html'
-    form_class = StockForm
     # success_url = reverse_lazy('VisualizingTweets:Index')
 
     def get_context_data(self, **kwargs):
@@ -154,7 +154,7 @@ class StockAdd(CreateView):
             expanded_url = tweet.entities['urls'][0]['expanded_url']
         else:
             expanded_url = ''
-        form = StockForm(
+        form = StockCreateForm(
             initial={'tweet_id': tweet_id,
                     'user_id': tweet.user.id_str,
                     'screen_name': tweet.user.screen_name,
@@ -172,6 +172,25 @@ class StockAdd(CreateView):
     def post(self, request, *args, **kwargs):
         messages.success(self.request, 'ストックしました。')
         return super().post(request, *args, **kwargs)
+
+class StockUpdate(UpdateView):
+    model = Stock
+    form_class = StockUpdateForm
+    template_name = 'stock_update.html'
+    success_url = reverse_lazy('VisualizingTweets:stock_list')
+
+    # def get_success_url(self):
+    #     return reverse_lazy('VisualizingTweets:stock_update', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        stock = form.save()
+        messages.success(self.request, f'ID：{stock.pk}のStockを更新しました。')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Stockの更新に失敗しました。')
+        return super().form_invalid(form)
+
 
 class StockDelete(DeleteView):
     model = Stock
