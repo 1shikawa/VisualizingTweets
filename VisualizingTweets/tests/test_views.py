@@ -49,7 +49,7 @@ class StockUpdate(TestCase):
         data = {
             'tweet_created_at': '2020-05-21 00:00:00'
         }
-        response = self.client.post('/StockUpdate/2', data)
+        response = self.client.post('/StockUpdate/1', data)
         self.assertEqual(response.status_code, 302)
         self.assertTemplateUsed(template_name='stock_update.html')
 
