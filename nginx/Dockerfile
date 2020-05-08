@@ -1,6 +1,3 @@
-FROM nginx
-# COPY ./nginx.conf /etc/nginx
-COPY ./nginx.conf /etc/nginx/conf.d
-COPY ./mime.types /etc/nginx
-
+FROM nginx:latest
+RUN rm /etc/nginx/conf.d/django_nginx.conf
 
