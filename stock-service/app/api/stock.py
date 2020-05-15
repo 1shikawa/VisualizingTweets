@@ -25,7 +25,7 @@ async def delete_stock(id):
     if not stock:
         raise HTTPException(status_code=404, detail='stock not found')
     await crud.delete_stock(id)
-    return {'deleted': id}
+    return {"result": "delete success"}
 
 
 @stock.post('/', response_model=StockOut, status_code=201)

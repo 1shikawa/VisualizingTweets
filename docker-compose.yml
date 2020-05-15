@@ -34,7 +34,9 @@ services:
       TZ: "Asia/Tokyo"
     volumes:
       - db_volume:/var/lib/mysql
-      - ./mysql/sql:/docker-entrypoint-initdb.d
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d # 定義どおりにテーブル作成
+      - ./mysql/conf.d:/etc/mysql/conf.d # MySQLの基本設定(文字化け対策)
+      # - ./mysql/log:/var/log/mysql # ログの保存
 
   websrv:
     container_name: visualizingTweets-nginx
@@ -48,9 +50,10 @@ services:
       - ./static:/opt/static/
     depends_on:
       - webapp
-      - stock_service
+      - stock_api
 
-  stock_service:
+  stock_api:
+    container_name: stock_api
     build: ./stock-service
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:

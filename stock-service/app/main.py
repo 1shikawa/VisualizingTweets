@@ -14,5 +14,5 @@ async def startup():
 async def shutdown():
     await database.disconnect()
 
-# movies routerを登録する
+# stock routerを登録する
 app.include_router(stock, prefix='/api/v1/stock', tags=['stock'])
