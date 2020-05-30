@@ -5,11 +5,12 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView,
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from .models import Stock
-from .forms import SearchForm, StockCreateForm, StockUpdateForm
+from .forms import SearchForm, KeyWordSearchForm, StockCreateForm, StockUpdateForm
 import requests
 import logging
 import pandas as pd
 import tweepy
+import pprint
 
 # 各種Twitterーのキーをセット
 CONSUMER_KEY = settings.CONSUMER_KEY
@@ -27,9 +28,6 @@ api = tweepy.API(auth)
 # Twitter URL
 URL = 'https://twitter.com/'
 
-# デフォルトツイート取得件数
-default_display_number = 300
-
 # dataframeのカラム定義
 columns = [
     'screen_name',
@@ -41,15 +39,14 @@ columns = [
     'url'
 ]
 
-
 class Index(TemplateView):
     template_name = 'index.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = SearchForm(self.request.GET or None, initial={'display_number': default_display_number})
+        form = SearchForm(self.request.GET or None)
         if form.is_valid():
-            # 入力フォームからuser_idとdisplay_number取得
+            # 入力フォームからscreen_nameとdisplay_number取得
             screen_name = form.cleaned_data.get('screen_name')
             display_number = int(form.cleaned_data.get('display_number'))
         context['form'] = form
@@ -80,7 +77,7 @@ class Index(TemplateView):
                     return redirect('Visualizing:Index', form)
 
                 # Tweepy,Statusオブジェクトからツイート情報取得
-                for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, include_entities=True, include_rts=False).items(display_number):
+                for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, trim_user=True, include_entities=True, include_rts=False).items(display_number):
                     try:
                         if not "RT @" in tweet.text and tweet.favorite_count != 0:
                             se = pd.Series([
@@ -91,7 +88,7 @@ class Index(TemplateView):
                                 tweet.text,
                                 tweet.favorite_count,
                                 tweet.retweet_count,
-                                URL+screen_name + '/status/'+tweet.id_str  # ツイートリンクURL
+                                URL + screen_name + '/status/'+ tweet.id_str  # ツイートリンクURL
                             ], columns
                             )
                         tweets_df = tweets_df.append(se, ignore_index=True)
@@ -106,7 +103,7 @@ class Index(TemplateView):
                 # 日別のリツイート、いいね数の合計
                 grouped_df = tweets_df.groupby(tweets_df.created_at.dt.date).sum().sort_values(by='created_at',
                                                                                             ascending=False)
-                # リツイート＆いいね数が多い順にソート
+                # いいね,リツイート数が多い順にソート
                 sorted_df = tweets_df.sort_values(['fav', 'retweets'], ascending=False)
                 # created_atをキーに昇順ソート
                 sorted_df_created_at = tweets_df.sort_values('created_at', ascending=True)
@@ -114,7 +111,7 @@ class Index(TemplateView):
                 sorted_df_MaxFav = max(sorted_df['fav'])
 
                 context = {
-                    'form': SearchForm(initial={'display_number': default_display_number}), # フォーム初期化
+                    'form': SearchForm(), # フォーム初期化
                     'screen_name': screen_name,
                     'tweets_df': tweets_df,
                     'grouped_df': grouped_df,
@@ -124,11 +121,75 @@ class Index(TemplateView):
                     'profile': profile,
                     'display_number': display_number,
                 }
-
                 return context
-
         except:
             # messages.error(self.request, 'エラーが発生しました。')
+            return context
+
+
+# dataframeのカラム定義
+columns2 = [
+    'screen_name',
+    'user_name',
+    'tweet_id',
+    'created_at',
+    'text',
+    'fav',
+    'retweets',
+    'url',
+    'user_image',
+    'statuses_count',
+    'followers_count'
+]
+class KeyWordSearch(TemplateView):
+    template_name = 'keyword_search.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = KeyWordSearchForm(self.request.GET or None)
+        if form.is_valid():
+            keyword = form.cleaned_data.get('keyword')
+            display_number = int(form.cleaned_data.get('display_number'))
+            lang = form.cleaned_data.get('lang')
+        context['form'] = form
+
+        # columns定義したDataFrameを作成
+        tweets_df = pd.DataFrame(columns=columns2)
+
+        try:
+            print(lang)
+            for tweet in tweepy.Cursor(api.search, q=keyword, lang=lang, include_entities=True, include_rts=False).items(display_number):
+                if not tweet.text.startswith('RT @'):
+                    se = pd.Series([
+                        # ツイート情報
+                        tweet.user.screen_name,
+                        tweet.user.name,
+                        tweet.id,
+                        tweet.created_at,
+                        tweet.text,
+                        tweet.favorite_count,
+                        tweet.retweet_count,
+                        URL + tweet.user.screen_name + '/status/' + tweet.id_str,  # ツイートリンクURL
+                        # ツイートしたユーザー情報
+                        tweet.user.profile_image_url,
+                        tweet.user.statuses_count,
+                        tweet.user.followers_count,
+                    ], columns2
+                    )
+                    tweets_df = tweets_df.append(se, ignore_index=True)
+            # 重複するツイートを削除
+            tweets_df = tweets_df.drop_duplicates(subset='tweet_id')
+            # いいね,リツイート数が多い順にソート
+            sorted_df = tweets_df.sort_values(['fav', 'retweets'], ascending=False)
+
+            context = {
+                'form': KeyWordSearchForm(), # フォーム初期化
+                'sorted_df': sorted_df,
+                'display_number': display_number
+            }
+            # pprint.pprint(tweets_df)
+            return context
+        except:
             return context
 
 

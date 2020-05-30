@@ -3,7 +3,8 @@ from .models import Stock
 
 
 class SearchForm(forms.Form):
-    screen_name = forms.CharField(label='ユーザー名', required=True,)
+    """Twitterユーザータイムライン検索フォーム"""
+    screen_name = forms.CharField(label='スクリーンネーム', required=True,)
     display_number = forms.ChoiceField(label='取得件数',
         choices=(
             ('10', 10),
@@ -15,6 +16,7 @@ class SearchForm(forms.Form):
             ('800', 800),
             ('1000', 1000),
         ),
+        initial=300,
         required=True,
         widget=forms.widgets.Select
     )
@@ -25,8 +27,49 @@ class SearchForm(forms.Form):
             field.widget.attrs['class'] = 'form-control'
             field.widget.attrs['placeholder'] = field.label
 
+class KeyWordSearchForm(forms.Form):
+    """Twitterキーワード検索フォーム"""
+    keyword = forms.CharField(label='キーワード', required=True,)
+    display_number = forms.ChoiceField(label='取得件数',
+        choices=(
+            ('10', 10),
+            ('30', 30),
+            ('50', 50),
+            ('100', 100),
+            ('300', 300),
+            ('500', 500),
+            ('800', 800),
+            ('1000', 1000),
+        ),
+        initial=300,
+        required=True,
+        widget=forms.widgets.Select
+    )
+    lang = forms.ChoiceField(label='言語',
+        choices=(
+            ('ja', '日本'),
+            ('en', '英語'),
+        ),
+        initial='ja',
+        required=True,
+        widget=forms.widgets.RadioSelect()
+    )
+    # locale = forms.MultipleChoiceField(label='対象範囲',
+    #     choices=(('ja', '日本のみ'),),
+    #     widget=forms.CheckboxSelectMultiple(),
+    #     initial='ja'
+    #     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['keyword'].widget.attrs['class'] = 'form-control'
+        self.fields['keyword'].widget.attrs['placeholder'] = 'キーワード'
+        self.fields['display_number'].widget.attrs['class'] = 'form-control'
+        self.fields['display_number'].widget.attrs['placeholder'] = '取得件数'
+
 
 class StockCreateForm(forms.ModelForm):
+    """ツイートストック用フォーム"""
     class Meta:
         model = Stock
         fields = ['tweet_id', 'user_id', 'screen_name', 'user_name','tweet_text',
@@ -41,6 +84,7 @@ class StockCreateForm(forms.ModelForm):
 
 
 class StockUpdateForm(forms.ModelForm):
+    """ツイートストック更新フォーム"""
     class Meta:
         model = Stock
         fields = ['tweet_id', 'user_id', 'screen_name', 'user_name', 'tweet_text',
