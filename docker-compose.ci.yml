@@ -16,6 +16,7 @@ services:
       - CONSUMER_SECRET
       - ACCESS_TOKEN
       - ACCESS_TOKEN_SECRET
+      - YOUTUBE_API_KEY
     env_file: .env
     volumes:
       - .:/code
