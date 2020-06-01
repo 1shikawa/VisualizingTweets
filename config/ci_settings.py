@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'bootstrap4',
     'VisualizingTweets',
+    'VisualizingYoutube',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,10 @@ CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 
+#####################
+# YoutubeAPI setting #
+#####################
+YOUTUBE_API_KEY = os.environ['YOUTUBE_API_KEY']
 
 LOGGING = {
     # バージョンは「1」固定
