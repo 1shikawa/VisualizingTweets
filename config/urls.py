@@ -19,6 +19,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('VisualizingTweets/', include('VisualizingTweets.urls', namespace='VisualizingTweets')),
+    path('', include('VisualizingTweets.urls', namespace='VisualizingTweets')),
     path('VisualizingYoutube/', include('VisualizingYoutube.urls', namespace='VisualizingYoutube')),
 ]
