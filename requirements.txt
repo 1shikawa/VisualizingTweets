@@ -1,4 +1,5 @@
 Django<2.3
+django-allauth
 django-pandas
 django-bootstrap4
 django-forms-bootstrap

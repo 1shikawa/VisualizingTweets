@@ -14,6 +14,7 @@ class Stock(models.Model):
     retweet_count = models.PositiveIntegerField('リツイート数', blank=True,default=0)
     expanded_url = models.URLField('関連URL', max_length=300, blank=True,default='http://example.com')
     created_at = models.DateTimeField('ストック日', auto_now_add=True, null=True)
+    stock_user = models.CharField('ストック者', max_length=30, blank=True, null=True)
     updated_at = models.DateTimeField('更新日', auto_now=True, null=True)
 
     def get_absolute_url(self):

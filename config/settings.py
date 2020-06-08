@@ -37,10 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    'bootstrap4',
-    'VisualizingTweets',
-    'VisualizingYoutube',
+    'django.contrib.humanize', # add
+
+    'bootstrap4',  # add
+    'accounts',  # add
+    'VisualizingTweets',  # add
+    'VisualizingYoutube',  # add
+
+    'django.contrib.sites',  # add
+    'allauth',  # add
+    'allauth.account',  # add
+    'allauth.socialaccount',  # add
+    'allauth.socialaccount.providers.twitter',  # add
+    'allauth.socialaccount.providers.google',  # add
 ]
 
 MIDDLEWARE = [
@@ -125,37 +134,112 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+##########################
+# django-allauth setting #
+##########################
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# django-allauthで利用するdjango.contrib.sitesを使うためにサイト識別用IDを設定
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = (
+    # 一般ユーザー用(メールアドレス認証)
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',  # 管理サイト用(ユーザー名認証)
+)
+# メールアドレス認証に変更する設定
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+
+# サインアップにメールアドレス確認を挟むよう設定
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True
+
+# ログイン/ログアウト後の遷移先を設定
+LOGIN_REDIRECT_URL = 'VisualizingTweets:Index'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
+
+# ログアウトリンクのクリック一発でログアウトする設定
+ACCOUNT_LOGOUT_ON_GET = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # コンソール上にメッセージを表示
 
 #####################
 # tweepyAPI setting #
 #####################
-CONSUMER_KEY = os.environ['CONSUMER_KEY']
-CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
-ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
+# CONSUMER_KEY = os.environ['CONSUMER_KEY']
+# CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
+# ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+# ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
+CONSUMER_KEY = 'hvgtijJXhGaj2x8fyPVzjeZVG'
+CONSUMER_SECRET = 'zuMm9DbQRKuMYyLVCmHbUjtV1OknXKWEusgh8kpgksrCchzws4'
+ACCESS_TOKEN = '133257671-SlwXzmLBO5Xy1KYCsZyG4OSJf5QcEjZFV6gD3km2'
+ACCESS_TOKEN_SECRET = 'zXdiZz6vpOkJn1G87LTredcCwO6vaUTZQj1NMsD6VsTXL'
 
-#####################
+
+######################
 # YoutubeAPI setting #
-#####################
-YOUTUBE_API_KEY = os.environ['YOUTUBE_API_KEY']
+######################
+YOUTUBE_API_KEY = 'AIzaSyA93ZH-ib4VNz5qUVtwduhcgs4mpEJj4sY'
 
+
+###################
+# logging setting #
+###################
 LOGGING = {
+    # バージョンは「1」固定
     'version': 1,
+    # 既存のログ設定を無効化しない
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    # ログフォーマット
+    'formatters': {
+        # 開発用
+        'develop': {
+            'format': '%(asctime)s [%(levelname)s] %(pathname)s:%(lineno)d '
+                      '%(message)s'
         },
     },
+    # ハンドラ
+    'handlers': {
+        # コンソール出力用ハンドラ
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'develop',
+        },
+    },
+    # ロガー
     'loggers': {
+        # 自作アプリケーション全般のログを拾うロガー
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # Django本体が出すログ全般を拾うロガー
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+            'level': 'INFO',
+            'propagate': False,
         },
+        # 発行されるSQL文を出力するための設定
+        # 'django.db.backends': {
+        #     'handlers': ['console'],
+        #     'level': 'DEBUG',
+        #     'propagate': False,
+        # },
     },
 }
 
-# heroku settings
+#####################
+# humanize settings #
+#####################
+NUMBER_GROUPING = 3
+
+
+###################
+# heroku settings #
+###################
 import dj_database_url
 DATABASES['default'] = dj_database_url.config()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -168,8 +252,6 @@ try:
 except ImportError:
     pass
 
-# humanize settings
-NUMBER_GROUPING = 3
 
 import django_heroku
 django_heroku.settings(locals())

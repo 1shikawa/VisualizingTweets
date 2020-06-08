@@ -5,11 +5,12 @@ services:
     container_name: visualizingTweets-django
     build: ./app
     # restart: on-failure
-    command: bash -c "python manage.py runserver 0.0.0.0:8080"
-    # command: >
-    #   bash -c "python local_manage.py makemigrations
-    #   && python local_manage.py migrate
-    #   && python local_manage.py collectstatic --noinput
+    # command: bash -c "python manage.py runserver 0.0.0.0:8080"
+    command: >
+      bash -c "python local_manage.py makemigrations
+      && python local_manage.py migrate
+      && python local_manage.py collectstatic --noinput
+      && python manage.py runserver 0.0.0.0:8080"
     #   && gunicorn config.local_wsgi -b 0.0.0.0:8080"
     environment:
       - DJANGO_SETTINGS_MODULE=config.local_settings

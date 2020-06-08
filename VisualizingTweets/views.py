@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -193,12 +194,17 @@ class KeyWordSearch(TemplateView):
             return context
 
 
-class StockList(ListView):
+class StockList(LoginRequiredMixin, ListView):
     model = Stock
     template_name = 'stock_list.html'
     context_object_name = 'stock_list'
 
-class StockAdd(CreateView):
+    def get_queryset(self):
+        queryset = Stock.objects.filter(stock_user=self.request.user)
+        return queryset
+
+
+class StockAdd(LoginRequiredMixin, CreateView):
     model = Stock
     form_class = StockCreateForm
     template_name = 'stock_add.html'
@@ -209,7 +215,7 @@ class StockAdd(CreateView):
         tweet_id = self.kwargs['tweet_id']
         if Stock.objects.filter(tweet_id=tweet_id).exists():
             messages.warning(self.request, '既にストック済みです。')
-
+        # tweet_idからツイート情報取得
         tweet = api.get_status(id=tweet_id)
         if tweet.entities['urls']:
             expanded_url = tweet.entities['urls'][0]['expanded_url']
@@ -230,11 +236,18 @@ class StockAdd(CreateView):
         context['form'] = form
         return context
 
+    def form_valid(self, form):
+        stock = form.save(commit=False)
+        stock.stock_user = str(self.request.user)
+        stock.save()
+        return super().form_valid(form)
+
     def post(self, request, *args, **kwargs):
         messages.success(self.request, 'ストックしました。')
         return super().post(request, *args, **kwargs)
 
-class StockUpdate(UpdateView):
+
+class StockUpdate(LoginRequiredMixin, UpdateView):
     model = Stock
     form_class = StockUpdateForm
     template_name = 'stock_update.html'
@@ -253,7 +266,7 @@ class StockUpdate(UpdateView):
         return super().form_invalid(form)
 
 
-class StockDelete(DeleteView):
+class StockDelete(LoginRequiredMixin, DeleteView):
     model = Stock
     success_url = reverse_lazy('VisualizingTweets:stock_list')
 

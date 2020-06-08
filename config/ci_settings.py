@@ -37,10 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    'bootstrap4',
-    'VisualizingTweets',
-    'VisualizingYoutube',
+    'django.contrib.humanize',  # add
+
+    'bootstrap4',  # add
+    'accounts',  # add
+    'VisualizingTweets',  # add
+    'VisualizingYoutube',  # add
+
+    'django.contrib.sites',  # add
+    'allauth',  # add
+    'allauth.account',  # add
+    'allauth.socialaccount',  # add
+    'allauth.socialaccount.providers.twitter',  # add
+    'allauth.socialaccount.providers.google',  # add
 ]
 
 MIDDLEWARE = [
@@ -124,6 +133,26 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+##########################
+# django-allauth setting #
+##########################
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # default
+    'allauth.account.auth_backends.AuthenticationBackend',  # django-allauth
+)
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'   # email+パスワード認証方式を指定
+ACCOUNT_USERNAME_REQUIRED = False         # ユーザ名を利用しない設定にする
+
+SITE_ID = 1  # django-allauthを利用する際に必要な設定
+LOGIN_REDIRECT_URL = 'VisualizingTweets:Index'   # ログインURLの設定
+LOGIN_URL = '/accounts/login/'  # ログイン画面を何処にするかの設定
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # ログアウトリダイレクトの設定
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # ユーザ登録確認メールを送信する
+ACCOUNT_EMAIL_REQUIRED = True  # メールアドレスを必須項目に指定
+ACCOUNT_LOGOUT_ON_GET = True   # ログアウトリンクのクリック一発でログアウトする設定
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # コンソール上にメッセージを表示
 
 #####################
 # tweepyAPI setting #
@@ -133,9 +162,9 @@ CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 
-#####################
+######################
 # YoutubeAPI setting #
-#####################
+######################
 YOUTUBE_API_KEY = os.environ['YOUTUBE_API_KEY']
 
 LOGGING = {
