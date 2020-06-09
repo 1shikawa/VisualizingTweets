@@ -1,7 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-# from allauth.account.forms import LoginForm
-
 from django.contrib.auth import get_user_model
 
 CustomUser = get_user_model()
@@ -19,10 +17,10 @@ class SignUpForm(UserCreationForm):
             field.widget.attrs['placeholder'] = field.label
 
 
-class LoginForm(AuthenticationForm):
+class DefaultUserLoginForm(AuthenticationForm):
     class Meta:
         model = CustomUser
-        fields = ['email', 'password1', 'password2']
+        fields = ['email', 'password']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

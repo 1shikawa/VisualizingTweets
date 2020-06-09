@@ -34,6 +34,9 @@
                 <a class="pull-right btn btn-primary" href="{% url 'account_login' %}">ログイン</a>
             </div>
             <div class="float-right">
+                <a class="pull-right btn btn-primary" href="{% url 'accounts:default_user_login' %}">簡単ログイン</a>
+            </div>
+            <div class="float-right">
                 <a class="pull-right btn btn-primary" href="{% url 'account_signup' %}">新規ユーザー登録</a>
             </div>
         {% endif %}

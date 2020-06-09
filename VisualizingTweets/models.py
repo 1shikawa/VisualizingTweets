@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 class Stock(models.Model):
     tweet_id = models.CharField('ツイートID', max_length=50, blank=True, null=True)
     user_id = models.CharField('ユーザーID', max_length=50, blank=True, null=True)
-    screen_name = models.CharField('ハンドルネーム', max_length=100, blank=True, null=True)
+    screen_name = models.CharField('スクリーン名', max_length=100, blank=True, null=True)
     user_name = models.CharField('ユーザー名', max_length=100, blank=True, null=True)
     tweet_text = models.TextField('ツイート内容', max_length=500, blank=True, null=True)
     tweet_url = models.URLField('ツイートURL', max_length=300, blank=True, null=True)

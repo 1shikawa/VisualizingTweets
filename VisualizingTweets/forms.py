@@ -4,7 +4,7 @@ from .models import Stock
 
 class SearchForm(forms.Form):
     """Twitterユーザータイムライン検索フォーム"""
-    screen_name = forms.CharField(label='スクリーンネーム', required=True,)
+    screen_name = forms.CharField(label='スクリーン名', required=True,)
     display_number = forms.ChoiceField(label='取得件数',
         choices=(
             ('10', 10),

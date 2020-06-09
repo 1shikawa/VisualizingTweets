@@ -213,7 +213,7 @@ class StockAdd(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tweet_id = self.kwargs['tweet_id']
-        if Stock.objects.filter(tweet_id=tweet_id).exists():
+        if Stock.objects.filter(tweet_id=tweet_id, stock_user=str(self.request.user)).exists():
             messages.warning(self.request, '既にストック済みです。')
         # tweet_idからツイート情報取得
         tweet = api.get_status(id=tweet_id)
@@ -258,11 +258,11 @@ class StockUpdate(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         stock = form.save()
-        messages.success(self.request, f'ID：{stock.pk}のStockを更新しました。')
+        messages.success(self.request, f'ID：{stock.pk}のストックを更新しました。')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Stockの更新に失敗しました。')
+        messages.error(self.request, 'ストックの更新に失敗しました。')
         return super().form_invalid(form)
 
 
@@ -272,7 +272,7 @@ class StockDelete(LoginRequiredMixin, DeleteView):
 
     # 確認画面を省略するためにgetをpostにショートカット
     def get(self, *args, **kwargs):
-        messages.success(self.request, '対象ツイートを削除しました。')
+        messages.success(self.request, '対象ストックを削除しました。')
         return self.post(*args, **kwargs)
 
 
