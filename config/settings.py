@@ -150,14 +150,16 @@ AUTHENTICATION_BACKENDS = (
 # メールアドレス認証に変更する設定
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # CustomUserモデルにusernameは無い
 
 # サインアップにメールアドレス確認を挟むよう設定
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
 
 # ログイン/ログアウト後の遷移先を設定
+LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = 'VisualizingTweets:Index'
-ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'VisualizingTweets:Index'
 
 # ログアウトリンクのクリック一発でログアウトする設定
 ACCOUNT_LOGOUT_ON_GET = True

@@ -14,7 +14,7 @@
             <p>ツイッターのIDを入れると、直近のいいね数とリツイート数、最もリツイートされたツイートが一覧できます。</p>
             <p><a href="{% url 'VisualizingTweets:keyword_search' %}">キーワード検索</a></p>
             <a href="{% url 'VisualizingYoutube:Index' %}">YouTubeLiveランキング</a>
-            <span>{{ user.email }},{{ user.get_username }},{{ user.date_joined }}</span>
+            <span>{{ user.email }}：{{ user.get_username }}：{{ user.last_login }}：{{ user.date_joined }}</span>
 
        {% if user.is_authenticated %}
 
@@ -23,14 +23,18 @@
             </div>
 
             <div class="float-right">
+                <a class="pull-right btn btn-primary" href="{% url 'account_change_password' %}">パスワード変更</a>
+            </div>
+
+            <div class="float-right">
                 <a class="pull-right btn btn-success" href="{% url 'VisualizingTweets:stock_list' %}">Stock一覧</a>
             </div>
        {% else %}
             <div class="float-right">
-                <a class="pull-right btn btn-primary" href="{% url 'accounts:login' %}">ログイン</a>
+                <a class="pull-right btn btn-primary" href="{% url 'account_login' %}">ログイン</a>
             </div>
             <div class="float-right">
-                <a class="pull-right btn btn-primary" href="{% url 'accounts:signup' %}">新規ユーザー登録</a>
+                <a class="pull-right btn btn-primary" href="{% url 'account_signup' %}">新規ユーザー登録</a>
             </div>
         {% endif %}
             <form class="form-inline" method="GET" action="{% url 'VisualizingTweets:Index' %}">

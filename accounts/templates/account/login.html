@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block extracss %}
+
+{% endblock %}
+
+{% block contents %}
+    <section class="common-form">
+        {% if form.errors %}
+            <!--<p class="error-msg">Your username and password didn't match. Please try again.</p>-->
+        {% endif %}
+
+
+        <div class="container">
+            <h2 class="text-center logo my-4">
+                <a href="#">ログイン</a>
+            </h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-5 col-md-6 col-sm-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">メールアドレスとパスワードを入力後、<br>ログインして下さい。</h6>
+                            <div>
+                                <span>以下はテスト用アカウントです。</span><br>
+                                <span>メールアドレス：test@test.com</span><br>
+                                <span>パスワード：test</span><br>
+                            </div>
+                            <form method="post">
+                                <div class="form-group">
+                                    {% csrf_token %}
+                                    {% bootstrap_form form %}
+                                    <button type="submit" class="btn btn-success btn-block">メールアドレスでログイン</button>
+                                    <p><a href="{% url 'account_reset_password' %}"
+                                          class="text-muted">パスワードをお忘れの方はこちらから</a></p>
+                                    <a class="btn btn-primary btn-block"
+                                       href="{% url 'twitter_login' %}">Twitterアカウントでログイン</a>
+                                    <a class="btn btn-danger btn-block"
+                                        href="{% url 'google_login' %}">Googleアカウントでログイン</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+    </section>
+
+{% endblock %}
