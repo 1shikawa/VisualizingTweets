@@ -153,7 +153,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # CustomUserモデルにusernameは無い
 
 # サインアップにメールアドレス確認を挟むよう設定
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_REQUIRED = True
 
 # ログイン/ログアウト後の遷移先を設定
@@ -169,20 +169,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # コンソー
 #####################
 # tweepyAPI setting #
 #####################
-# CONSUMER_KEY = os.environ['CONSUMER_KEY']
-# CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
-# ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-# ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
-CONSUMER_KEY = 'hvgtijJXhGaj2x8fyPVzjeZVG'
-CONSUMER_SECRET = 'zuMm9DbQRKuMYyLVCmHbUjtV1OknXKWEusgh8kpgksrCchzws4'
-ACCESS_TOKEN = '133257671-SlwXzmLBO5Xy1KYCsZyG4OSJf5QcEjZFV6gD3km2'
-ACCESS_TOKEN_SECRET = 'zXdiZz6vpOkJn1G87LTredcCwO6vaUTZQj1NMsD6VsTXL'
+CONSUMER_KEY = os.environ['CONSUMER_KEY']
+CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
+ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 
 
 ######################
 # YoutubeAPI setting #
 ######################
-YOUTUBE_API_KEY = 'AIzaSyA93ZH-ib4VNz5qUVtwduhcgs4mpEJj4sY'
+YOUTUBE_API_KEY = os.environ['YOUTUBE_API_KEY']
 
 
 ###################

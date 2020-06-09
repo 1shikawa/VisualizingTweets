@@ -24,8 +24,8 @@ jobs:
     - name: Check logs
       run: docker logs visualizingTweets-django
 
-    - name: Run test suite
-      run: docker exec visualizingTweets-django python manage.py test
+    # - name: Run test suite
+      # run: docker exec visualizingTweets-django python manage.py test
 
   deploy:
     name: deploy to Heroku
