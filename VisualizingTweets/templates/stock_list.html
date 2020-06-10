@@ -52,20 +52,20 @@
     {% endif %}
     <!-- メッセージフレームワーク-->
 
-    <table id=stock_list width="95%" class="table table-striped table-bordered table-hover">
+    <table id=stock_list width="100%" class="table table-striped table-bordered table-hover">
     <!-- 表の列の定義-->
     <thead>
         <tr>
-            <th class="text-center" width="5">ID</th>
-            <th class="text-center" width="5">スクリーン名</th>
-            <th class="text-center" width="5">ユーザー名</th>
-            <th class="text-center" width="80">ツイート内容</th>
-            <th class="text-center" width="5">ツイート日</th>
-            <th class="text-center" width="5">いいね数</th>
-            <th class="text-center" width="5">リツイート数</th>
-            <th class="text-center" width="5">関連URL</th>
-            <th class="text-center" width="5">ストック日</th>
-            <th class="text-center" width="5">操作</th>
+            <th class="text-center">ID</th>
+            <th class="text-center">スクリーン名</th>
+            <th class="text-center">ユーザー名</th>
+            <th class="text-center">ツイート内容</th>
+            <th class="text-center">ツイート日</th>
+            <th class="text-center">いいね数</th>
+            <th class="text-center">リツイート数</th>
+            <th class="text-center">関連URL</th>
+            <th class="text-center">ストック日</th>
+            <th class="text-center">操作</th>
         </tr>
     </thead>
     <!-- ここまでが表の列の定義-->
@@ -73,19 +73,19 @@
     <tbody>
         {% for stock in stock_list %}
         <tr class="odd gradeX text-center">
-            <td class="text-center" width="10">{{ stock.pk }}</td>
-            <td class="text-center" width="10">{{ stock.screen_name }}</td>
-            <td class="text-center" width="10">{{ stock.user_name }}</td>
-            <td class="text-left" width="80">{{ stock.tweet_text }}</td>
-            <td class="text-center" width="10"><a href="{{ stock.tweet_url }}" target="_blank" rel="noopener">{{ stock.tweet_created_at }}</a></td>
-            <td class="text-center" width="10">{{ stock.favorite_count }}</td>
-            <td class="text-center" width="10">{{ stock.retweet_count }}</td>
+            <td class="text-center">{{ stock.pk }}</td>
+            <td class="text-center">{{ stock.screen_name }}</td>
+            <td class="text-center">{{ stock.user_name }}</td>
+            <td class="text-left">{{ stock.tweet_text }}</td>
+            <td class="text-center"><a href="{{ stock.tweet_url }}" target="_blank" rel="noopener">{{ stock.tweet_created_at }}</a></td>
+            <td class="text-center">{{ stock.favorite_count }}</td>
+            <td class="text-center">{{ stock.retweet_count }}</td>
             {% if stock.expanded_url %}
-            <td class="text-center" width="10"><a href="{{ stock.expanded_url }}" target="_blank" rel="noopener">LINK</a></td>
+            <td class="text-center"><a href="{{ stock.expanded_url }}" target="_blank" rel="noopener">LINK</a></td>
             {% else %}
-            <td class="text-center" width="10"></td>
+            <td class="text-center"></td>
             {% endif %}
-            <td class="text-center" width="10">{{ stock.created_at }}</td>
+            <td class="text-center">{{ stock.created_at }}</td>
             <td><a class="btn btn-primary" href="{% url 'VisualizingTweets:stock_update' stock.pk %}">更新</a>
                 <a class="btn btn-danger" href="{% url 'VisualizingTweets:stock_delete' stock.pk %}">削除</a></td>
         </tr>
@@ -117,11 +117,23 @@
             }
         });
         $("#stock_list").DataTable({
-            "searching": true,     //検索機能
-            "paging": true,      //ページング機能
-            "ordering": true,      //ソート機能
-            "lengthChange": true,  //件数切り替え機能
-
+            searching: true,            //検索機能
+            paging: true,               //ページング機能
+            ordering: true,             //ソート機能
+            lengthChange: true,         //件数切り替え機能
+            pagingType: "full_numbers", //ページャーの種類
+            columnDefs: [
+                 { targets: [0], width: "5%" }, //ID
+                 { targets: [1], width: "7%" }, //スクリーン名
+                 { targets: [2], width: "7%" }, //ユーザー名
+                 { targets: [3], width: "40%" }, //ツイート内容
+                 { targets: [4], width: "8%" }, //ツイート日
+                 { targets: [5], width: "7%" }, //いいね数
+                 { targets: [6], width: "8%" }, //リツイート数
+                 { targets: [7], width: "7%" }, //関連URL
+                 { targets: [8], width: "8%" }, //ストック日
+                 { targets: [9], width: "10%" }, //操作
+             ]
         }).columns.adjust().draw();
     });
 </script>

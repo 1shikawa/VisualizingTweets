@@ -11,7 +11,7 @@
     <div class="row">
        <div class="col-md-12">
             <h1><a href="{% url 'VisualizingTweets:Index' %}">Visualizing Tweets </a></h1>
-            <p>ツイッターのIDを入れると、直近のいいね数とリツイート数、最もリツイートされたツイートが一覧できます。</p>
+            <p>Twitterのスクリーン名(@以下)で検索すると、日毎の合計いいね数とリツイート数、影響のあったツイートが一覧できます。</p>
             <p><a href="{% url 'VisualizingTweets:keyword_search' %}">キーワード検索</a></p>
             <a href="{% url 'VisualizingYoutube:Index' %}">YouTubeLiveランキング</a>
             <span>{{ user.email }}：{{ user.get_username }}：{{ user.last_login }}：{{ user.date_joined }}</span>
