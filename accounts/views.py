@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
 from .forms import SignUpForm, DefaultUserLoginForm
+from django.contrib import messages
 
+CustomUser = get_user_model()
 
 # Create your views here.
 
@@ -28,20 +30,11 @@ from .forms import SignUpForm, DefaultUserLoginForm
 #     template_name = 'login.html'
 
 
-# class Logout(LogoutView):
-#     template_name = 'logout.html'
-
+GUEST_EMAIL = 'guest@localhost'
 # 簡単ログイン機能
-class DefaultUserLogin(LoginView):
-    form_class = DefaultUserLoginForm
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(data={'email':'guest@guest.jp','password':'guest1234'})
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            raw_password = form.cleaned_data.get('password')
-            user = authenticate(email=email, password=raw_password)
-            login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
-            return redirect('VisualizingTweets:Index')
-        return render(request, 'signup.html', {'form': form})
+def GuestLogin(request):
+    guest_user = CustomUser.objects.get(email=GUEST_EMAIL)
+    login(request, guest_user, backend='django.contrib.auth.backends.ModelBackend')
+    messages.success(request, 'ゲストユーザーとしてログインしました。')
+    return redirect('VisualizingTweets:Index')
 
