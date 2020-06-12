@@ -146,7 +146,7 @@ ACCOUNT_USERNAME_REQUIRED = False         # ユーザ名を利用しない設定
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # CustomUserモデルにusernameは無い
 
 SITE_ID = 1  # django-allauthを利用する際に必要な設定
-LOGIN_REDIRECT_URL = 'VisualizingTweets:Index'   # ログインURLの設定
+LOGIN_REDIRECT_URL = 'VisualizingTweets:index'   # ログインURLの設定
 LOGIN_URL = 'account_login'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # ログアウトリダイレクトの設定
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # ユーザ登録確認メールを送信する

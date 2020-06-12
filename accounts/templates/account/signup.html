@@ -10,14 +10,15 @@
 
 <div class="container">
     <div class="loginPage_contents">
-        <h1 class="h3 loginPage_contents_title">新規ユーザー登録</h1>
-        <br><hr><br>
+        <h4 class="text-center logo my-4">
+            <a>新規ユーザー登録</a>
+        </h4>
         <form action="" method="POST">
             <div class="col-md-6 offset-md-3">
                 <div class="card">
                     <div class="card-body">
                         {% bootstrap_form form  %}
-                        <button type="submit" class="btn btn-success" >登録してログイン</button>
+                        <button type="submit" class="btn btn-success btn-block" >登録してログイン</button>
                         <input type="hidden" name="next" value="{{ next }}" />
                         {% csrf_token %}
 

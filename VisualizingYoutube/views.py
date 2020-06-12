@@ -31,8 +31,12 @@ columns = [
     'concurrentViewers',
 ]
 
-class Index(TemplateView):
-    template_name = 'live_list.html'
+class videoSearch(TemplateView):
+    template_name = 'video_search.html'
+
+
+class liveRanking(TemplateView):
+    template_name = 'live_ranking.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)

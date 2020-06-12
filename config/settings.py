@@ -158,8 +158,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # ログイン/ログアウト後の遷移先を設定
 LOGIN_URL = 'account_login'
-LOGIN_REDIRECT_URL = 'VisualizingTweets:Index'
-ACCOUNT_LOGOUT_REDIRECT_URL = 'VisualizingTweets:Index'
+LOGIN_REDIRECT_URL = 'VisualizingTweets:index'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'VisualizingTweets:index'
 
 # ログアウトリンクのクリック一発でログアウトする設定
 ACCOUNT_LOGOUT_ON_GET = True

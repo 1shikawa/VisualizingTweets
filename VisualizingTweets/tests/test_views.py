@@ -8,17 +8,17 @@ class TestIndex(TestCase):
 
     def test_1_Index_access_success(self):
         # Indexアクセスが成功することを検証
-        response = self.client.get(reverse_lazy('VisualizingTweets:Index'))
+        response = self.client.get(reverse_lazy('VisualizingTweets:index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visualizing Tweets')
-        self.assertTemplateUsed(template_name='index.html')
+        self.assertTemplateUsed(template_name='timeline_search.html')
 
     def test_2_Index_get_access_success(self):
         # Indexのgetメソッドが成功することを検証
         response = self.client.get(reverse_lazy('VisualizingTweets:Index'), {'user_id':'neet_se', 'display_number':10})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Visualizing Tweets')
-        self.assertTemplateUsed(template_name='index.html')
+        self.assertTemplateUsed(template_name='timeline_search.html')
         # self.assertTrue('user_id' in response.context)
 
 class StockList(TestCase):

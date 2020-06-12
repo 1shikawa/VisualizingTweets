@@ -7,14 +7,11 @@
 {% endblock %}
 
 {% block contents %}
-<div class="container">
+
     <div class="row">
         <div class="col-md-12">
-            <h1><a href="{% url 'VisualizingTweets:Index' %}">Visualizing Tweets</a></h1>
-            <p><a href="{% url 'VisualizingTweets:Index' %}">ユーザータイムライン検索</a></p>
-            <div class="float-right">
-                <a class="pull-right btn btn-success" href="{% url 'VisualizingTweets:stock_list' %}">Stock一覧</a>
-            </div>
+            <h3>キーワード検索</h3>
+            <p>キーワードが含まれる直近で影響のあったツイートが一覧できます。</p>
                 <form class="form-inline" method="GET"" action="{% url 'VisualizingTweets:keyword_search' %}">
                     {% bootstrap_form form %}
                     <button type="submit" class="btn btn-primary">取得</button>

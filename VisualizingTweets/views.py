@@ -40,8 +40,12 @@ columns = [
     'url'
 ]
 
+
 class Index(TemplateView):
     template_name = 'index.html'
+
+class timelineSearch(TemplateView):
+    template_name = 'timeline_search.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,7 +79,7 @@ class Index(TemplateView):
                 else:
                     messages.warning(self.request, f'{screen_name}が見つかりません。')
                     form = SearchForm()
-                    return redirect('Visualizing:Index', form)
+                    return redirect('Visualizing:timeline_search', form)
 
                 # Tweepy,Statusオブジェクトからツイート情報取得
                 for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, trim_user=True, include_entities=True, include_rts=False).items(display_number):

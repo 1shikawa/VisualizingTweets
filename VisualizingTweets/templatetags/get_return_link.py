@@ -7,7 +7,7 @@ register = template.Library()
 
 @register.simple_tag
 def get_return_link(request):
-    top_page = resolve_url('VisualizingTweets:Index')  # Index
+    top_page = resolve_url('VisualizingTweets:index')  # Index
     referer = request.environ.get('HTTP_REFERER')  # これが、前ページのURL
 
     # URL直接入力やお気に入りアクセスのときはリファラがないので、トップぺージに戻す

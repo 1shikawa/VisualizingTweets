@@ -4,14 +4,12 @@
 {% load url_customize %}
 
 {% block contents %}
-    <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1><a href="{% url 'VisualizingTweets:Index' %}">Visualizing Tweets</a></h1>
+                <h3>ストック登録</h3>
                 <p>以下のツイート内容をストックします。</p>
             </div>
         </div>
-    </div>
     <!-- メッセージフレームワーク-->
     {% if messages %}
     <div class="container">

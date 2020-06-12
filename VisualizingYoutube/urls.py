@@ -4,5 +4,6 @@ from . import views
 app_name = 'VisualizingYoutube'
 
 urlpatterns = [
-    path('', views.Index.as_view(), name='Index'),
+    path('videoSearch/', views.videoSearch.as_view(), name='video_search'),
+    path('liveRanking/', views.liveRanking.as_view(), name='live_ranking'),
 ]

@@ -4,7 +4,8 @@ from . import views
 app_name = 'VisualizingTweets'
 
 urlpatterns = [
-    path('', views.Index.as_view(), name='Index'),
+    path('', views.Index.as_view(), name='index'),
+    path('timelineSearch/', views.timelineSearch.as_view(), name='timeline_search'),
     path('keywordSearch/', views.KeyWordSearch.as_view(), name='keyword_search'),
     path('Stock/<str:screen_name>/status/<int:tweet_id>', views.StockAdd.as_view(), name='stock_add'),
     path('StockList/', views.StockList.as_view(), name='stock_list'),
