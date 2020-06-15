@@ -36,5 +36,5 @@ def GuestLogin(request):
     guest_user = CustomUser.objects.get(email=GUEST_EMAIL)
     login(request, guest_user, backend='django.contrib.auth.backends.ModelBackend')
     messages.success(request, 'ゲストユーザーとしてログインしました。')
-    return redirect('VisualizingTweets:index')
+    return redirect('VisualizingTweets:stock_list')
 

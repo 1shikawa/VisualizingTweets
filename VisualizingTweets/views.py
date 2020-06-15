@@ -30,7 +30,7 @@ api = tweepy.API(auth)
 URL = 'https://twitter.com/'
 
 # dataframeのカラム定義
-columns = [
+timeline_columns = [
     'screen_name',
     'tweet_id',
     'created_at',
@@ -56,7 +56,7 @@ class timelineSearch(TemplateView):
             display_number = int(form.cleaned_data.get('display_number'))
         context['form'] = form
         # columns定義したDataFrameを作成
-        tweets_df = pd.DataFrame(columns=columns)
+        tweets_df = pd.DataFrame(columns=timeline_columns)
         try:
             if screen_name and display_number:
                 # 対象ユーザーが存在するかどうか確認
@@ -91,10 +91,10 @@ class timelineSearch(TemplateView):
                                 tweet.created_at,
                                 # tweet.text.replace('\n', ''),
                                 tweet.text,
-                                tweet.favorite_count,
-                                tweet.retweet_count,
+                                int(tweet.favorite_count),
+                                int(tweet.retweet_count),
                                 URL + screen_name + '/status/'+ tweet.id_str  # ツイートリンクURL
-                            ], columns
+                            ], timeline_columns
                             )
                         tweets_df = tweets_df.append(se, ignore_index=True)
 
@@ -133,7 +133,7 @@ class timelineSearch(TemplateView):
 
 
 # dataframeのカラム定義
-columns2 = [
+keysearch_columns = [
     'screen_name',
     'user_name',
     'tweet_id',
@@ -159,7 +159,7 @@ class KeyWordSearch(TemplateView):
         context['form'] = form
 
         # columns定義したDataFrameを作成
-        tweets_df = pd.DataFrame(columns=columns2)
+        tweets_df = pd.DataFrame(columns=keysearch_columns)
 
         try:
             print(lang)
@@ -172,14 +172,14 @@ class KeyWordSearch(TemplateView):
                         tweet.id,
                         tweet.created_at,
                         tweet.text,
-                        tweet.favorite_count,
-                        tweet.retweet_count,
+                        int(tweet.favorite_count),
+                        int(tweet.retweet_count),
                         URL + tweet.user.screen_name + '/status/' + tweet.id_str,  # ツイートリンクURL
                         # ツイートしたユーザー情報
                         tweet.user.profile_image_url,
                         tweet.user.statuses_count,
                         tweet.user.followers_count,
-                    ], columns2
+                    ], keysearch_columns
                     )
                     tweets_df = tweets_df.append(se, ignore_index=True)
             # 重複するツイートを削除

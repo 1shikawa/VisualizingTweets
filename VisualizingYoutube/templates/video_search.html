@@ -10,6 +10,11 @@
     <div class="row">
        <div class="col-md-12">
             <h3>Youtube動画検索</h3>
+            <p>キーワードが含まれ反響のあった動画を一覧できます。</p>
+            <form class="form-inline" method="GET"" action="{% url 'VisualizingYoutube:video_search' %}">
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-primary">取得</button>
+            </form>
         </div>
     </div>
 
@@ -40,16 +45,16 @@
 
         <!-- 一覧 -->
         <div class="col-md-12">
-            {% for index, row in sorted_df.iterrows %}
+            {% for index, row in sorted_video_df.iterrows %}
             <div class="white-container">
-                <p>チャンネル名：{{ row.channelTitle }}</p>
+                <span>チャンネル名：<a href="{{ row.channelURL }}" target="_blank">{{ row.channelTitle }}</a></span>
                 <p>タイトル：{{ row.title }}</p>
-                <a>説明：{{ row.description }}</a>
+                <p>説明：{{ row.description }}</p>
+                <a>公開日：{{ row.publishedAt }}
                 <div>
                 <iframe width="480" height="360" src="//www.youtube.com/embed/{{ row.videoId }}" frameborder="0"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                <p>視聴者数：{{ row.concurrentViewers | intcomma }}</p>
-                <a>開始時間：{{ row.actualStartTime }}</a>
+                <p>再生数：{{ row.viewCount | intcomma }} 高評価：{{ row.likeCount | intcomma }} 低評価：{{ row.dislikeCount | intcomma }} コメント数：{{ row.commentCount | intcomma}}</p>
                 </div>
             </div>
             <br>
