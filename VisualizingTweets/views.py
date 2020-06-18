@@ -12,6 +12,7 @@ import logging
 import pandas as pd
 import tweepy
 import pprint
+import bs4
 
 # 各種Twitterーのキーをセット
 CONSUMER_KEY = settings.CONSUMER_KEY
@@ -30,20 +31,58 @@ api = tweepy.API(auth)
 URL = 'https://twitter.com/'
 
 # dataframeのカラム定義
-timeline_columns = [
-    'screen_name',
-    'tweet_id',
-    'created_at',
-    'text',
-    'fav',
-    'retweets',
+trend_columns = [
+    'name',
+    'tweet_volume',
     'url'
 ]
-
 
 class Index(TemplateView):
     template_name = 'index.html'
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # pprint.pprint(api.trends_available())
+        trends = api.trends_place('23424856') #日本のトレンド
+
+        # columns定義したDataFrameを作成
+        trend_df = pd.DataFrame(columns=trend_columns)
+        for trend in trends[0]['trends']:
+            se = pd.Series([
+                trend['name'],
+                trend['tweet_volume'],
+                trend['url']
+            ], trend_columns
+            )
+            trend_df = trend_df.append(se, ignore_index=True)
+
+        # trend_df = trend_df.dropna(subset=['tweet_volume'])
+        # ツイート数が多い順にソート
+        sorted_df = trend_df.sort_values(['tweet_volume'], ascending=False)
+
+
+
+
+
+        context = {
+            'sorted_df': sorted_df
+        }
+
+        return context
+
+
+# dataframeのカラム定義
+timeline_columns = [
+    'screen_name',
+    'tweet_id',
+    'created_at',
+    'full_text',
+    'fav',
+    'retweets',
+    'tweet_url',
+    # 'media_url',
+    # 'media_display_url'
+]
 class timelineSearch(TemplateView):
     template_name = 'timeline_search.html'
 
@@ -82,25 +121,28 @@ class timelineSearch(TemplateView):
                     return redirect('Visualizing:timeline_search', form)
 
                 # Tweepy,Statusオブジェクトからツイート情報取得
-                for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, trim_user=True, include_entities=True, include_rts=False).items(display_number):
+                for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, trim_user=True, include_entities=True, include_rts=False, tweet_mode="extended").items(display_number):
+                    pprint.pprint(tweet)
                     try:
-                        if not "RT @" in tweet.text and tweet.favorite_count != 0:
+                        if not "RT @" in tweet.full_text and tweet.favorite_count != 0:
                             se = pd.Series([
                                 screen_name,
                                 tweet.id,
                                 tweet.created_at,
                                 # tweet.text.replace('\n', ''),
-                                tweet.text,
+                                tweet.full_text,
                                 int(tweet.favorite_count),
                                 int(tweet.retweet_count),
-                                URL + screen_name + '/status/'+ tweet.id_str  # ツイートリンクURL
+                                URL + screen_name + '/status/' + tweet.id_str, # ツイートリンクURL
+                                # tweet.entities['media'][0]['url'],
+                                # tweet.entities['media'][0]['display_url']
                             ], timeline_columns
                             )
                         tweets_df = tweets_df.append(se, ignore_index=True)
 
                     except Exception as e:
                         print(e)
-
+                print(tweets_df)
                 # created_atを日付型に変換
                 tweets_df['created_at'] = pd.to_datetime(tweets_df['created_at'])
                 # 重複するツイートを削除
@@ -138,7 +180,7 @@ keysearch_columns = [
     'user_name',
     'tweet_id',
     'created_at',
-    'text',
+    'full_text',
     'fav',
     'retweets',
     'url',
@@ -162,16 +204,15 @@ class KeyWordSearch(TemplateView):
         tweets_df = pd.DataFrame(columns=keysearch_columns)
 
         try:
-            print(lang)
-            for tweet in tweepy.Cursor(api.search, q=keyword, lang=lang, include_entities=True, include_rts=False).items(display_number):
-                if not tweet.text.startswith('RT @'):
+            for tweet in tweepy.Cursor(api.search, q=keyword, lang=lang, include_entities=True, include_rts=False, tweet_mode="extended").items(display_number):
+                if not tweet.full_text.startswith('RT @'):
                     se = pd.Series([
                         # ツイート情報
                         tweet.user.screen_name,
                         tweet.user.name,
                         tweet.id,
                         tweet.created_at,
-                        tweet.text,
+                        tweet.full_text,
                         int(tweet.favorite_count),
                         int(tweet.retweet_count),
                         URL + tweet.user.screen_name + '/status/' + tweet.id_str,  # ツイートリンクURL
@@ -192,8 +233,9 @@ class KeyWordSearch(TemplateView):
                 'sorted_df': sorted_df,
                 'display_number': display_number
             }
-            # pprint.pprint(tweets_df)
+
             return context
+
         except:
             return context
 

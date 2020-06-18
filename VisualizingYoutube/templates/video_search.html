@@ -46,18 +46,25 @@
         <!-- 一覧 -->
         <div class="col-md-12">
             {% for index, row in sorted_video_df.iterrows %}
-            <div class="white-container">
-                <span>チャンネル名：<a href="{{ row.channelURL }}" target="_blank">{{ row.channelTitle }}</a></span>
-                <p>タイトル：{{ row.title }}</p>
-                <p>説明：{{ row.description }}</p>
-                <a>公開日：{{ row.publishedAt }}
-                <div>
-                <iframe width="480" height="360" src="//www.youtube.com/embed/{{ row.videoId }}" frameborder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                <p>再生数：{{ row.viewCount | intcomma }} 高評価：{{ row.likeCount | intcomma }} 低評価：{{ row.dislikeCount | intcomma }} コメント数：{{ row.commentCount | intcomma}}</p>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">{{ row.title }}</h5>
+                    <h6 class="card-text">チャンネル名：<a href="{{ row.channelURL }}" target="_blank">{{ row.channelTitle }}</a></h6>
+                    <h6>公開日：{{ row.publishedAt }}</h6>
+                    <div>
+                        <iframe width="700" height="420" src="//www.youtube.com/embed/{{ row.videoId }}" frameborder="0"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <h6>再生数：{{ row.viewCount | intcomma }} 高評価：{{ row.likeCount | intcomma }} 低評価：{{ row.dislikeCount | intcomma }} コメント数：{{ row.commentCount | intcomma}}</h6>
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="collapse" data-target="#description" aria-expanded="false" aria-controls="description">
+                        説明</button>
+                            <div class="collapse" id="description">
+                                <div class="card card-body">
+                                    {{ row.description | linebreaksbr | urlize | url_target_blank }}
+                                </div>
+                            </div>
+                    </div>
                 </div>
-            </div>
-            <br>
+            </div><br>
             {% endfor %}
         </div>
     </div>

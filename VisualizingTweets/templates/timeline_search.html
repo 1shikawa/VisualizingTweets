@@ -51,57 +51,61 @@
         </div>
     </div>
     <br>
+
     <div class="row">
         <!-- プロフィール -->
-        <div class="col-md-2">
+        <div class="col-md-3">
             {% if profile %}
-            <div class="white-container">
-                <div>
-                    <img src="{{profile.image}}" width="100px">
-                    <a href="https://twitter.com/{{profile.screen_name}}" target="_blank">@{{profile.screen_name}}</a>
-                    <p>{{ profile.user_name }}</p>
+            <div class="card">
+                <div class="card-body" id="profile">
+                    <div>
+                        <img src="{{profile.image}}" width="100px">
+                        <a href="https://twitter.com/{{profile.screen_name}}" target="_blank">@{{profile.screen_name}}</a>
+                        <p>{{ profile.user_name }}</p>
+                    </div>
+                    <div>ツイート数：{{ profile.statuses_count | intcomma }}</div>
+                    <div>フォロワー数：{{ profile.followers_count | intcomma }}</div>
+                    <p>登録日：{{ profile.created_at }}</p>
+                    <div>{{ profile.description }}</div>
+
+                    <div>
+                        <p>日別の被リツイート＆いいね数の合計</p>
+                        {% for index, row in grouped_df.iterrows %}
+                        <div>
+                            {{index}}
+                            <i class="fas fa-retweet"></i> {{row.retweets | intcomma }}
+                            <i class="far fa-heart"></i> {{row.fav | intcomma }}
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div>ツイート数：{{ profile.statuses_count | intcomma }}</div>
-                <div>フォロワー数：{{ profile.followers_count | intcomma }}</div>
-                <p>登録日：{{ profile.created_at }}</p>
-                <div>{{ profile.description }}</div>
             </div>
             {% endif %}
-            {% if profile %}
-            <div class="white-container">
-                <div>
-                    <p>日別の被リツイート＆いいね数の合計</p>
-                    {% for index, row in grouped_df.iterrows %}
-                    <div>
-                        {{index}}
-                        <i class="fas fa-retweet"></i> {{row.retweets | intcomma }}
-                        <i class="far fa-heart"></i> {{row.fav | intcomma }}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
         </div>
 
-        <!-- 一覧 -->
-        <div class="col-md-7">
-            {% if profile %}
+
+    <!-- 一覧 -->
+    <div class="col-md-8">
+        {% if profile %}
             <h4>直近{{ display_number }}ツイートでリツイート・いいねされたツイート一覧</h4>
             {% for index, row in sorted_df.iterrows %}
-            <div class="white-container">
-                {{ row.created_at }}
-                <div class="float-right">
-                    <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
+            <div class="card">
+                <div class="card-body">
+                    {{ row.created_at }}
+                    <div class="float-right">
+                        <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
+                    </div>
+                    <div id="tweet-text">{{ row.full_text | linebreaksbr | urlize | url_target_blank }}</div>
+                    <div id="profile">
+                        <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
+                        <a class="pull-right" href="{{ row.tweet_url }}" target="_blank" rel="noopener">ツイートを見る</a>
+                    </div>
                 </div>
-                <div id="tweet-text">{{ row.text | linebreaksbr | urlize | url_target_blank }}</div>
-                <div>
-                    <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
-                    <a class="pull-right" href="{{ row.url }}" target="_blank" rel="noopener">ツイートを見る</a>
-                </div>
-            </div>
+            </div><br>
             {% endfor %}
-            {% endif %}
-        </div>
+        {% endif %}
+    </div>
+</div>
 
 {% block script %}
 <script>

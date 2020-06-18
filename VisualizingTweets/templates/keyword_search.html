@@ -1,4 +1,4 @@
-{% extends './base.html' %}
+{% extends 'base.html' %}
 {% load bootstrap4 %}
 {% load humanize %}
 {% load url_customize %}
@@ -49,30 +49,34 @@
     <div class="row">
         {% for index, row in sorted_df.iterrows %}
         <div class="col-md-3">
-            <div class="white-container">
-                <img src="{{ row.user_image }}" width="50px">
-                <a href="https://twitter.com/{{ row.screen_name }}" id="CopyTarget" value="{{ row.screen_name }}" target="_blank">@{{ row.screen_name }}</a>
-                <button type="button" class="btn btn-info" onclick="CopyToClipboard()" title="スクリーン名をコピー">
-                    <i class="fas fa-clipboard"></i>
-                </button>
-                <p>{{ row.user_name }}</p>
-                <div>ツイート数：{{ row.statuses_count | intcomma }}</div>
-                <div>フォロワー数：{{ row.followers_count | intcomma }}</div>
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ row.user_image }}" width="50px">
+                    <a href="https://twitter.com/{{ row.screen_name }}" id="CopyTarget" value="{{ row.screen_name }}" target="_blank">@{{ row.screen_name }}</a>
+                    <button type="button" class="btn btn-info" onclick="CopyToClipboard()" title="スクリーン名をコピー">
+                        <i class="fas fa-clipboard"></i>
+                    </button>
+                    <p>{{ row.user_name }}</p>
+                    <div>ツイート数：{{ row.statuses_count | intcomma }}</div>
+                    <div>フォロワー数：{{ row.followers_count | intcomma }}</div>
+                </div>
             </div>
         </div>
         <div class="col-md-9">
-            <div class="white-container">
-                {{ row.created_at }}
-                <div class="float-right">
-                    <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
-                </div>
+            <div class="card">
+                <div class="card-body">
+                    {{ row.created_at }}
+                    <div class="float-right">
+                        <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
+                    </div>
 
-                <div id="tweet-text">{{ row.text | linebreaksbr | urlize | url_target_blank }}</div>
-                <div>
-                    <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
-                    <a class="pull-right" href="{{ row.url }}" target="_blank" rel="noopener">ツイートを見る</a>
+                    <div id="tweet-text">{{ row.full_text | linebreaksbr | urlize | url_target_blank }}</div>
+                    <div id="profile">
+                        <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
+                        <a class="pull-right" href="{{ row.url }}" target="_blank" rel="noopener">ツイートを見る</a>
+                    </div>
                 </div>
-            </div>
+            </div><br>
         </div>
         {% endfor %}
     </div>

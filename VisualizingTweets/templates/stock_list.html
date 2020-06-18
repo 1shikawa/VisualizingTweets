@@ -52,7 +52,7 @@
     {% endif %}
     <!-- メッセージフレームワーク-->
 
-    <table id=stock_list width="100%" class="table table-striped table-bordered table-hover">
+    <table id=stock_list width="100%" class="table table-bordered table-hover">
     <!-- 表の列の定義-->
     <thead>
         <tr>
@@ -86,8 +86,8 @@
             <td class="text-center"></td>
             {% endif %}
             <td class="text-center">{{ stock.created_at }}</td>
-            <td><a class="btn btn-primary" href="{% url 'VisualizingTweets:stock_update' stock.pk %}">更新</a>
-                <a class="btn btn-danger" href="{% url 'VisualizingTweets:stock_delete' stock.pk %}">削除</a></td>
+            <td><a class="btn btn-sm btn-primary" href="{% url 'VisualizingTweets:stock_update' stock.pk %}">更新</a>
+                <a class="btn btn-sm btn-danger" href="{% url 'VisualizingTweets:stock_delete' stock.pk %}">削除</a></td>
         </tr>
         {% endfor %}
     </tbody>

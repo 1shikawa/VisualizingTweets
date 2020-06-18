@@ -45,4 +45,50 @@
     </div>
     {% endif %}
     <!-- メッセージフレームワーク-->
+<div class="row">
+        <div class="col-md-4">
+            <h4>Twitterトレンド</h4>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-info">
+                        <th>タイトル</th>
+                        <th>ツイート数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index, row in sorted_df.iterrows %}
+                        <tr>
+                            <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
+                            <td>{{ row.tweet_volume | intcomma }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <h4>〇〇トレンド</h4>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-info">
+                        <th>タイトル</th>
+                        <th>ツイート数</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <h4>✕✕トレンド</h4>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-info">
+                        <th>タイトル</th>
+                        <th>ツイート数</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
 {% endblock %}
