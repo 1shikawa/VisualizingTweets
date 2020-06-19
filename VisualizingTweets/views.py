@@ -60,10 +60,6 @@ class Index(TemplateView):
         # ツイート数が多い順にソート
         sorted_df = trend_df.sort_values(['tweet_volume'], ascending=False)
 
-
-
-
-
         context = {
             'sorted_df': sorted_df
         }
@@ -134,8 +130,8 @@ class timelineSearch(TemplateView):
                                 int(tweet.favorite_count),
                                 int(tweet.retweet_count),
                                 URL + screen_name + '/status/' + tweet.id_str, # ツイートリンクURL
-                                # tweet.entities['media'][0]['url'],
-                                # tweet.entities['media'][0]['display_url']
+                                # tweet.entities['media'][0]['url'] if tweet.entities['media'][0]['url'] else '',
+                                # tweet.entities['media'][0]['display_url'] if tweet.entities['media'][0]['display_url'] else 'a'
                             ], timeline_columns
                             )
                         tweets_df = tweets_df.append(se, ignore_index=True)

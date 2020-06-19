@@ -12,7 +12,7 @@
         <div class="col-md-12">
             <h3>キーワード検索</h3>
             <p>キーワードが含まれる直近で影響のあったツイートが一覧できます。</p>
-                <form class="form-inline" method="GET"" action="{% url 'VisualizingTweets:keyword_search' %}">
+                <form class="form-inline" method="GET" action="{% url 'VisualizingTweets:keyword_search' %}">
                     {% bootstrap_form form %}
                     <button type="submit" class="btn btn-primary">取得</button>
                 </form>
@@ -52,8 +52,8 @@
             <div class="card">
                 <div class="card-body">
                     <img src="{{ row.user_image }}" width="50px">
-                    <a href="https://twitter.com/{{ row.screen_name }}" id="CopyTarget" value="{{ row.screen_name }}" target="_blank">@{{ row.screen_name }}</a>
-                    <button type="button" class="btn btn-info" onclick="CopyToClipboard()" title="スクリーン名をコピー">
+                    <a href="https://twitter.com/{{ row.screen_name }}" id="copyarea" type="text" value="{{ row.screen_name }}" target="_blank">@{{ row.screen_name }}</a>
+                    <button type="button" class="btn sm-btn copybtn" data-copy="copyarea" title="スクリーン名をコピー">
                         <i class="fas fa-clipboard"></i>
                     </button>
                     <p>{{ row.user_name }}</p>
@@ -69,8 +69,9 @@
                     <div class="float-right">
                         <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
                     </div>
-
+                {% autoescape off %}
                     <div id="tweet-text">{{ row.full_text | linebreaksbr | urlize | url_target_blank }}</div>
+                {% endautoescape %}
                     <div id="profile">
                         <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
                         <a class="pull-right" href="{{ row.url }}" target="_blank" rel="noopener">ツイートを見る</a>
@@ -82,18 +83,35 @@
     </div>
     {% endif %}
 
-    <script>
-        function CopyToClipboard() {
-            // コピー対象をJavaScript上で変数として定義する
-            var copyTarget = document.getElementById("CopyTarget");
+{% block script %}
+<script>
+const copybtns = document.getElementsByClassName('copybtn'); // コピーするボタンのクラス名
 
-            // コピー対象のテキストを選択する
-            copyTarget.select();
-
-            // 選択しているテキストをクリップボードにコピーする
-            document.execCommand("Copy");
+const clipCopy = () =>{
+  if( copybtns.length > 0 ){
+    for(let i = 0; i < copybtns.length ; i++){
+      copybtns[i].addEventListener('click', ()=>{
+        const copytextarea = document.createElement("textarea");
+        const id = copybtns[i].getAttribute('data-copy');
+        const copyarea = document.getElementById(id);
+        const copytext = copyarea.textContent;
+        copytextarea.textContent = copytext;
+        document.body.appendChild(copytextarea);
+        copytextarea.select();
+        const results = document.execCommand('copy');
+        document.body.removeChild(copytextarea);
+        if( results ){
+          alert(copytext+'コピーしました。');
+        }else{
+          alert("コピーに失敗しました。")
         }
-    </script>
+      });
+    }
+  }
+}
 
+clipCopy();
+
+</script>
 {% endblock %}
-</html>
+{% endblock %}

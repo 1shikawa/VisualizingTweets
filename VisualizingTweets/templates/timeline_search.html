@@ -9,7 +9,7 @@
 {% block contents %}
 
     <div class="row">
-       <div class="col-md-12">
+        <div class="col-md-12">
             <h3>タイムライン検索</h3>
             <p>Twitterのスクリーン名(@以下)で検索すると、日毎の合計いいね数とリツイート数、影響のあったツイートが一覧できます。</p>
             <form class="form-inline" method="GET" action="{% url 'VisualizingTweets:timeline_search' %}">
@@ -85,7 +85,7 @@
 
 
     <!-- 一覧 -->
-    <div class="col-md-8">
+    <div class="col-md-9">
         {% if profile %}
             <h4>直近{{ display_number }}ツイートでリツイート・いいねされたツイート一覧</h4>
             {% for index, row in sorted_df.iterrows %}
@@ -95,7 +95,9 @@
                     <div class="float-right">
                         <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' row.screen_name row.tweet_id %}" target="_blank">Stock</a>
                     </div>
+                {% autoescape off %}
                     <div id="tweet-text">{{ row.full_text | linebreaksbr | urlize | url_target_blank }}</div>
+                {% endautoescape %}
                     <div id="profile">
                         <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
                         <a class="pull-right" href="{{ row.tweet_url }}" target="_blank" rel="noopener">ツイートを見る</a>
