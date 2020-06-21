@@ -76,8 +76,7 @@ timeline_columns = [
     'fav',
     'retweets',
     'tweet_url',
-    # 'media_url',
-    # 'media_display_url'
+    # 'media_url'
 ]
 class timelineSearch(TemplateView):
     template_name = 'timeline_search.html'
@@ -130,9 +129,8 @@ class timelineSearch(TemplateView):
                                 int(tweet.favorite_count),
                                 int(tweet.retweet_count),
                                 URL + screen_name + '/status/' + tweet.id_str, # ツイートリンクURL
-                                # tweet.entities['media'][0]['url'] if tweet.entities['media'][0]['url'] else '',
-                                # tweet.entities['media'][0]['display_url'] if tweet.entities['media'][0]['display_url'] else 'a'
-                            ], timeline_columns
+                                # tweet.entities['media'][0]['media_url'] if tweet.entities['media'] else tweet.id,
+                                ], timeline_columns
                             )
                         tweets_df = tweets_df.append(se, ignore_index=True)
 

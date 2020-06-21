@@ -46,7 +46,7 @@
 
     <!-- chart -->
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-12" style="margin:0 auto;">
             <canvas id="chart"></canvas>
         </div>
     </div>
@@ -99,10 +99,12 @@
                     <div id="tweet-text">{{ row.full_text | linebreaksbr | urlize | url_target_blank }}</div>
                 {% endautoescape %}
                     <div id="profile">
+                   {% comment %} <p style="text-align:center;"><img src="{{ row.media_url }}" width="314" height="229"></p> {% endcomment %}
                         <span><i class="far fa-heart"></i>  {{ row.fav | intcomma }}</span> <span><i class="fas fa-retweet"></i> {{ row.retweets | intcomma }}</span>
                         <a class="pull-right" href="{{ row.tweet_url }}" target="_blank" rel="noopener">ツイートを見る</a>
                     </div>
                 </div>
+
             </div><br>
             {% endfor %}
         {% endif %}
