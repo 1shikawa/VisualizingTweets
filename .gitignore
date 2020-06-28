@@ -5,3 +5,4 @@ local_wsgi.py
 db.sqlite3
 *.py[co]
 static
+.idea
