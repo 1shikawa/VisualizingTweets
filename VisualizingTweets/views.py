@@ -121,7 +121,7 @@ class timelineSearch(TemplateView):
             if screen_name and display_number:
                 # 対象ユーザーが存在するかどうか確認
                 res = requests.get(URL + screen_name)
-                if res.status_code == 200:
+                if res.status_code:
                     # Userオブジェクトからプロフィール情報取得
                     user = api.get_user(screen_name=screen_name)
                     profile = {
@@ -143,7 +143,6 @@ class timelineSearch(TemplateView):
 
                 # Tweepy,Statusオブジェクトからツイート情報取得
                 for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, trim_user=True, include_entities=True, include_rts=False, tweet_mode="extended").items(display_number):
-                    pprint.pprint(tweet)
                     try:
                         if not "RT @" in tweet.full_text and tweet.favorite_count != 0:
                             se = pd.Series([
@@ -162,7 +161,7 @@ class timelineSearch(TemplateView):
 
                     except Exception as e:
                         print(e)
-                print(tweets_df)
+
                 # created_atを日付型に変換
                 tweets_df['created_at'] = pd.to_datetime(tweets_df['created_at'])
                 # 重複するツイートを削除
