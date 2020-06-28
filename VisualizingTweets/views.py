@@ -11,8 +11,8 @@ import requests
 import logging
 import pandas as pd
 import tweepy
+from bs4 import BeautifulSoup
 import pprint
-import bs4
 
 # 各種Twitterーのキーをセット
 CONSUMER_KEY = settings.CONSUMER_KEY
@@ -31,9 +31,16 @@ api = tweepy.API(auth)
 URL = 'https://twitter.com/'
 
 # dataframeのカラム定義
-trend_columns = [
+twitter_trend_columns = [
     'name',
     'tweet_volume',
+    'url'
+]
+
+yahoo_comment_columns = [
+    'rank',
+    'title',
+    'comment_volume',
     'url'
 ]
 
@@ -46,24 +53,43 @@ class Index(TemplateView):
         trends = api.trends_place('23424856') #日本のトレンド
 
         # columns定義したDataFrameを作成
-        trend_df = pd.DataFrame(columns=trend_columns)
+        twitter_trend_df = pd.DataFrame(columns=twitter_trend_columns)
         for trend in trends[0]['trends']:
             se = pd.Series([
                 trend['name'],
                 trend['tweet_volume'],
                 trend['url']
-            ], trend_columns
+            ], twitter_trend_columns
             )
-            trend_df = trend_df.append(se, ignore_index=True)
+            twitter_trend_df = twitter_trend_df.append(se, ignore_index=True)
 
         # trend_df = trend_df.dropna(subset=['tweet_volume'])
         # ツイート数が多い順にソート
-        sorted_df = trend_df.sort_values(['tweet_volume'], ascending=False)
+        twitter_trend_df = twitter_trend_df.sort_values(['tweet_volume'], ascending=False)
+
+        # Yahooニュースコメントランキングからスクレイピング
+        YAHOO_NEWS_URL = 'https://news.yahoo.co.jp/ranking/comment'
+        html = requests.get(YAHOO_NEWS_URL)
+        soup = BeautifulSoup(html.text, "html.parser")
+        topicsindex = soup.find('div', attrs={'class': 'newsFeed'})
+        topics = topicsindex.find_all('li')
+
+        # columns定義したDataFrameを作成
+        yahoo_news_df = pd.DataFrame(columns=yahoo_comment_columns)
+        for topic in topics:
+            se = pd.Series([
+                topic.find('span', attrs={'class': 'newsFeed_item_rankNum'}).contents[0],
+                topic.find('div', attrs={'class': 'newsFeed_item_title'}).contents[0],
+                topic.find('em').contents[0],
+                topic.find('a').get('href')
+            ], yahoo_comment_columns
+            )
+            yahoo_news_df = yahoo_news_df.append(se, ignore_index=True)
 
         context = {
-            'sorted_df': sorted_df
+            'twitter_trend_df': twitter_trend_df,
+            'yahoo_news_df': yahoo_news_df
         }
-
         return context
 
 

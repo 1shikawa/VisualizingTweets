@@ -10,17 +10,9 @@
     <div class="row">
        <div class="col-md-12">
             <h3>Influencer-Search</h3>
-            <a>以下SNSで反響の大きい、影響ある事柄について把握することができる情報収集アプリです。</a>
-            <ul>
-                <li>
-                    <a>Twitter</a>
-                </li>
-                <li>
-                <a>YouTube</a>
-                </li>
-            </ul>
+            <h5>SNSで反響の大きい、影響ある事柄についてリアルタイムに把握することができる情報収集アプリです。</ｈ>
         </div>
-    </div>
+    </div><br>
     <!-- メッセージフレームワーク-->
     {% if messages %}
     <div class="container" style="margin-top:1rem;">
@@ -56,7 +48,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for index, row in sorted_df.iterrows %}
+                    {% for index, row in twitter_trend_df.iterrows %}
                         <tr>
                             <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
                             <td>{{ row.tweet_volume | intcomma }}</td>
@@ -66,29 +58,27 @@
             </table>
         </div>
 
-        <div class="col-md-4">
-            <h4>〇〇トレンド</h4>
+        <div class="col-md-7">
+            <h4>Yahooトレンド</h4>
             <table class="table table-hover table-bordered">
                 <thead>
-                    <tr class="table-info">
+                    <tr class="table-danger">
+                        <th>No.</th>
                         <th>タイトル</th>
-                        <th>ツイート数</th>
+                        <th width="15%">コメント数</th>
                     </tr>
                 </thead>
+                <tbody>
+                    {% for index, row in yahoo_news_df.iterrows %}
+                        <tr>
+                            <td>{{ row.rank }}</td>
+                            <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
+                            <td width="15%">{{ row.comment_volume | intcomma }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
 
-        <div class="col-md-4">
-            <h4>✕✕トレンド</h4>
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr class="table-info">
-                        <th>タイトル</th>
-                        <th>ツイート数</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
 
 {% endblock %}
