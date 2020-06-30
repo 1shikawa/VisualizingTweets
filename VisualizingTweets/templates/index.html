@@ -65,6 +65,7 @@
                     <tr class="table-danger">
                         <th>No.</th>
                         <th>タイトル</th>
+                        <th width="15%">配信日時</th>
                         <th width="15%">コメント数</th>
                     </tr>
                 </thead>
@@ -73,6 +74,7 @@
                         <tr>
                             <td>{{ row.rank }}</td>
                             <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
+                            <td width="15%">{{ row.time }}</td>
                             <td width="15%">{{ row.comment_volume | intcomma }}</td>
                         </tr>
                     {% endfor %}

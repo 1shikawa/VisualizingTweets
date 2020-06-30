@@ -40,6 +40,7 @@ twitter_trend_columns = [
 yahoo_comment_columns = [
     'rank',
     'title',
+    'time',
     'comment_volume',
     'url'
 ]
@@ -80,6 +81,7 @@ class Index(TemplateView):
             se = pd.Series([
                 topic.find('span', attrs={'class': 'newsFeed_item_rankNum'}).contents[0],
                 topic.find('div', attrs={'class': 'newsFeed_item_title'}).contents[0],
+                topic.find('time', attrs={'class': 'newsFeed_item_date'}).contents[0],
                 topic.find('em').contents[0],
                 topic.find('a').get('href')
             ], yahoo_comment_columns
