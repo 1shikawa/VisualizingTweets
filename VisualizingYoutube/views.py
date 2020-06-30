@@ -11,6 +11,7 @@ import logging
 import pandas as pd
 from datetime import datetime
 import pytz
+from bs4 import BeautifulSoup
 import pprint
 
 from apiclient.discovery import build
@@ -191,3 +192,38 @@ def iso_to_jstdt(iso_str):
         except ValueError:
             pass
     return dt
+
+
+class AllliveRanking(TemplateView):
+    """YoutubeLiveランキング"""
+    template_name = 'all_live_ranking.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # ちくわちゃんランキングからスクレイピング
+        CHIKURAN_URL = 'http://www.chikuwachan.com/live/'
+        html = requests.get(CHIKURAN_URL)
+        soup = BeautifulSoup(html.text, "html.parser")
+        topicsindex = soup.find('div', class_="lives")
+        # topicsindex = soup.find('div', id='ranking')
+        # topics = topicsindex.find_all('li', attrs={'class': 'lives'})
+        # print(html.text)
+
+        # columns定義したDataFrameを作成
+        # yahoo_news_df = pd.DataFrame(columns=yahoo_comment_columns)
+        # for topic in topics:
+        #     se = pd.Series([
+        #         topic.find('span', attrs={'class': 'newsFeed_item_rankNum'}).contents[0],
+        #         topic.find('div', attrs={'class': 'newsFeed_item_title'}).contents[0],
+        #         topic.find('em').contents[0],
+        #         topic.find('a').get('href')
+        #     ], yahoo_comment_columns
+        #     )
+        #     yahoo_news_df = yahoo_news_df.append(se, ignore_index=True)
+
+        # context = {
+        #     'twitter_trend_df': twitter_trend_df,
+        #     'yahoo_news_df': yahoo_news_df
+        # }
+        return context
