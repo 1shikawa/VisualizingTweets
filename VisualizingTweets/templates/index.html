@@ -20,8 +20,8 @@
             {% for message in messages %}
                 {% if message.tags == "success" %}
                     <div class="alert alert-success" role="alert">
-                {% elif message.tags == "warning" %}
-                    <div class="alert alert-warning" role="alert">
+                {% elif message.tags == "danger" %}
+                    <div class="alert alert-danger" role="alert">
                 {% elif message.tags == "error" %}
                     <div class="alert alert-danger" role="alert">
                 {% else %}
@@ -42,17 +42,24 @@
             <h4>Twitterトレンド</h4>
             <table class="table table-hover table-bordered">
                 <thead>
-                    <tr class="table-info">
-                        <th>タイトル</th>
-                        <th>ツイート数</th>
+                    <tr class="bg-primary">
+                        <th><font color="#FFFFFF">タイトル</font></th>
+                        <th><font color="#FFFFFF">ツイート数</font></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for index, row in twitter_trend_df.iterrows %}
-                        <tr>
-                            <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
-                            <td>{{ row.tweet_volume | intcomma }}</td>
-                        </tr>
+                        {% if row.tweet_volume > 100000 %}
+                            <tr class="table-danger">
+                                <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
+                                <td>{{ row.tweet_volume | intcomma }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
+                                <td>{{ row.tweet_volume | intcomma }}</td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
@@ -62,21 +69,30 @@
             <h4>Yahooトレンド</h4>
             <table class="table table-hover table-bordered">
                 <thead>
-                    <tr class="table-danger">
-                        <th>No.</th>
-                        <th>タイトル</th>
-                        <th width="15%">配信日時</th>
-                        <th width="15%">コメント数</th>
+                    <tr class="bg-danger">
+                        <th><font color="#FFFFFF">No.</font></th>
+                        <th><font color="#FFFFFF">タイトル</font></th>
+                        <th width="15%"><font color="#FFFFFF">配信日時</font></th>
+                        <th width="15%"><font color="#FFFFFF">コメント数</font></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for index, row in yahoo_news_df.iterrows %}
-                        <tr>
-                            <td>{{ row.rank }}</td>
-                            <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
-                            <td width="15%">{{ row.time }}</td>
-                            <td width="15%">{{ row.comment_volume | intcomma }}</td>
-                        </tr>
+                        {% if row.comment_volume > 1000 %}
+                            <tr class="table-danger">
+                                <td>{{ row.rank }}</td>
+                                <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
+                                <td width="15%">{{ row.time }}</td>
+                                <td width="15%">{{ row.comment_volume | intcomma }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td>{{ row.rank }}</td>
+                                <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
+                                <td width="15%">{{ row.time }}</td>
+                                <td width="15%">{{ row.comment_volume | intcomma }}</td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>

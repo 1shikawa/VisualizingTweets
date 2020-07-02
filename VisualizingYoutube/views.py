@@ -203,9 +203,9 @@ class AllliveRanking(TemplateView):
 
         # ちくわちゃんランキングからスクレイピング
         CHIKURAN_URL = 'http://www.chikuwachan.com/live/'
-        html = requests.get(CHIKURAN_URL)
-        soup = BeautifulSoup(html.text, "html.parser")
-        topicsindex = soup.find('div', class_="lives")
+        # html = requests.get(CHIKURAN_URL)
+        # soup = BeautifulSoup(html.text, "html.parser")
+        # topicsindex = soup.find('div', class_="lives")
         # topicsindex = soup.find('div', id='ranking')
         # topics = topicsindex.find_all('li', attrs={'class': 'lives'})
         # print(html.text)

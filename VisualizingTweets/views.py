@@ -65,6 +65,7 @@ class Index(TemplateView):
             twitter_trend_df = twitter_trend_df.append(se, ignore_index=True)
 
         # trend_df = trend_df.dropna(subset=['tweet_volume'])
+        twitter_trend_df = twitter_trend_df.fillna(0)
         # ツイート数が多い順にソート
         twitter_trend_df = twitter_trend_df.sort_values(['tweet_volume'], ascending=False)
 
@@ -82,7 +83,7 @@ class Index(TemplateView):
                 topic.find('span', attrs={'class': 'newsFeed_item_rankNum'}).contents[0],
                 topic.find('div', attrs={'class': 'newsFeed_item_title'}).contents[0],
                 topic.find('time', attrs={'class': 'newsFeed_item_date'}).contents[0],
-                topic.find('em').contents[0],
+                int(topic.find('em').contents[0]),
                 topic.find('a').get('href')
             ], yahoo_comment_columns
             )
