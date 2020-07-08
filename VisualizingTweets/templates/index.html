@@ -43,6 +43,7 @@
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="bg-primary">
+                        <th><font color="#FFFFFF">No.</font></th>
                         <th><font color="#FFFFFF">タイトル</font></th>
                         <th><font color="#FFFFFF">ツイート数</font></th>
                     </tr>
@@ -51,11 +52,13 @@
                     {% for index, row in twitter_trend_df.iterrows %}
                         {% if row.tweet_volume > 100000 %}
                             <tr class="table-danger">
+                                <td>{{ forloop.counter }}</td>
                                 <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
-                                <td>{{ row.tweet_volume | intcomma }}</td>
+                                <td><b>{{ row.tweet_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
                             <tr>
+                                <td>{{ forloop.counter }}</td>
                                 <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
                                 <td>{{ row.tweet_volume | intcomma }}</td>
                             </tr>
@@ -83,7 +86,7 @@
                                 <td>{{ row.rank }}</td>
                                 <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
                                 <td width="15%">{{ row.time }}</td>
-                                <td width="15%">{{ row.comment_volume | intcomma }}</td>
+                                <td width="15%"><b>{{ row.comment_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
                             <tr>
