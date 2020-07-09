@@ -53,13 +53,13 @@
                         {% if row.tweet_volume > 100000 %}
                             <tr class="table-danger">
                                 <td>{{ forloop.counter }}</td>
-                                <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
+                                <td><a href="{{ row.url }}" target="_blank"><b>{{ row.name }}</b></a></td>
                                 <td><b>{{ row.tweet_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td><a href="{{ row.url }}" target="_blank">{{ row.name }}<a></td>
+                                <td><a href="{{ row.url }}" target="_blank">{{ row.name }}></a></td>
                                 <td>{{ row.tweet_volume | intcomma }}</td>
                             </tr>
                         {% endif %}
@@ -84,14 +84,14 @@
                         {% if row.comment_volume > 1000 %}
                             <tr class="table-danger">
                                 <td>{{ row.rank }}</td>
-                                <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
+                                <td><a href="{{ row.url }}" target="_blank"><b>{{ row.title }}></b></a></td>
                                 <td width="15%">{{ row.time }}</td>
                                 <td width="15%"><b>{{ row.comment_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
                             <tr>
                                 <td>{{ row.rank }}</td>
-                                <td><a href="{{ row.url }}" target="_blank">{{ row.title }}<a></td>
+                                <td><a href="{{ row.url }}" target="_blank">{{ row.title }}></a></td>
                                 <td width="15%">{{ row.time }}</td>
                                 <td width="15%">{{ row.comment_volume | intcomma }}</td>
                             </tr>
