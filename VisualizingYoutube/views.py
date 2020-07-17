@@ -117,6 +117,7 @@ class videoSearch(TemplateView):
 # dataframeのカラム定義
 live_columns = [
     'channelTitle',
+    'channelUrl',
     'title',
     'description',
     'videoId',
@@ -160,6 +161,7 @@ class liveRanking(TemplateView):
             for search_video_result in search_video.get("items", []):
                 se = pd.Series([
                     search_video_result['snippet']['channelTitle'],
+                    'https://www.youtube.com/channel/' + search_video_result['snippet']['channelId'],
                     search_video_result['snippet']['title'],
                     search_video_result['snippet']['description'],
                     search_video_result['id'],
@@ -170,7 +172,7 @@ class liveRanking(TemplateView):
         # 視聴者数が多い順にソート
         sorted_df = live_df.sort_values(['concurrentViewers'], ascending=False)
 
-        print(sorted_df)
+        print(sorted_df["channelUrl"])
 
         context = {
             'sorted_df': sorted_df
