@@ -55,7 +55,7 @@
     <table id=stock_list width="100%" class="table table-bordered table-hover">
     <!-- 表の列の定義-->
     <thead>
-        <tr>
+        <tr class="table-info">
             <th class="text-center">ID</th>
             <th class="text-center">スクリーン名</th>
             <th class="text-center">ユーザー名</th>
@@ -72,7 +72,7 @@
     <!-- 表のデータ部分の表示-->
     <tbody>
         {% for stock in stock_list %}
-        <tr class="odd gradeX text-center">
+        <tr class="bg-light odd gradeX text-center">
             <td class="text-center">{{ stock.pk }}</td>
             <td class="text-center">{{ stock.screen_name }}</td>
             <td class="text-center">{{ stock.user_name }}</td>
@@ -127,11 +127,11 @@
                  { targets: [1], width: "7%" }, //スクリーン名
                  { targets: [2], width: "7%" }, //ユーザー名
                  { targets: [3], width: "40%" }, //ツイート内容
-                 { targets: [4], width: "8%" }, //ツイート日
+                 { targets: [4], width: "9%" }, //ツイート日
                  { targets: [5], width: "7%" }, //いいね数
-                 { targets: [6], width: "8%" }, //リツイート数
+                 { targets: [6], width: "9%" }, //リツイート数
                  { targets: [7], width: "7%" }, //関連URL
-                 { targets: [8], width: "8%" }, //ストック日
+                 { targets: [8], width: "10%" }, //ストック日
                  { targets: [9], width: "10%" }, //操作
              ]
         }).columns.adjust().draw();

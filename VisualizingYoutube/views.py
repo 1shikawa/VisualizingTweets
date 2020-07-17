@@ -227,3 +227,47 @@ class AllliveRanking(TemplateView):
         #     'yahoo_news_df': yahoo_news_df
         # }
         return context
+
+
+import asyncio
+from pornhub_api.backends.aiohttp import AioHttpBackend
+from pornhub_api import PornhubApi
+import pprint
+
+# dataframeのカラム定義
+pornhub_columns = [
+    'title',
+]
+class PornhubRanking(TemplateView):
+    """YoutubeLiveランキング"""
+    template_name = 'pornhub_ranking.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        api = PornhubApi()
+        video_ids =[]
+        data = api.search.search(
+            # "chechick",
+            ordering="mostviewed",
+            period="week",
+            # tags=["black"],
+            )
+        for video in data.videos:
+            video_ids.append(video.video_id)
+
+        pornhub_df = pd.DataFrame(columns=pornhub_columns)
+        for video_id in video_ids:
+            # video = api.video.get_by_id(video_id).video
+            for video in api.video.get_by_id(video_id).video:
+                # pprint.pprint(video[1])
+                se = pd.Series([
+                    video[1],
+                ], pornhub_columns)
+                pornhub_df = pornhub_df.append(se, ignore_index=True)
+        print(pornhub_df)
+        # video = api.video.get_by_id("ph58c466aa61bc5").video
+        # pprint.pprint(video.video_id)
+
+        return context
+# starts = api.stars.all()
+# print(starts)

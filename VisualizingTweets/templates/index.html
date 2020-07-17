@@ -10,7 +10,7 @@
     <div class="row">
        <div class="col-md-12">
             <h3>Influencer-Search</h3>
-            <h5>SNSで反響の大きい、影響ある事柄についてリアルタイムに把握することができる情報収集アプリです。</ｈ>
+            <h5>SNSで反響の大きい、影響ある事柄についてリアルタイムに把握することができる情報収集サイトです。</ｈ>
         </div>
     </div><br>
     <!-- メッセージフレームワーク-->
@@ -57,7 +57,7 @@
                                 <td><b>{{ row.tweet_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
-                            <tr>
+                            <tr class="bg-light">
                                 <td>{{ forloop.counter }}</td>
                                 <td><a href="{{ row.url }}" target="_blank">{{ row.name }}</a></td>
                                 <td>{{ row.tweet_volume | intcomma }}</td>
@@ -68,7 +68,7 @@
             </table>
         </div>
 
-        <div class="col-md-7">
+        <div class="col-md-8">
             <h4>Yahooトレンド</h4>
             <table class="table table-hover table-bordered">
                 <thead>
@@ -86,14 +86,14 @@
                                 <td>{{ row.rank }}</td>
                                 <td><a href="{{ row.url }}" target="_blank"><b>{{ row.title }}</b></a></td>
                                 <td width="15%">{{ row.time }}</td>
-                                <td width="15%"><b>{{ row.comment_volume | intcomma }}</b></td>
+                                <td width="10%"><b>{{ row.comment_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
-                            <tr>
+                            <tr class="bg-light">
                                 <td>{{ row.rank }}</td>
                                 <td><a href="{{ row.url }}" target="_blank">{{ row.title }}</a></td>
                                 <td width="15%">{{ row.time }}</td>
-                                <td width="15%">{{ row.comment_volume | intcomma }}</td>
+                                <td width="10%">{{ row.comment_volume | intcomma }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}

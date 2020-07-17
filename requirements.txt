@@ -20,4 +20,6 @@ whitenoise==3.3.1
 google-api-python-client
 httplib2
 oauth2client
+pornhub-api
+aiohttp
 django-heroku
