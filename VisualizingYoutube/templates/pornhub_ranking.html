@@ -9,8 +9,7 @@
 {% block contents %}
     <div class="row">
        <div class="col-md-12">
-            <h3>Hなランキング</h3>
-            <h5>工事中</h5>
+            <h3>Hな動画ランキング</h3>
         </div>
     </div>
 
@@ -41,25 +40,27 @@
 
         <!-- 一覧 -->
         <div class="col-md-12">
-            {% for index, row in sorted_df.iterrows %}
+            {% for index, row in pornhub_df.iterrows %}
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-header">{{ row.title }}</h5>
-                    <h6 class="card-text">チャンネル名：<a href="{{ row.channelURL }}" target="_blank">{{ row.channelTitle }}</a></h6>
-                    <div>
-                        <iframe width="700" height="420" src="//www.youtube.com/embed/{{ row.videoId }}" frameborder="0"
-                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        <h6>視聴者数:{{ row.concurrentViewers | intcomma }}&nbsp;&nbsp;&nbsp;開始時間:{{ row.actualStartTime }}</h6>
-                        <button type="button" class="btn btn-sm btn-success" data-toggle="collapse" data-target="#description" aria-expanded="false" aria-controls="description">
-                        説明</button>
-                    </div>
-                    <div class="collapse" id="description">
-                        <div class="card card-body">
-                            {{ row.description | linebreaksbr | urlize | url_target_blank }}
-                        </div>
-                    </div>
+                    <h6 class="card-text"><a href="{{ row.url }}" target="_blank"><img src={{ row.image1 }}><img src={{ row.image2 }}>
+                        <img src={{ row.image3 }}><img src={{ row.image4 }}></a></h6>
                 </div>
             <br>
+            {% endfor %}
+            {% for video in video_list %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">{{ video.title }}</h5>
+                    <h6 class="card-text"><a href="{{ video.url }}" target="_blank"><img src={{ video.image1 }}><img src={{ video.image2 }}>
+                        <img src={{ video.image3 }}><img src={{ video.image4 }}></a></h6>
+                    {% if video.rating >= 80.0 %}
+                        <h6>総再生数:{{ video.views | intcomma }}&nbsp;&nbsp;&nbsp;Rating:<font color="red">{{ video.rating | intcomma }}</font>&nbsp;&nbsp;&nbsp;動画時間:{{ video.duration | intcomma }}</h6>
+                    {% else %}
+                        <h6>総再生数:{{ video.views | intcomma }}&nbsp;&nbsp;&nbsp;Rating:{{ video.rating | intcomma }}&nbsp;&nbsp;&nbsp;動画時間:{{ video.duration | intcomma }}</h6>
+                    {% endif %}
+                </div>
             {% endfor %}
         </div>
     </div>

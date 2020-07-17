@@ -54,7 +54,7 @@
                     <div>
                         <iframe width="700" height="420" src="//www.youtube.com/embed/{{ row.videoId }}" frameborder="0"
                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        <h6>再生数：{{ row.viewCount | intcomma }} 高評価：{{ row.likeCount | intcomma }} 低評価：{{ row.dislikeCount | intcomma }} コメント数：{{ row.commentCount | intcomma}}</h6>
+                        <h6>総再生数:{{ row.viewCount | intcomma }}&nbsp;&nbsp;&nbsp;高評価:{{ row.likeCount | intcomma }}&nbsp;&nbsp;&nbsp;低評価:{{ row.dislikeCount | intcomma }}&nbsp;&nbsp;&nbsp;コメント数:{{ row.commentCount | intcomma}}</h6>
                         <button type="button" class="btn btn-sm btn-success" data-toggle="collapse" data-target="#description" aria-expanded="false" aria-controls="description">
                         説明</button>
                             <div class="collapse" id="description">

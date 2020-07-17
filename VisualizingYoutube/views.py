@@ -238,10 +238,15 @@ import pprint
 
 # dataframeのカラム定義
 pornhub_columns = [
-    'title',
+    # 'title',
+    # 'url',
+    # 'image1',
+    # 'image2',
+    # 'image3',
+    # 'image4',
 ]
 class PornhubRanking(TemplateView):
-    """YoutubeLiveランキング"""
+    """Pornhubランキング"""
     template_name = 'pornhub_ranking.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -249,27 +254,42 @@ class PornhubRanking(TemplateView):
         api = PornhubApi()
         video_ids =[]
         data = api.search.search(
-            # "chechick",
+            # "japanese",
             ordering="mostviewed",
-            period="week",
-            # tags=["black"],
+            period="day",
+            tags=["japanese"],
             )
-        for video in data.videos:
+        for video in data.videos[:10]:
             video_ids.append(video.video_id)
 
-        pornhub_df = pd.DataFrame(columns=pornhub_columns)
-        for video_id in video_ids:
-            # video = api.video.get_by_id(video_id).video
-            for video in api.video.get_by_id(video_id).video:
-                # pprint.pprint(video[1])
-                se = pd.Series([
-                    video[1],
-                ], pornhub_columns)
-                pornhub_df = pornhub_df.append(se, ignore_index=True)
-        print(pornhub_df)
-        # video = api.video.get_by_id("ph58c466aa61bc5").video
-        # pprint.pprint(video.video_id)
+        video_list = asyncio.run(execute(video_ids))
+
+        context = {
+            # 'pornhub_df': pornhub_df,
+            'video_list': video_list,
+        }
 
         return context
-# starts = api.stars.all()
-# print(starts)
+
+
+async def execute(video_ids: list):
+    backend = AioHttpBackend()
+    api = PornhubApi(backend=backend)
+    video_list = []
+    for video_id in video_ids:
+        video = await api.video.get_by_id(video_id)
+        data ={
+            'title': video.video.title,
+            'views': video.video.views,
+            'rating': float(video.video.rating),
+            'duration': video.video.duration,
+            'url': 'https://www.pornhub.com/view_video.php?' + video.video.url.query,
+            'image1': 'https://ci.phncdn.com/' + video.video.thumbs[0].src.path,
+            'image2': 'https://ci.phncdn.com/' + video.video.thumbs[1].src.path,
+            'image3': 'https://ci.phncdn.com/' + video.video.thumbs[2].src.path,
+            'image4': 'https://ci.phncdn.com/' + video.video.thumbs[3].src.path,
+        }
+        video_list.append(data)
+    await backend.close()
+    # print(video_list)
+    return video_list
