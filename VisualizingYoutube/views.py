@@ -255,31 +255,44 @@ class PornhubRanking(TemplateView):
         video_ids =[]
         data = api.search.search(
             # "japanese",
-            ordering="mostviewed",
             period="day",
-            tags=["japanese"],
+            category=["japanese"]
+            # tags=["japanese"],
+            # ordering="rating"
             )
-        for video in data.videos[:10]:
-            video_ids.append(video.video_id)
-
-        video_list = asyncio.run(execute(video_ids))
+        video_list = []
+        for video in data.videos[:20]:
+            data = {
+                'title': video.title,
+                'publish_date': video.publish_date,
+                'views': video.views,
+                'rating': float(video.rating),
+                'duration': video.duration,
+                'url': 'https://www.pornhub.com/view_video.php?' + video.url.query,
+                'image1': 'https://ci.phncdn.com/' + video.thumbs[0].src.path,
+                'image2': 'https://ci.phncdn.com/' + video.thumbs[1].src.path,
+                'image3': 'https://ci.phncdn.com/' + video.thumbs[2].src.path,
+                'image4': 'https://ci.phncdn.com/' + video.thumbs[9].src.path,
+                'image5': 'https://ci.phncdn.com/' + video.thumbs[10].src.path,
+            }
+            video_list.append(data)
 
         context = {
             # 'pornhub_df': pornhub_df,
             'video_list': video_list,
         }
-
         return context
 
 
-async def execute(video_ids: list):
+async def execute(video_ids: str):
     backend = AioHttpBackend()
     api = PornhubApi(backend=backend)
     video_list = []
     for video_id in video_ids:
         video = await api.video.get_by_id(video_id)
-        data ={
+        data = {
             'title': video.video.title,
+            'publish_date': video.video.publish_date,
             'views': video.video.views,
             'rating': float(video.video.rating),
             'duration': video.video.duration,

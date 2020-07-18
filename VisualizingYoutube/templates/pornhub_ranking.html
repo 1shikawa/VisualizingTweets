@@ -53,8 +53,9 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-header">{{ video.title }}</h5>
+                    <h6 class="card-text">公開日時:{{ video.publish_date }}</h6>
                     <h6 class="card-text"><a href="{{ video.url }}" target="_blank"><img src={{ video.image1 }}><img src={{ video.image2 }}>
-                        <img src={{ video.image3 }}><img src={{ video.image4 }}></a></h6>
+                        <img src={{ video.image3 }}><img src={{ video.image4 }}><img src={{ video.image5 }}></a></h6>
                     {% if video.rating >= 80.0 %}
                         <h6>総再生数:{{ video.views | intcomma }}&nbsp;&nbsp;&nbsp;Rating:<font color="red">{{ video.rating | intcomma }}</font>&nbsp;&nbsp;&nbsp;動画時間:{{ video.duration | intcomma }}</h6>
                     {% else %}
