@@ -182,7 +182,7 @@ class liveRanking(TemplateView):
 
 
 # ISO時間（文字列）を日本時間（datetime型）に変換
-def iso_to_jstdt(iso_str):
+def iso_to_jstdt(iso_str: str) -> str:
     dt = None
     try:
         dt = datetime.strptime(iso_str, '%Y-%m-%dT%H:%M:%S.%fZ')
@@ -236,15 +236,6 @@ from pornhub_api.backends.aiohttp import AioHttpBackend
 from pornhub_api import PornhubApi
 import pprint
 
-# dataframeのカラム定義
-pornhub_columns = [
-    # 'title',
-    # 'url',
-    # 'image1',
-    # 'image2',
-    # 'image3',
-    # 'image4',
-]
 class PornhubRanking(TemplateView):
     """Pornhubランキング"""
     template_name = 'pornhub_ranking.html'
@@ -276,33 +267,11 @@ class PornhubRanking(TemplateView):
                 'image5': 'https://ci.phncdn.com/' + video.thumbs[10].src.path,
             }
             video_list.append(data)
+        video_list_df = pd.DataFrame(video_list)
+        video_list_df = video_list_df.sort_values(['rating','views'], ascending=False)
 
         context = {
-            # 'pornhub_df': pornhub_df,
-            'video_list': video_list,
+            'video_list_df': video_list_df
         }
         return context
 
-
-async def execute(video_ids: str):
-    backend = AioHttpBackend()
-    api = PornhubApi(backend=backend)
-    video_list = []
-    for video_id in video_ids:
-        video = await api.video.get_by_id(video_id)
-        data = {
-            'title': video.video.title,
-            'publish_date': video.video.publish_date,
-            'views': video.video.views,
-            'rating': float(video.video.rating),
-            'duration': video.video.duration,
-            'url': 'https://www.pornhub.com/view_video.php?' + video.video.url.query,
-            'image1': 'https://ci.phncdn.com/' + video.video.thumbs[0].src.path,
-            'image2': 'https://ci.phncdn.com/' + video.video.thumbs[1].src.path,
-            'image3': 'https://ci.phncdn.com/' + video.video.thumbs[2].src.path,
-            'image4': 'https://ci.phncdn.com/' + video.video.thumbs[3].src.path,
-        }
-        video_list.append(data)
-    await backend.close()
-    # print(video_list)
-    return video_list

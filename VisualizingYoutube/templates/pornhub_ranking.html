@@ -10,6 +10,7 @@
     <div class="row">
        <div class="col-md-12">
             <h3>Hな動画ランキング</h3>
+            <p>直近公開されたHな動画でratingや総再生数が多い順に表示します。</p>
         </div>
     </div>
 
@@ -40,16 +41,7 @@
 
         <!-- 一覧 -->
         <div class="col-md-12">
-            {% for index, row in pornhub_df.iterrows %}
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-header">{{ row.title }}</h5>
-                    <h6 class="card-text"><a href="{{ row.url }}" target="_blank"><img src={{ row.image1 }}><img src={{ row.image2 }}>
-                        <img src={{ row.image3 }}><img src={{ row.image4 }}></a></h6>
-                </div>
-            <br>
-            {% endfor %}
-            {% for video in video_list %}
+            {% for index, video in video_list_df.iterrows %}
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-header">{{ video.title }}</h5>
