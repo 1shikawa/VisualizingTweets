@@ -236,6 +236,11 @@ from pornhub_api.backends.aiohttp import AioHttpBackend
 from pornhub_api import PornhubApi
 import pprint
 
+
+class pornConfirm(TemplateView):
+    templete_name = 'porn_confirm.html'
+
+
 class PornhubRanking(TemplateView):
     """Pornhubランキング"""
     template_name = 'pornhub_ranking.html'
