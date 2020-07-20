@@ -10,7 +10,7 @@
     <div class="row">
        <div class="col-md-12">
             <h3>Hな動画ランキング</h3>
-            <p>直近公開されたHな動画でratingや総再生数が多い順に表示します。</p>
+            <p>直近公開されたHな動画でRatingや総再生数が多い順に表示します。</p>
         </div>
     </div>
 
@@ -44,7 +44,7 @@
             {% for index, video in video_list_df.iterrows %}
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-header">{{ video.title }}</h5>
+                    <h5 class="card-header">{{ forloop.counter }}.&nbsp;{{ video.title }}</h5>
                     <h6 class="card-text">公開日時:{{ video.publish_date }}</h6>
                     <h6 class="card-text"><a href="{{ video.url }}" target="_blank"><img src={{ video.image1 }}><img src={{ video.image2 }}>
                         <img src={{ video.image3 }}><img src={{ video.image4 }}><img src={{ video.image5 }}></a></h6>
