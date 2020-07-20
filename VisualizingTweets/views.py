@@ -64,8 +64,8 @@ class Index(TemplateView):
             )
             twitter_trend_df = twitter_trend_df.append(se, ignore_index=True)
 
-        trend_df = trend_df.dropna(subset=['tweet_volume'])
-        twitter_trend_df = twitter_trend_df.fillna(0)
+        twitter_trend_df = twitter_trend_df.dropna(subset=['tweet_volume'])
+        # twitter_trend_df = twitter_trend_df.fillna(0)
         # ツイート数が多い順にソート
         twitter_trend_df = twitter_trend_df.sort_values(['tweet_volume'], ascending=False)
 
