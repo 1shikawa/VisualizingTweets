@@ -257,7 +257,7 @@ class PornhubRanking(TemplateView):
             # ordering="rating"
             )
         video_list = []
-        for video in data.videos[:20]:
+        for video in data.videos[:30]:
             data = {
                 'title': video.title,
                 'publish_date': video.publish_date,
