@@ -9,8 +9,20 @@
 {% block contents %}
     <div class="row">
        <div class="col-md-12">
-            <h3>Hな動画ランキング</h3>
-            <p>直近公開されたHな動画でratingや総再生数が多い順に表示します。</p>
+       <br>
+        <center>
+            <span style="font-size : xx-large"><font color="red">年齢確認</font></span>
+            <p>
+                <span class="h4">この先、18歳未満の方には不適切な表現内容が含まれます。18歳未満の方のアクセスは固くお断りします。
+                <p class="h5">あなたは18歳以上ですか？<p></span>
+            </p>
+            <div style="display:inline;">
+                <a style="font-size : larger" href="{% url 'VisualizingYoutube:pornhub_ranking' %}">はい</a>
+            </div>&nbsp;&nbsp;
+            <div style="display:inline;">
+                <a style="font-size : larger" href="{% url 'VisualizingTweets:index' %}">いいえ</a>
+            </div>
+        </center>
         </div>
     </div>
 
@@ -39,24 +51,6 @@
     {% endif %}
     <!-- メッセージフレームワーク-->
 
-        <!-- 一覧 -->
-        <div class="col-md-12">
-            {% for index, video in video_list_df.iterrows %}
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-header">{{ video.title }}</h5>
-                    <h6 class="card-text">公開日時:{{ video.publish_date }}</h6>
-                    <h6 class="card-text"><a href="{{ video.url }}" target="_blank"><img src={{ video.image1 }}><img src={{ video.image2 }}>
-                        <img src={{ video.image3 }}><img src={{ video.image4 }}><img src={{ video.image5 }}></a></h6>
-                    {% if video.rating >= 80.0 %}
-                        <h6>総再生数:{{ video.views | intcomma }}&nbsp;&nbsp;&nbsp;Rating:<font color="red">{{ video.rating | intcomma }}</font>&nbsp;&nbsp;&nbsp;動画時間:{{ video.duration | intcomma }}</h6>
-                    {% else %}
-                        <h6>総再生数:{{ video.views | intcomma }}&nbsp;&nbsp;&nbsp;Rating:{{ video.rating | intcomma }}&nbsp;&nbsp;&nbsp;動画時間:{{ video.duration | intcomma }}</h6>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
