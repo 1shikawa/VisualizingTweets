@@ -238,7 +238,7 @@ import pprint
 
 
 class pornConfirm(TemplateView):
-    templete_name = 'porn_confirm.html'
+    template_name = 'porn_confirm.html'
 
 
 class PornhubRanking(TemplateView):
