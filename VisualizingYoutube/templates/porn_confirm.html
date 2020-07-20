@@ -11,13 +11,17 @@
        <div class="col-md-12">
        <br>
         <center>
-            <span class="alert" style="font-size:24px">年齢確認</span>
+            <span font color="red" font size="+3">年齢確認</span>
             <p>
                 <span class="h4">この先18歳未満の方には不適切な表現内容が含まれます。18歳未満の方のアクセスは固くお断りします。
-                <p>あなたは18歳以上ですか？<p></span>
+                <p class="h5">あなたは18歳以上ですか？<p></span>
             </p>
-            <a href="{% url 'VisualizingYoutube:pornhub_ranking' %}">はい</a>
-            <a href="VisualizingTweets:index">いいえ</a>
+            <div style="display:inline;">
+                <a href="{% url 'VisualizingYoutube:pornhub_ranking' %}">はい</a>
+            </div>
+            <div style="display:inline;">
+                <a href="{% url 'VisualizingTweets:index' %}">いいえ</a>
+            </div>
         </center>
         </div>
     </div>
