@@ -28,7 +28,7 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth)
 
 # Twitter URL
-URL = 'https://twitter.com/'
+TWITTER_URL = 'https://twitter.com/'
 
 # dataframeのカラム定義
 twitter_trend_columns = [
@@ -51,23 +51,11 @@ class Index(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         # pprint.pprint(api.trends_available())
-        trends = api.trends_place('23424856') #日本のトレンド
+        jp_area_code = '23424856'
+        us_area_code = '23424977'
+        jp_twitter_trend_df = get_twitter_trend_df(jp_area_code)
+        us_twitter_trend_df = get_twitter_trend_df(us_area_code)
 
-        # columns定義したDataFrameを作成
-        twitter_trend_df = pd.DataFrame(columns=twitter_trend_columns)
-        for trend in trends[0]['trends']:
-            se = pd.Series([
-                trend['name'],
-                trend['tweet_volume'],
-                trend['url']
-            ], twitter_trend_columns
-            )
-            twitter_trend_df = twitter_trend_df.append(se, ignore_index=True)
-
-        twitter_trend_df = twitter_trend_df.dropna(subset=['tweet_volume'])
-        # twitter_trend_df = twitter_trend_df.fillna(0)
-        # ツイート数が多い順にソート
-        twitter_trend_df = twitter_trend_df.sort_values(['tweet_volume'], ascending=False)
 
         # Yahooニュースコメントランキングからスクレイピング
         YAHOO_NEWS_URL = 'https://news.yahoo.co.jp/ranking/comment'
@@ -90,10 +78,31 @@ class Index(TemplateView):
             yahoo_news_df = yahoo_news_df.append(se, ignore_index=True)
 
         context = {
-            'twitter_trend_df': twitter_trend_df,
+            'jp_twitter_trend_df': jp_twitter_trend_df,
+            'us_twitter_trend_df': us_twitter_trend_df,
             'yahoo_news_df': yahoo_news_df
         }
         return context
+
+
+def get_twitter_trend_df(parentid: str):
+    """parentidから各国のTwitterトレンドを取得"""
+    trends = api.trends_place(parentid)
+    # # columns定義したDataFrameを作成
+    twitter_trend_df = pd.DataFrame(columns=twitter_trend_columns)
+    for trend in trends[0]['trends']:
+        se = pd.Series([
+            trend['name'],
+            trend['tweet_volume'],
+            trend['url']
+        ], twitter_trend_columns
+        )
+        twitter_trend_df = twitter_trend_df.append(se, ignore_index=True)
+    twitter_trend_df = twitter_trend_df.dropna(subset=['tweet_volume'])
+    # twitter_trend_df = twitter_trend_df.fillna(0)
+    twitter_trend_df = twitter_trend_df.sort_values(['tweet_volume'], ascending=False)
+
+    return twitter_trend_df
 
 
 # dataframeのカラム定義
@@ -123,7 +132,7 @@ class timelineSearch(TemplateView):
         try:
             if screen_name and display_number:
                 # 対象ユーザーが存在するかどうか確認
-                res = requests.get(URL + screen_name)
+                res = requests.get(TWITTER_URL + screen_name)
                 if res.status_code:
                     # Userオブジェクトからプロフィール情報取得
                     user = api.get_user(screen_name=screen_name)
@@ -156,7 +165,7 @@ class timelineSearch(TemplateView):
                                 tweet.full_text,
                                 int(tweet.favorite_count),
                                 int(tweet.retweet_count),
-                                URL + screen_name + '/status/' + tweet.id_str, # ツイートリンクURL
+                                TWITTER_URL + screen_name + '/status/' + tweet.id_str, # ツイートリンクURL
                                 # tweet.entities['media'][0]['media_url'] if tweet.entities['media'] else tweet.id,
                                 ], timeline_columns
                             )
@@ -237,7 +246,7 @@ class KeyWordSearch(TemplateView):
                         tweet.full_text,
                         int(tweet.favorite_count),
                         int(tweet.retweet_count),
-                        URL + tweet.user.screen_name + '/status/' + tweet.id_str,  # ツイートリンクURL
+                        TWITTER_URL + tweet.user.screen_name + '/status/' + tweet.id_str,  # ツイートリンクURL
                         # ツイートしたユーザー情報
                         tweet.user.profile_image_url,
                         tweet.user.statuses_count,
@@ -295,7 +304,7 @@ class StockAdd(LoginRequiredMixin, CreateView):
                     'screen_name': tweet.user.screen_name,
                     'user_name': tweet.user.name,
                     'tweet_text': tweet.text,
-                    'tweet_url': URL + tweet.user.id_str + '/status/' + tweet.id_str,
+                    'tweet_url': TWITTER_URL + tweet.user.id_str + '/status/' + tweet.id_str,
                     'tweet_created_at': tweet.created_at,
                     'favorite_count': tweet.favorite_count,
                     'retweet_count': tweet.retweet_count,

@@ -39,7 +39,7 @@
     <!-- メッセージフレームワーク-->
 <div class="row">
         <div class="col-md-4">
-            <h4>Twitterトレンド</h4>
+            <h4>Twitterトレンド(日本)</h4>
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="bg-primary">
@@ -49,7 +49,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for index, row in twitter_trend_df.iterrows %}
+                    {% for index, row in jp_twitter_trend_df.iterrows %}
                         {% if row.tweet_volume > 100000 %}
                             <tr class="table-danger">
                                 <td>{{ forloop.counter }}</td>
@@ -63,6 +63,40 @@
                                 <td>{{ row.tweet_volume | intcomma }}</td>
                             </tr>
                         {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h4>Twitterトレンド(米国)</h4>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="bg-primary">
+                        <th>
+                            <font color="#FFFFFF">No.</font>
+                        </th>
+                        <th>
+                            <font color="#FFFFFF">タイトル</font>
+                        </th>
+                        <th>
+                            <font color="#FFFFFF">ツイート数</font>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index, row in us_twitter_trend_df.iterrows %}
+                    {% if row.tweet_volume > 100000 %}
+                    <tr class="table-danger">
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{{ row.url }}" target="_blank"><b>{{ row.name }}</b></a></td>
+                        <td><b>{{ row.tweet_volume | intcomma }}</b></td>
+                    </tr>
+                    {% else %}
+                    <tr class="bg-light">
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{{ row.url }}" target="_blank">{{ row.name }}</a></td>
+                        <td>{{ row.tweet_volume | intcomma }}</td>
+                    </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>

@@ -125,9 +125,10 @@ live_columns = [
     'concurrentViewers',
 ]
 
-class liveRanking(TemplateView):
+
+class YoutubeLiveRanking(TemplateView):
     """YoutubeLiveランキング"""
-    template_name = 'live_ranking.html'
+    template_name = 'youtubelive_ranking.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -171,8 +172,6 @@ class liveRanking(TemplateView):
                 live_df = live_df.append(se, ignore_index=True)
         # 視聴者数が多い順にソート
         sorted_df = live_df.sort_values(['concurrentViewers'], ascending=False)
-
-        print(sorted_df["channelUrl"])
 
         context = {
             'sorted_df': sorted_df
