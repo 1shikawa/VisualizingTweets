@@ -265,10 +265,13 @@ class PornhubRanking(TemplateView):
                 'duration': video.duration,
                 'url': 'https://www.pornhub.com/view_video.php?' + video.url.query,
                 'image1': 'https://ci.phncdn.com/' + video.thumbs[0].src.path,
-                'image2': 'https://ci.phncdn.com/' + video.thumbs[1].src.path,
-                'image3': 'https://ci.phncdn.com/' + video.thumbs[2].src.path,
-                'image4': 'https://ci.phncdn.com/' + video.thumbs[9].src.path,
-                'image5': 'https://ci.phncdn.com/' + video.thumbs[10].src.path,
+                'image2': 'https://ci.phncdn.com/' + video.thumbs[2].src.path,
+                'image3': 'https://ci.phncdn.com/' + video.thumbs[4].src.path,
+                'image4': 'https://ci.phncdn.com/' + video.thumbs[6].src.path,
+                'image5': 'https://ci.phncdn.com/' + video.thumbs[8].src.path,
+                'image6': 'https://ci.phncdn.com/' + video.thumbs[10].src.path,
+                'image7': 'https://ci.phncdn.com/' + video.thumbs[12].src.path,
+                'image8': 'https://ci.phncdn.com/' + video.thumbs[14].src.path,
             }
             video_list.append(data)
         video_list_df = pd.DataFrame(video_list)
