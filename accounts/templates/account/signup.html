@@ -3,7 +3,15 @@
 {% load bootstrap4 %}
 
 {% block css %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+.loginPage_contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+.loginPage_contents_title {
+    margin-top: 12vh;
+}
 {% endblock css %}
 
 {% block contents %}
