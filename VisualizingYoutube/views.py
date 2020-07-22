@@ -80,7 +80,7 @@ class videoSearch(TemplateView):
                     maxResults=1,
                     regionCode='JP',
                 ).execute()
-                pprint.pprint(search_videos)
+                # pprint.pprint(search_videos)
                 for search_video in search_videos.get("items", []):
                     se = pd.Series([
                         search_video['snippet']['channelId'],
@@ -142,7 +142,7 @@ class YoutubeLiveRanking(TemplateView):
             type='video',
             part='id,snippet',
             order='viewCount',
-            maxResults=15,
+            maxResults=20,
         ).execute()
 
         videos = []
@@ -158,7 +158,7 @@ class YoutubeLiveRanking(TemplateView):
                 maxResults=1,
                 regionCode='JP',
             ).execute()
-            print(search_video)
+
             for search_video_result in search_video.get("items", []):
                 se = pd.Series([
                     search_video_result['snippet']['channelTitle'],
