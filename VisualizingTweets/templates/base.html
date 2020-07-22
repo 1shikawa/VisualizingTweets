@@ -56,8 +56,8 @@
             <a class="nav-link" href="{% url 'VisualizingTweets:index' %}">Home <span class="sr-only">(current)</span></a>
           </li>
 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" id="DropdownMenu" role="button" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
               メニュー
             </a>
@@ -77,20 +77,23 @@
 
         <ul class="navbar-nav">
         {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link">{{ user.get_username }}</a>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" id="is_authenticated" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              {{ user.get_username }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'account_change_password' %}">パスワード変更</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'account_logout' %}">ログアウト</a>
+            </div>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'account_change_password' %}">パスワード変更</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'account_logout' %}">ログアウト</a>
-          </li>
+
        {% else %}
-          <li class="nav-item">
+          <li class="nav-item active">
             <a class="nav-link" href="{% url 'account_login' %}">ログイン</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item active">
             <a class="nav-link" href="{% url 'account_signup' %}">新規登録</a>
           </li>
        {% endif %}
