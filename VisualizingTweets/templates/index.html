@@ -57,7 +57,7 @@
                                 <td><b>{{ row.tweet_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
-                            <tr class="bg-light">
+                            <tr class="bg-white">
                                 <td>{{ forloop.counter }}</td>
                                 <td><a href="{{ row.url }}" target="_blank">{{ row.name }}</a></td>
                                 <td>{{ row.tweet_volume | intcomma }}</td>
@@ -91,7 +91,7 @@
                         <td><b>{{ row.tweet_volume | intcomma }}</b></td>
                     </tr>
                     {% else %}
-                    <tr class="bg-light">
+                    <tr class="bg-white">
                         <td>{{ forloop.counter }}</td>
                         <td><a href="{{ row.url }}" target="_blank">{{ row.name }}</a></td>
                         <td>{{ row.tweet_volume | intcomma }}</td>
@@ -123,7 +123,7 @@
                                 <td width="10%"><b>{{ row.comment_volume | intcomma }}</b></td>
                             </tr>
                         {% else %}
-                            <tr class="bg-light">
+                            <tr class="bg-white">
                                 <td>{{ row.rank }}</td>
                                 <td><a href="{{ row.url }}" target="_blank">{{ row.title }}</a></td>
                                 <td width="15%">{{ row.time }}</td>
