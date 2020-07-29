@@ -10,13 +10,15 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
 
 <style>
-    body{
-        background-color:#e6ecf0;
-        }
-    #stock_list{
-        background-color:#ffffff;
-        }
-    {% block css %}{% endblock %}
+    body {
+        background-color: #e6ecf0;
+    }
+
+    #stock_list {
+        background-color: #ffffff;
+    }
+
+        {% block css %}{% endblock %}
 </style>
 
 {% endblock %}
@@ -24,109 +26,139 @@
 {% block contents %}
 <div class="container-fluid">
     <div class="row">
-       <div class="col-md-12">
+        <div class="col-md-12">
             <h3>ストック一覧</h3>
             <p>ストックしたツイートを一覧表示します。</p>
 
-    <!-- メッセージフレームワーク-->
-    {% if messages %}
-    <div class="container" style="margin-top:1rem;">
-        <div class="message">
-            {% for message in messages %}
-                {% if message.tags == "success" %}
+            <!-- メッセージフレームワーク-->
+            {% if messages %}
+            <div class="container" style="margin-top:1rem;">
+                <div class="message">
+                    {% for message in messages %}
+                    {% if message.tags == "success" %}
                     <div class="alert alert-success" role="alert">
-                {% elif message.tags == "warning" %}
-                    <div class="alert alert-warning" role="alert">
-                {% elif message.tags == "error" %}
-                    <div class="alert alert-danger" role="alert">
-                {% else %}
-                    <div class="alert alert-info" role="alert">
-                {% endif %}
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
+                        {% elif message.tags == "warning" %}
+                        <div class="alert alert-warning" role="alert">
+                            {% elif message.tags == "error" %}
+                            <div class="alert alert-danger" role="alert">
+                                {% else %}
+                                <div class="alert alert-info" role="alert">
+                                    {% endif %}
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!-- メッセージフレームワーク-->
+
+                        <table id=stock_list width="100%" class="table table-bordered table-hover">
+                            <!-- 表の列の定義-->
+                            <thead>
+                                <tr class="table-info">
+                                    <th class="text-center">スクリーン名</th>
+                                    <th class="text-center">ユーザー名</th>
+                                    <th class="text-center">ツイート内容</th>
+                                    <th class="text-center">ツイート日</th>
+                                    <th class="text-center">いいね数</th>
+                                    <th class="text-center">リツイート数</th>
+                                    <th class="text-center">関連URL</th>
+                                    <th class="text-center">ストック日</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                            </thead>
+                            <!-- ここまでが表の列の定義-->
+                            <!-- 表のデータ部分の表示-->
+                            <tbody>
+                                {% for stock in stock_list %}
+                                <tr class="bg-white odd gradeX text-center">
+                                    <td class="text-center">{{ stock.screen_name }}</td>
+                                    <td class="text-center">{{ stock.user_name }}</td>
+                                    <td class="text-left">{{ stock.tweet_text }}</td>
+                                    <td class="text-center"><a href="{{ stock.tweet_url }}" target="_blank"
+                                            rel="noopener">{{ stock.tweet_created_at }}</a></td>
+                                    <td class="text-center">{{ stock.favorite_count }}</td>
+                                    <td class="text-center">{{ stock.retweet_count }}</td>
+                                    {% if stock.expanded_url %}
+                                    <td class="text-center"><a href="{{ stock.expanded_url }}" target="_blank"
+                                            rel="noopener">LINK</a></td>
+                                    {% else %}
+                                    <td class="text-center"></td>
+                                    {% endif %}
+                                    <td class="text-center">{{ stock.created_at }}</td>
+                                    <td><a class="btn btn-sm btn-primary"
+                                            href="{% url 'VisualizingTweets:stock_update' stock.pk %}">更新</a>
+                                        <a class="btn btn-sm btn-danger"
+                                            href="{% url 'VisualizingTweets:stock_delete' stock.pk %}">削除</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <!-- ここまでが表のデータ部分の表示-->
+                        </table>
                     </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-    <!-- メッセージフレームワーク-->
-
-    <table id=stock_list width="100%" class="table table-bordered table-hover">
-    <!-- 表の列の定義-->
-    <thead>
-        <tr class="table-info">
-            <th class="text-center">スクリーン名</th>
-            <th class="text-center">ユーザー名</th>
-            <th class="text-center">ツイート内容</th>
-            <th class="text-center">ツイート日</th>
-            <th class="text-center">いいね数</th>
-            <th class="text-center">リツイート数</th>
-            <th class="text-center">関連URL</th>
-            <th class="text-center">ストック日</th>
-            <th class="text-center">操作</th>
-        </tr>
-    </thead>
-    <!-- ここまでが表の列の定義-->
-    <!-- 表のデータ部分の表示-->
-    <tbody>
-        {% for stock in stock_list %}
-        <tr class="bg-white odd gradeX text-center">
-            <td class="text-center">{{ stock.screen_name }}</td>
-            <td class="text-center">{{ stock.user_name }}</td>
-            <td class="text-left">{{ stock.tweet_text }}</td>
-            <td class="text-center"><a href="{{ stock.tweet_url }}" target="_blank" rel="noopener">{{ stock.tweet_created_at }}</a></td>
-            <td class="text-center">{{ stock.favorite_count }}</td>
-            <td class="text-center">{{ stock.retweet_count }}</td>
-            {% if stock.expanded_url %}
-            <td class="text-center"><a href="{{ stock.expanded_url }}" target="_blank" rel="noopener">LINK</a></td>
-            {% else %}
-            <td class="text-center"></td>
-            {% endif %}
-            <td class="text-center">{{ stock.created_at }}</td>
-            <td><a class="btn btn-sm btn-primary" href="{% url 'VisualizingTweets:stock_update' stock.pk %}">更新</a>
-                <a class="btn btn-sm btn-danger" href="{% url 'VisualizingTweets:stock_delete' stock.pk %}">削除</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    <!-- ここまでが表のデータ部分の表示-->
-</table>
-</div>
-</div>
-</div>
-<!-- ここまでがテーブル表の定義 -->
-<!-- DataTablesのjavascrit読み込み-->
-<script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+                </div>
+            </div>
+            <!-- ここまでがテーブル表の定義 -->
+            <!-- DataTablesのjavascrit読み込み-->
+            <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
 
 
-<!-- Databableの定義-->
-<script>
-    jQuery(function ($) {
-        // デフォルトの設定を変更
-        $.extend($.fn.dataTable.defaults, {
-            language: {
-                url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
-            }
-        });
-        $("#stock_list").DataTable({
-            searching: true,            //検索機能
-            paging: true,               //ページング機能
-            ordering: true,             //ソート機能
-            lengthChange: true,         //件数切り替え機能
-            pagingType: "full_numbers", //ページャーの種類
-            columnDefs: [
-                 { targets: [0], width: "7%" }, //スクリーン名
-                 { targets: [1], width: "7%" }, //ユーザー名
-                 { targets: [2], width: "40%" }, //ツイート内容
-                 { targets: [3], width: "9%" }, //ツイート日
-                 { targets: [4], width: "7%" }, //いいね数
-                 { targets: [5], width: "9%" }, //リツイート数
-                 { targets: [6], width: "7%" }, //関連URL
-                 { targets: [7], width: "10%" }, //ストック日
-                 { targets: [8], width: "10%" }, //操作
-             ]
-        }).columns.adjust().draw();
-    });
-</script>
-{% endblock %}
+            <!-- Databableの定義-->
+            <script>
+                jQuery(function ($) {
+                    // デフォルトの設定を変更
+                    $.extend($.fn.dataTable.defaults, {
+                        language: {
+                            url: "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
+                        }
+                    });
+                    $("#stock_list").DataTable({
+                        searching: true, //検索機能
+                        paging: true, //ページング機能
+                        ordering: true, //ソート機能
+                        lengthChange: true, //件数切り替え機能
+                        pagingType: "full_numbers", //ページャーの種類
+                        columnDefs: [{
+                                targets: [0],
+                                width: "7%"
+                            }, //スクリーン名
+                            {
+                                targets: [1],
+                                width: "7%"
+                            }, //ユーザー名
+                            {
+                                targets: [2],
+                                width: "40%"
+                            }, //ツイート内容
+                            {
+                                targets: [3],
+                                width: "9%"
+                            }, //ツイート日
+                            {
+                                targets: [4],
+                                width: "7%"
+                            }, //いいね数
+                            {
+                                targets: [5],
+                                width: "9%"
+                            }, //リツイート数
+                            {
+                                targets: [6],
+                                width: "7%"
+                            }, //関連URL
+                            {
+                                targets: [7],
+                                width: "10%"
+                            }, //ストック日
+                            {
+                                targets: [8],
+                                width: "10%"
+                            }, //操作
+                        ]
+                    }).columns.adjust().draw();
+                });
+            </script>
+            {% endblock %}
