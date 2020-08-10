@@ -6,7 +6,7 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView,
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from .models import Stock
-from .forms import SearchForm, KeyWordSearchForm, StockCreateForm, StockUpdateForm
+from .forms import SearchForm, KeyWordSearchForm, StockCreateForm, StockUpdateForm, SpecifiedUrlForm
 import requests
 import logging
 import pandas as pd
@@ -293,7 +293,7 @@ class StockAdd(LoginRequiredMixin, CreateView):
         if Stock.objects.filter(tweet_id=tweet_id, stock_user=str(self.request.user)).exists():
             messages.warning(self.request, '既にストック済みです。')
         # tweet_idからツイート情報取得
-        tweet = api.get_status(id=tweet_id)
+        tweet = api.get_status(id=tweet_id, tweet_mode="extended")
         if tweet.entities['urls']:
             expanded_url = tweet.entities['urls'][0]['expanded_url']
         else:
@@ -303,7 +303,7 @@ class StockAdd(LoginRequiredMixin, CreateView):
                     'user_id': tweet.user.id_str,
                     'screen_name': tweet.user.screen_name,
                     'user_name': tweet.user.name,
-                    'tweet_text': tweet.text,
+                    'tweet_text': tweet.full_text,
                     'tweet_url': TWITTER_URL + tweet.user.id_str + '/status/' + tweet.id_str,
                     'tweet_created_at': tweet.created_at,
                     'favorite_count': tweet.favorite_count,
@@ -351,6 +351,63 @@ class StockDelete(LoginRequiredMixin, DeleteView):
     def get(self, *args, **kwargs):
         messages.success(self.request, '対象ストックを削除しました。')
         return self.post(*args, **kwargs)
+
+
+class SpecifiedUrl(TemplateView):
+    template_name = 'specified_url.html'
+    form_class = SpecifiedUrlForm
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = SpecifiedUrlForm(self.request.GET or None)
+        tweet_url,tweet_id = '',''
+        if form.is_valid():
+            tweet_url = form.cleaned_data.get('tweet_url')
+            tweet_id = get_tweet_id(tweet_url)
+
+        if Stock.objects.filter(tweet_id=tweet_id, stock_user=str(self.request.user)).exists():
+            messages.warning(self.request, '既にストック済みです。')
+
+        tweet = api.get_status(id=tweet_id, tweet_mode="extended")
+        print(tweet)
+        if tweet.entities['urls']:
+            expanded_url = tweet.entities['urls'][0]['expanded_url']
+        else:
+            expanded_url = ''
+
+        context ={
+            'form': SpecifiedUrlForm(),
+            'tweet_id': tweet_id,
+            'user_id': tweet.user.id_str,
+            'screen_name': tweet.user.screen_name,
+            'user_name': tweet.user.name,
+            'tweet_text': tweet.full_text,
+            'tweet_url': TWITTER_URL + tweet.user.id_str + '/status/' + tweet.id_str,
+            'tweet_created_at': tweet.created_at,
+            'favorite_count': tweet.favorite_count,
+            'retweet_count': tweet.retweet_count,
+            'expanded_url': expanded_url
+        }
+        # print(tweet)
+        return context
+
+
+def get_tweet_id(url: str) -> int:
+    """TweetURLからscreen_nameとstatus_idを取得"""
+    url = url.replace('https://twitter.com/','')
+    data = url.split('/')
+    screen_name = data[0]
+    tweet_id = int(data[2])
+    return tweet_id
+
+
+# 関数ベースビューで指定ストックを直接登録
+# 登録前に存在チェック
+# 　有り→登録せず
+# 　なし→登録
+
+
+
 
 
 # class BulkStockView(ListView):

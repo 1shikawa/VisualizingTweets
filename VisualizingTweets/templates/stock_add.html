@@ -1,145 +1,142 @@
 {% extends './base.html' %}
-{% load bootstrap4 %}
 {% load humanize %}
+{% load bootstrap4 %}
 {% load url_customize %}
 
 {% block contents %}
-        <div class="row">
-            <div class="col-md-12">
-                <h3>ストック登録</h3>
-                <p>以下のツイート内容をストックします。</p>
-            </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>ストック登録</h3>
+            <p>以下のツイート内容をストックします。</p>
         </div>
-    <!-- メッセージフレームワーク-->
-    {% if messages %}
-    <div class="container">
-        <div class="message">
-            {% for message in messages %}
-            {% if message.tags == "success" %}
-            <div class="alert alert-success" role="alert">
-                {% elif message.tags == "warning" %}
-                <div class="alert alert-warning" role="alert">
-                    {% elif message.tags == "error" %}
-                    <div class="alert alert-danger" role="alert">
-                        {% else %}
-                        <div class="alert alert-info" role="alert">
-                            {% endif %}
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
+    </div>
+
+            <!-- メッセージフレームワーク-->
+            {% if messages %}
+            <div class="container" style="margin-top:1rem;">
+                <div class="message">
+                    {% for message in messages %}
+                    {% if message.tags == "success" %}
+                    <div class="alert alert-success" role="alert">
+                        {% elif message.tags == "warning" %}
+                        <div class="alert alert-warning" role="alert">
+                            {% elif message.tags == "error" %}
+                            <div class="alert alert-danger" role="alert">
+                                {% else %}
+                                <div class="alert alert-info" role="alert">
+                                    {% endif %}
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        {% endfor %}
-                    </div>
+                        {% endif %}
+                        <!-- メッセージフレームワーク-->
+
+    <form method="POST" enctype='multipart/form-data'>
+        {% if form.non_field_errors %}
+        <div class="errorlist">
+            {% for error in form.non_field_errors %}
+            {{ error }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-md-5">
+                <div class="field form-group">
+                    {{ form.tweet_id.label_tag }}
+                    {{ form.tweet_id }}
                 </div>
-                {% endif %}
+            </div>
+
+            <div class="col-md-5">
+                <div class="field form-group">
+                    {{ form.user_id.label_tag }}
+                    {{ form.user_id }}
+                </div>
             </div>
         </div>
-    </div>
-    <!-- メッセージフレームワーク-->
 
-    <div class="container">
-        <form method="POST" enctype='multipart/form-data'>
-            {% if form.non_field_errors %}
-            <div class="errorlist">
-                {% for error in form.non_field_errors %}
-                {{ error }}<br>
-                {% endfor %}
-            </div>
-            {% endif %}
-            <div class="row">
-                <div class="col-md-5">
-                    <div class="field form-group">
-                        {{ form.tweet_id.label_tag }}
-                        {{ form.tweet_id }}
-                    </div>
-                </div>
-
-                <div class="col-md-5">
-                    <div class="field form-group">
-                        {{ form.user_id.label_tag }}
-                        {{ form.user_id }}
-                    </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="field form-group">
+                    {{ form.screen_name.label_tag }}
+                    {{ form.screen_name }}
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-5">
-                    <div class="field form-group">
-                        {{ form.screen_name.label_tag }}
-                        {{ form.screen_name }}
-                    </div>
+            <div class="col-md-5">
+                <div class="field form-group">
+                    {{ form.user_name.label_tag }}
+                    {{ form.user_name }}
                 </div>
+            </div>
+        </div>
 
-                <div class="col-md-5">
-                    <div class="field form-group">
-                        {{ form.user_name.label_tag }}
-                        {{ form.user_name }}
-                    </div>
+        <div class="row">
+            <div class="col-md-10">
+                <div class="field form-group">
+                    {{ form.tweet_text.label_tag }}
+                    {{ form.tweet_text }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <div class="field form-group">
+                    {{ form.favorite_count.label_tag }}
+                    {{ form.favorite_count }}
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="field form-group">
-                        {{ form.tweet_text.label_tag }}
-                        {{ form.tweet_text }}
-                    </div>
+            <div class="col-md-2">
+                <div class="field form-group">
+                    {{ form.retweet_count.label_tag }}
+                    {{ form.retweet_count }}
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-2">
-                    <div class="field form-group">
-                        {{ form.favorite_count.label_tag }}
-                        {{ form.favorite_count }}
-                    </div>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="field form-group">
-                        {{ form.retweet_count.label_tag }}
-                        {{ form.retweet_count }}
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="field form-group">
-                        {{ form.tweet_created_at.label_tag }}
-                        {{ form.tweet_created_at }}
-                    </div>
+            <div class="col-md-6">
+                <div class="field form-group">
+                    {{ form.tweet_created_at.label_tag }}
+                    {{ form.tweet_created_at }}
                 </div>
             </div>
+        </div>
 
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="field form-group">
-                        {{ form.tweet_url.label_tag }}
-                        {{ form.tweet_url }}
-                    </div>
+        <div class="row">
+            <div class="col-md-10">
+                <div class="field form-group">
+                    {{ form.tweet_url.label_tag }}
+                    {{ form.tweet_url }}
                 </div>
             </div>
+        </div>
 
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="field form-group">
-                        {{ form.expanded_url.label_tag }}
-                        {{ form.expanded_url }}
-                    </div>
+        <div class="row">
+            <div class="col-md-10">
+                <div class="field form-group">
+                    {{ form.expanded_url.label_tag }}
+                    {{ form.expanded_url }}
                 </div>
             </div>
+        </div>
 
-            {% if field.errors %}
-            <div class="errorlist">
-                {% for error in field.errors %}
-                {{ error }}<br>
-                {% endfor %}
-            </div>
-            {% endif %}
+        {% if field.errors %}
+        <div class="errorlist">
+            {% for error in field.errors %}
+            {{ error }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-            <button class="btn btn-primary" type="submit">登録</button>
-            <button class="btn btn-success" onclick="window.close();">閉じる</button>
-            {% csrf_token %}
-        </form>
-    </div>
+        <button class="btn btn-primary" type="submit">登録</button>
+        <button class="btn btn-success" onclick="window.close();">閉じる</button>
+        {% csrf_token %}
+    </form>
+
 {% endblock %}

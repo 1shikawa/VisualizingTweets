@@ -114,3 +114,6 @@ class StockUpdateForm(forms.ModelForm):
         self.fields['expanded_url'].widget.attrs['readonly'] = 'readonly'
 
 
+class SpecifiedUrlForm(forms.Form):
+    """URL指定からのTweet取得フォーム"""
+    tweet_url = forms.CharField(label='URL', required=True,)
