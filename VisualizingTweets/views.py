@@ -378,6 +378,11 @@ class SpecifiedUrl(TemplateView):
                 else:
                     expanded_url = ''
 
+                if tweet.entities['media']:
+                    media_url = tweet.entities['media'][0]['media_url']
+                else:
+                    media_url = ''
+                # print(media_url)
                 context ={
                     'form': SpecifiedUrlForm(),
                     'tweet_id': tweet_id,
@@ -389,7 +394,8 @@ class SpecifiedUrl(TemplateView):
                     'tweet_created_at': tweet.created_at,
                     'favorite_count': tweet.favorite_count,
                     'retweet_count': tweet.retweet_count,
-                    'expanded_url': expanded_url
+                    'expanded_url': expanded_url,
+                    'media_url': media_url
                 }
                 return context
         except:
