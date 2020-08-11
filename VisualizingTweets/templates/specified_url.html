@@ -19,75 +19,76 @@
     </div>
 </div>
 
-    <!-- メッセージフレームワーク-->
-    {% if messages %}
-    <div class="container" style="margin-top:1rem;">
-        <div class="message">
-            {% for message in messages %}
-            {% if message.tags == "success" %}
-            <div class="alert alert-success" role="alert">
-                {% elif message.tags == "warning" %}
-                <div class="alert alert-warning" role="alert">
-                    {% elif message.tags == "error" %}
-                    <div class="alert alert-danger" role="alert">
-                        {% else %}
-                        <div class="alert alert-info" role="alert">
-                            {% endif %}
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        {% endfor %}
+<!-- メッセージフレームワーク-->
+{% if messages %}
+<div class="container" style="margin-top:1rem;">
+    <div class="message">
+        {% for message in messages %}
+        {% if message.tags == "success" %}
+        <div class="alert alert-success" role="alert">
+            {% elif message.tags == "warning" %}
+            <div class="alert alert-warning" role="alert">
+                {% elif message.tags == "error" %}
+                <div class="alert alert-danger" role="alert">
+                    {% else %}
+                    <div class="alert alert-info" role="alert">
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endif %}
-                <!-- メッセージフレームワーク-->
-<br>
-<div class="container">
-    <div class="row">
-        <div class="col-md-5">
-            {{ screen_name }}
-        </div>
-        <div class="col-md-5">
-            {{ user_name }}
-        </div>
-    </div>
+            </div>
+            {% endif %}
+            <!-- メッセージフレームワーク-->
+            <br>
+            {% if screen_name %}
+            <div class="row">
+                <div class="col-md-5">
+                    {{ screen_name }}
+                </div>
+                <div class="col-md-5">
+                    {{ user_name }}
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-md-10">
-            {% autoescape off %}
-            <div id="tweet-text">{{ tweet_text | linebreaksbr | urlize | url_target_blank }}</div>
-            {% endautoescape %}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            {{ favorite_count }}
-        </div>
+            <div class="row">
+                <div class="col-md-10">
+                    {% autoescape off %}
+                    <div id="tweet-text">{{ tweet_text | linebreaksbr | urlize | url_target_blank }}</div>
+                    {% endautoescape %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    {{ favorite_count }}
+                </div>
 
-        <div class="col-md-2">
-            {{ retweet_count }}
-        </div>
+                <div class="col-md-2">
+                    {{ retweet_count }}
+                </div>
 
-        <div class="col-md-6">
-            {{ tweet_created_at }}
-        </div>
-    </div>
+                <div class="col-md-6">
+                    {{ tweet_created_at }}
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-md-10">
-            <a href="{{ tweet_url }}">{{ tweet_url }}</a>
-        </div>
-    </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <a href="{{ tweet_url }}">{{ tweet_url }}</a>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-md-10">
-            <a href="{{ expanded_url }}">{{ expanded_url }}</a>
-        </div>
-    </div>
-    <a class="pull-right btn btn-primary btn-sm" href="{% url 'VisualizingTweets:stock_add' screen_name tweet_id %}"
-        target="_blank">Stock</a>
-</div>
+            <div class="row">
+                <div class="col-md-10">
+                    <a href="{{ expanded_url }}">{{ expanded_url }}</a>
+                </div>
+            </div>
+            <a class="pull-right btn btn-primary btn-sm"
+                href="{% url 'VisualizingTweets:stock_add' screen_name tweet_id %}" target="_blank">Stock</a>
 
-{% endblock %}
+        </div>
+        {% endif %}
+        {% endblock %}

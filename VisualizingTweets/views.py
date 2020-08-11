@@ -360,36 +360,40 @@ class SpecifiedUrl(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         form = SpecifiedUrlForm(self.request.GET or None)
-        tweet_url,tweet_id = '',''
         if form.is_valid():
             tweet_url = form.cleaned_data.get('tweet_url')
+        context['form'] = form
+
+        try:
             tweet_id = get_tweet_id(tweet_url)
 
-        if Stock.objects.filter(tweet_id=tweet_id, stock_user=str(self.request.user)).exists():
-            messages.warning(self.request, '既にストック済みです。')
+            if Stock.objects.filter(tweet_id=tweet_id, stock_user=str(self.request.user)).exists():
+                messages.warning(self.request, '既にストック済みです。')
+                return context
 
-        tweet = api.get_status(id=tweet_id, tweet_mode="extended")
-        print(tweet)
-        if tweet.entities['urls']:
-            expanded_url = tweet.entities['urls'][0]['expanded_url']
-        else:
-            expanded_url = ''
+            else:
+                tweet = api.get_status(id=tweet_id, tweet_mode="extended")
+                if tweet.entities['urls']:
+                    expanded_url = tweet.entities['urls'][0]['expanded_url']
+                else:
+                    expanded_url = ''
 
-        context ={
-            'form': SpecifiedUrlForm(),
-            'tweet_id': tweet_id,
-            'user_id': tweet.user.id_str,
-            'screen_name': tweet.user.screen_name,
-            'user_name': tweet.user.name,
-            'tweet_text': tweet.full_text,
-            'tweet_url': TWITTER_URL + tweet.user.id_str + '/status/' + tweet.id_str,
-            'tweet_created_at': tweet.created_at,
-            'favorite_count': tweet.favorite_count,
-            'retweet_count': tweet.retweet_count,
-            'expanded_url': expanded_url
-        }
-        # print(tweet)
-        return context
+                context ={
+                    'form': SpecifiedUrlForm(),
+                    'tweet_id': tweet_id,
+                    'user_id': tweet.user.id_str,
+                    'screen_name': tweet.user.screen_name,
+                    'user_name': tweet.user.name,
+                    'tweet_text': tweet.full_text,
+                    'tweet_url': TWITTER_URL + tweet.user.id_str + '/status/' + tweet.id_str,
+                    'tweet_created_at': tweet.created_at,
+                    'favorite_count': tweet.favorite_count,
+                    'retweet_count': tweet.retweet_count,
+                    'expanded_url': expanded_url
+                }
+                return context
+        except:
+            return context
 
 
 def get_tweet_id(url: str) -> int:
@@ -399,6 +403,8 @@ def get_tweet_id(url: str) -> int:
     screen_name = data[0]
     tweet_id = int(data[2])
     return tweet_id
+
+
 
 
 # 関数ベースビューで指定ストックを直接登録
