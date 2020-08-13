@@ -8,6 +8,7 @@ urlpatterns = [
     path('timelineSearch/', views.timelineSearch.as_view(), name='timeline_search'),
     path('keywordSearch/', views.KeyWordSearch.as_view(), name='keyword_search'),
     path('SpecifiedUrl/', views.SpecifiedUrl.as_view(), name='specified_url'),
+    path('CreateStock/<str:tweet_id>', views.create_stock, name='create_stock'),
     path('Stock/<str:screen_name>/status/<int:tweet_id>', views.StockAdd.as_view(), name='stock_add'),
     path('StockList/', views.StockList.as_view(), name='stock_list'),
     path('StockUpdate/<int:pk>', views.StockUpdate.as_view(), name='stock_update'),

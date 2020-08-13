@@ -77,20 +77,22 @@
 
             <div class="row">
                 <div class="col-md-10">
-                    <a href="{{ tweet_url }}">{{ tweet_url }}</a>
+                    <a href="{{ tweet_url }}" target="_blank">{{ tweet_url }}</a>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-10">
-                    <a href="{{ expanded_url }}">{{ expanded_url }}</a>
+                    <a href="{{ expanded_url }}" target="_blank">{{ expanded_url }}</a>
                 </div>
             </div>
 
             <img src="{{ media_url }}">
-            <a class="pull-right btn btn-primary btn-sm"
-                href="{% url 'VisualizingTweets:stock_add' screen_name tweet_id %}" target="_blank">Stock</a>
 
+            <form class="form" method="POST" action="{% url 'VisualizingTweets:create_stock' tweet_id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Stock</button>
+            </form>
         </div>
         {% endif %}
         {% endblock %}

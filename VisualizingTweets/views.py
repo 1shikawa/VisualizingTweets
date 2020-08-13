@@ -411,15 +411,31 @@ def get_tweet_id(url: str) -> int:
     return tweet_id
 
 
-
-
-# 関数ベースビューで指定ストックを直接登録
-# 登録前に存在チェック
-# 　有り→登録せず
-# 　なし→登録
-
-
-
+def create_stock(request, tweet_id):
+    if request.method == 'POST':
+        tweet = api.get_status(id=tweet_id, tweet_mode="extended")
+        if tweet.entities['urls']:
+            expanded_url = tweet.entities['urls'][0]['expanded_url']
+        else:
+            expanded_url = ''
+        stock = Stock.objects.create(
+            tweet_id = tweet.id,
+            screen_name = tweet.user.screen_name,
+            user_id =  tweet.user.id_str,
+            user_name =  tweet.user.name,
+            tweet_text =  tweet.full_text,
+            tweet_url =  TWITTER_URL + tweet.user.id_str + '/status/' + tweet.id_str,
+            tweet_created_at = tweet.created_at,
+            favorite_count = tweet.favorite_count,
+            retweet_count = tweet.retweet_count,
+            expanded_url = expanded_url,
+            stock_user = str(request.user)
+        )
+        stock.save()
+        messages.success(request, 'ストックしました。')
+        return redirect('VisualizingTweets:specified_url')
+    else:
+        return redirect('VisualizingTweets:specified_url')
 
 
 # class BulkStockView(ListView):
