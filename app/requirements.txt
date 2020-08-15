@@ -3,6 +3,7 @@ django-allauth
 django-pandas
 django-bootstrap4
 django-forms-bootstrap
+django-sendgrid-v5
 pandas
 tweepy
 humanize

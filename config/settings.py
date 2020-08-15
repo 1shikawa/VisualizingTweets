@@ -164,7 +164,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL = 'VisualizingTweets:stock_list'
 # ログアウトリンクのクリック一発でログアウトする設定
 ACCOUNT_LOGOUT_ON_GET = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # コンソール上にメッセージを表示
 
 #####################
 # tweepyAPI setting #
@@ -179,6 +178,17 @@ ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 # YoutubeAPI setting #
 ######################
 YOUTUBE_API_KEY = os.environ['YOUTUBE_API_KEY']
+
+
+##########################
+# Email SendGrid setting #
+##########################
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # コンソール上にメッセージを表示
+EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
+EMAIL_HOST = 'influencer-search.herokuapp.com'
+DEFAULT_FROM_EMAIL = 'notify@influencer-search.herokuapp.com'
+SENDGRID_API_KEY = os.environ['SENDGRID_API_KEY']
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
 
 ###################

@@ -402,7 +402,7 @@ class SpecifiedUrl(TemplateView):
             return context
 
 
-def get_tweet_id(url: str) -> int:
+def get_tweet_id(url: str) -> str:
     """TweetURLからscreen_nameとstatus_idを取得"""
     url = url.replace('https://twitter.com/','')
     data = url.split('/')
