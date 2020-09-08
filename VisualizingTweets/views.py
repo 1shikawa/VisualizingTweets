@@ -1,3 +1,4 @@
+from concurrent.futures.thread import ThreadPoolExecutor
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -8,11 +9,14 @@ from django.conf import settings
 from .models import Stock
 from .forms import SearchForm, KeyWordSearchForm, StockCreateForm, StockUpdateForm, SpecifiedUrlForm
 import requests
+import concurrent.futures
 import logging
 import pandas as pd
 import tweepy
 from bs4 import BeautifulSoup
 import pprint
+
+logger = logging.getLogger(__name__)
 
 # 各種Twitterーのキーをセット
 CONSUMER_KEY = settings.CONSUMER_KEY
@@ -53,36 +57,44 @@ class Index(TemplateView):
         # pprint.pprint(api.trends_available())
         jp_area_code = '23424856'
         us_area_code = '23424977'
-        jp_twitter_trend_df = get_twitter_trend_df(jp_area_code)
-        us_twitter_trend_df = get_twitter_trend_df(us_area_code)
 
-
-        # Yahooニュースコメントランキングからスクレイピング
-        YAHOO_NEWS_URL = 'https://news.yahoo.co.jp/ranking/comment'
-        html = requests.get(YAHOO_NEWS_URL)
-        soup = BeautifulSoup(html.text, "html.parser")
-        topicsindex = soup.find('div', attrs={'class': 'newsFeed'})
-        topics = topicsindex.find_all('li')
-
-        # columns定義したDataFrameを作成
-        yahoo_news_df = pd.DataFrame(columns=yahoo_comment_columns)
-        for topic in topics:
-            se = pd.Series([
-                topic.find('span', attrs={'class': 'newsFeed_item_rankNum'}).contents[0],
-                topic.find('div', attrs={'class': 'newsFeed_item_title'}).contents[0],
-                topic.find('time', attrs={'class': 'newsFeed_item_date'}).contents[0],
-                int(topic.find('em').contents[0]),
-                topic.find('a').get('href')
-            ], yahoo_comment_columns
-            )
-            yahoo_news_df = yahoo_news_df.append(se, ignore_index=True)
-
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3, thread_name_prefix='thread') as executor:
+            jp_twitter_trend = executor.submit(get_twitter_trend_df, jp_area_code)
+            us_twitter_trend = executor.submit(get_twitter_trend_df, us_area_code)
+            yahoo_news = executor.submit(scrapying_news)
+        # logger.info(jp_twitter_trend_df)
         context = {
-            'jp_twitter_trend_df': jp_twitter_trend_df,
-            'us_twitter_trend_df': us_twitter_trend_df,
-            'yahoo_news_df': yahoo_news_df
+            'jp_twitter_trend_df': jp_twitter_trend.result(),
+            'us_twitter_trend_df': us_twitter_trend.result(),
+            'yahoo_news_df': yahoo_news.result(),
         }
         return context
+
+
+def scrapying_news():
+    # Yahooニュースコメントランキングからスクレイピング
+    YAHOO_NEWS_URL = 'https://news.yahoo.co.jp/ranking/comment'
+    html = requests.get(YAHOO_NEWS_URL)
+    soup = BeautifulSoup(html.text, "html.parser")
+    topicsindex = soup.find('div', attrs={'class': 'newsFeed'})
+    topics = topicsindex.find_all('li')
+
+    # columns定義したDataFrameを作成
+    yahoo_news_df = pd.DataFrame(columns=yahoo_comment_columns)
+    for topic in topics:
+        se = pd.Series([
+            topic.find('span', attrs={
+                        'class': 'newsFeed_item_rankNum'}).contents[0],
+            topic.find('div', attrs={
+                        'class': 'newsFeed_item_title'}).contents[0],
+            topic.find('time', attrs={
+                        'class': 'newsFeed_item_date'}).contents[0],
+            int(topic.find('em').contents[0]),
+            topic.find('a').get('href')
+        ], yahoo_comment_columns
+        )
+        yahoo_news_df = yahoo_news_df.append(se, ignore_index=True)
+    return yahoo_news_df
 
 
 def get_twitter_trend_df(parentid: str):
