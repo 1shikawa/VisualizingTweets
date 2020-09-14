@@ -4,6 +4,8 @@ django-pandas
 django-bootstrap4
 django-forms-bootstrap
 django-sendgrid-v5
+django-import-export
+django-jazzmin
 pandas
 tweepy
 humanize

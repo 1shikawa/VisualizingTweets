@@ -17,6 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 
+
+admin.site.site_header = 'Influencer-Search管理サイト'
+admin.site.site_title = 'Influencer-Search管理サイト'
+admin.site.index_title = 'ホーム'
+admin.site.site_url = None
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
