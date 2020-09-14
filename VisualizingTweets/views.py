@@ -93,6 +93,7 @@ def scrapying_news():
         ], yahoo_comment_columns
         )
         yahoo_news_df = yahoo_news_df.append(se, ignore_index=True)
+
     return yahoo_news_df
 
 
