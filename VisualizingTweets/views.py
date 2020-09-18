@@ -57,6 +57,7 @@ class Index(TemplateView):
         jp_area_code = '23424856'
         us_area_code = '23424977'
 
+        # concurrent.futuresによるマルチスレッド処理
         with concurrent.futures.ThreadPoolExecutor(max_workers=3, thread_name_prefix='thread') as executor:
             jp_twitter_trend = executor.submit(get_twitter_trend_df, jp_area_code)
             us_twitter_trend = executor.submit(get_twitter_trend_df, us_area_code)
