@@ -1,5 +1,8 @@
+from re import search
 from django import forms
+from django.forms import ValidationError
 from .models import Stock
+import re
 
 
 class SearchForm(forms.Form):
@@ -117,3 +120,13 @@ class StockUpdateForm(forms.ModelForm):
 class SpecifiedUrlForm(forms.Form):
     """URL指定からのTweet取得フォーム"""
     tweet_url = forms.CharField(label='URL', required=True,)
+
+    def clean_tweet_url(self):
+        tweet_url = str(self.cleaned_data['tweet_url'])
+        RE_URL = re.compile('https://twitter.com/[\w]+/status/[\d]+')
+        if not(RE_URL.fullmatch(tweet_url)):
+            raise forms.ValidationError(
+                'TwitterのURLを入力して下さい。\n 例：https://twitter.com/user_name/status/9999999999999999999')
+        return tweet_url
+
+
