@@ -10,6 +10,9 @@ import requests
 import logging
 import pandas as pd
 from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import NoSuchElementException
 import pytz
 from bs4 import BeautifulSoup
 import pprint
@@ -196,37 +199,50 @@ def iso_to_jstdt(iso_str: str) -> str:
 
 
 class AllliveRanking(TemplateView):
-    """YoutubeLiveランキング"""
+    """ちくわちゃんランキング"""
     template_name = 'all_live_ranking.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        driver = webdriver.Chrome(options=options)
+        driver.get('http://www.chikuwachan.com/twicas/')
 
-        # ちくわちゃんランキングからスクレイピング
-        CHIKURAN_URL = 'http://www.chikuwachan.com/live/'
-        # html = requests.get(CHIKURAN_URL)
-        # soup = BeautifulSoup(html.text, "html.parser")
-        # topicsindex = soup.find('div', class_="lives")
-        # topicsindex = soup.find('div', id='ranking')
-        # topics = topicsindex.find_all('li', attrs={'class': 'lives'})
-        # print(html.text)
+        live_list = []
+        for i in range(1, 21):
+            title_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl > div.title'
+            topic_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl > div.topic'
+            href_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl'
+            icon_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl > div.image_user > img'
+            image_selector = f'#ranking > div > ul > li:nth-child({i}) > a > span > img'
+            viewers_selector = f'#ranking > div > ul > li:nth-child({i}) > div.watch.viewers.watch10000 > div.count'
+            viewers_selector = f'#ranking > div > ul > li:nth-child({i}) > div.watch.viewers.watch5000 > div.count'
+            if i < 11:
+                live = {
+                    'title': driver.find_element_by_css_selector(title_selector).text,
+                    'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('src'),
+                    'image': driver.find_element_by_css_selector(image_selector).get_attribute('src')
+                }
+                live_list.append(live)
+            else:
+                live = {
+                    'title': driver.find_element_by_css_selector(title_selector).text,
+                    'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('data-src'),
+                    'image': driver.find_element_by_css_selector(image_selector).get_attribute('data-src')
+                }
+                live_list.append(live)
+        live_df = pd.DataFrame(live_list)
+        context = {
+            'live_df': live_df
+        }
 
-        # columns定義したDataFrameを作成
-        # yahoo_news_df = pd.DataFrame(columns=yahoo_comment_columns)
-        # for topic in topics:
-        #     se = pd.Series([
-        #         topic.find('span', attrs={'class': 'newsFeed_item_rankNum'}).contents[0],
-        #         topic.find('div', attrs={'class': 'newsFeed_item_title'}).contents[0],
-        #         topic.find('em').contents[0],
-        #         topic.find('a').get('href')
-        #     ], yahoo_comment_columns
-        #     )
-        #     yahoo_news_df = yahoo_news_df.append(se, ignore_index=True)
-
-        # context = {
-        #     'twitter_trend_df': twitter_trend_df,
-        #     'yahoo_news_df': yahoo_news_df
-        # }
         return context
 
 
@@ -274,7 +290,7 @@ class PornhubRanking(TemplateView):
                 'image8': 'https://ci.phncdn.com/' + video.thumbs[14].src.path,
             }
             video_list.append(data)
-        video_list_df = pd.DataFrame(video_list)
+        video_list_df = pd.DataFrame(video_list) #辞書のリストからDF生成
         video_list_df = video_list_df.sort_values(['rating','views'], ascending=False)
 
         context = {

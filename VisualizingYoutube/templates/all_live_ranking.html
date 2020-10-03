@@ -10,7 +10,7 @@
     <div class="row">
        <div class="col-md-12">
             <h3>国内ライブ配信ランキング</h3>
-            <h5>工事中</h5>
+            <h5></h5>
         </div>
     </div>
 
@@ -41,19 +41,14 @@
 
         <!-- 一覧 -->
         <div class="col-md-12">
-            {% for index, row in sorted_df.iterrows %}
-            <div class="white-container">
-                <p>チャンネル名：{{ row.channelTitle }}</p>
-                <p>タイトル：{{ row.title }}</p>
-                <a>説明：{{ row.description }}</a>
-                <div>
-                <iframe width="480" height="360" src="//www.youtube.com/embed/{{ row.videoId }}" frameborder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                <a>視聴者数：{{ row.concurrentViewers | intcomma }}</a>
-                <a>開始時間：{{ row.actualStartTime }}</a>
+            {% for index, live in live_df.iterrows %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-header">{{ forloop.counter }}.&nbsp;{{ live.topic }}&nbsp;&nbsp;By {{ live.title }}</h5>
+                    <h6 class="card-text"><a href="{{ live.url }}" target="_blank"><img src={{ live.image }}><img
+                                src={{ live.icon }}></a></h6>
                 </div>
             </div>
-            <br>
             {% endfor %}
         </div>
     </div>

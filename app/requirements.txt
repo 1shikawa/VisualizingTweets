@@ -24,3 +24,5 @@ httplib2
 pornhub-api
 aiohttp
 oauth2client
+selenium
+chromedriver-binary==85.*
