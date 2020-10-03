@@ -25,4 +25,6 @@ httplib2
 oauth2client
 pornhub-api
 aiohttp
+selenium
+chromedriver-binary==85.*
 django-heroku
