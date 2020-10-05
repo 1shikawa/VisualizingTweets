@@ -27,4 +27,5 @@ pornhub-api
 aiohttp
 selenium
 chromedriver-binary==85.*
+lxml
 django-heroku

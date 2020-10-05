@@ -15,6 +15,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException
 import pytz
 from bs4 import BeautifulSoup
+import lxml.html
 import pprint
 
 from apiclient.discovery import build
@@ -210,32 +211,55 @@ class AllliveRanking(TemplateView):
         options.add_argument('--disable-dev-shm-usage')
         driver = webdriver.Chrome(options=options)
         driver.get('http://www.chikuwachan.com/twicas/')
+        html = driver.page_source
 
+        soup = BeautifulSoup(html, 'lxml')
         live_list = []
-        for i in range(1, 21):
-            title_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl > div.title'
-            topic_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl > div.topic'
-            href_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl'
-            icon_selector = f'#ranking > div > ul > li:nth-child({i}) > div.content > a.liveurl > div.image_user > img'
-            image_selector = f'#ranking > div > ul > li:nth-child({i}) > a > span > img'
-            viewers_selector = f'#ranking > div > ul > li:nth-child({i}) > div.watch.viewers.watch10000 > div.count'
-            viewers_selector = f'#ranking > div > ul > li:nth-child({i}) > div.watch.viewers.watch5000 > div.count'
+        for i in range(1, 31):
+            common_selector = f'#ranking > div > ul > li:nth-child({i}) > '
+            title_selector = common_selector + 'div.content > a.liveurl > div.title'
+            topic_selector = common_selector + 'div.content > a.liveurl > div.topic'
+            href_selector = common_selector + 'div.content > a.liveurl'
+            icon_selector = common_selector + 'div.content > a.liveurl > div.image_user > img'
+            image_selector = common_selector + 'a > span > img'
+            site_selector = common_selector + 'div.content > a.siteicon > img'
+            viewers_selector = common_selector + 'div > div.count'
+            progress_selector = common_selector + 'div.content > div.progress'
+
             if i < 11:
                 live = {
-                    'title': driver.find_element_by_css_selector(title_selector).text,
-                    'topic': driver.find_element_by_css_selector(topic_selector).text,
-                    'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
-                    'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('src'),
-                    'image': driver.find_element_by_css_selector(image_selector).get_attribute('src')
+                    # 'title': driver.find_element_by_css_selector(title_selector).text,
+                    # 'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    # 'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    # 'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('src'),
+                    # 'image': driver.find_element_by_css_selector(image_selector).get_attribute('src'),
+                    # 'site': driver.find_element_by_css_selector(site_selector).get_attribute('src')
+                    'title': soup.select_one(title_selector).get_text(),
+                    'topic': soup.select_one(topic_selector).get_text(),
+                    'url': soup.select_one(href_selector).get('href'),
+                    'image': soup.select_one(image_selector).get('src'),
+                    'icon': soup.select_one(icon_selector).get('src'),
+                    'site': soup.select_one(site_selector).get('src'),
+                    'viewers': soup.select_one(viewers_selector).get_text(),
+                    'progress': soup.select_one(progress_selector).get_text()
                 }
                 live_list.append(live)
             else:
                 live = {
-                    'title': driver.find_element_by_css_selector(title_selector).text,
-                    'topic': driver.find_element_by_css_selector(topic_selector).text,
-                    'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
-                    'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('data-src'),
-                    'image': driver.find_element_by_css_selector(image_selector).get_attribute('data-src')
+                    # 'title': driver.find_element_by_css_selector(title_selector).text,
+                    # 'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    # 'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    # 'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('data-src'),
+                    # 'image': driver.find_element_by_css_selector(image_selector).get_attribute('data-src'),
+                    # 'site': driver.find_element_by_css_selector(site_selector).get_attribute('src')
+                    'title': soup.select_one(title_selector).get_text(),
+                    'topic': soup.select_one(topic_selector).get_text(),
+                    'url': soup.select_one(href_selector).get('href'),
+                    'image': soup.select_one(image_selector).get('data-src'),
+                    'icon': soup.select_one(icon_selector).get('data-src'),
+                    'site': soup.select_one(site_selector).get('src'),
+                    'viewers': soup.select_one(viewers_selector).get_text(),
+                    'progress': soup.select_one(progress_selector).get_text()
                 }
                 live_list.append(live)
         live_df = pd.DataFrame(live_list)
@@ -271,6 +295,7 @@ class PornhubRanking(TemplateView):
             # tags=["japanese"],
             # ordering="rating"
             )
+        THUMBNAIL_URL = 'https://ci.phncdn.com/'
         video_list = []
         for video in data.videos[:30]:
             data = {
@@ -280,14 +305,14 @@ class PornhubRanking(TemplateView):
                 'rating': float(video.rating),
                 'duration': video.duration,
                 'url': 'https://www.pornhub.com/view_video.php?' + video.url.query,
-                'image1': 'https://ci.phncdn.com/' + video.thumbs[0].src.path,
-                'image2': 'https://ci.phncdn.com/' + video.thumbs[2].src.path,
-                'image3': 'https://ci.phncdn.com/' + video.thumbs[4].src.path,
-                'image4': 'https://ci.phncdn.com/' + video.thumbs[6].src.path,
-                'image5': 'https://ci.phncdn.com/' + video.thumbs[8].src.path,
-                'image6': 'https://ci.phncdn.com/' + video.thumbs[10].src.path,
-                'image7': 'https://ci.phncdn.com/' + video.thumbs[12].src.path,
-                'image8': 'https://ci.phncdn.com/' + video.thumbs[14].src.path,
+                'image1': THUMBNAIL_URL + video.thumbs[0].src.path,
+                'image2': THUMBNAIL_URL + video.thumbs[2].src.path,
+                'image3': THUMBNAIL_URL + video.thumbs[4].src.path,
+                'image4': THUMBNAIL_URL + video.thumbs[6].src.path,
+                'image5': THUMBNAIL_URL + video.thumbs[8].src.path,
+                'image6': THUMBNAIL_URL + video.thumbs[10].src.path,
+                'image7': THUMBNAIL_URL + video.thumbs[12].src.path,
+                'image8': THUMBNAIL_URL + video.thumbs[14].src.path,
             }
             video_list.append(data)
         video_list_df = pd.DataFrame(video_list) #辞書のリストからDF生成

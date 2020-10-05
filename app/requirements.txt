@@ -26,3 +26,4 @@ aiohttp
 oauth2client
 selenium
 chromedriver-binary==85.*
+lxml
