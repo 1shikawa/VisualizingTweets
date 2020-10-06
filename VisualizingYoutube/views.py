@@ -15,7 +15,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException
 import pytz
 from bs4 import BeautifulSoup
-import lxml.html
 import pprint
 
 from apiclient.discovery import build

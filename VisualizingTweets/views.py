@@ -366,7 +366,7 @@ class StockDelete(LoginRequiredMixin, DeleteView):
         return self.post(*args, **kwargs)
 
 
-class SpecifiedUrl(TemplateView):
+class SpecifiedUrl(LoginRequiredMixin, TemplateView):
     template_name = 'specified_url.html'
     form_class = SpecifiedUrlForm
 
