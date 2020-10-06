@@ -9,4 +9,7 @@ urlpatterns = [
     path('pornConfirm/', views.pornConfirm.as_view(), name='porn_confirm'),
     path('pornhubRanking/', views.PornhubRanking.as_view(), name='pornhub_ranking'),
     path('AllliveRanking/', views.AllliveRanking.as_view(), name='all_live_ranking'),
+    path('YoutubeRanking/', views.YoutubeRanking.as_view(), name='youtube_ranking'),
+    path('TwicasRanking/', views.TwicasRanking.as_view(), name='twicas_ranking'),
+
 ]

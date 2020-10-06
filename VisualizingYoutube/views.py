@@ -270,6 +270,149 @@ class AllliveRanking(TemplateView):
         return context
 
 
+class YoutubeRanking(TemplateView):
+    """ちくわちゃんランキング"""
+    template_name = 'youtube_ranking.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        driver = webdriver.Chrome(options=options)
+        driver.get('http://www.chikuwachan.com/live/TUB/')
+        html = driver.page_source
+
+        soup = BeautifulSoup(html, 'lxml')
+        live_list = []
+        for i in range(1, 31):
+            common_selector = f'#ranking > div > ul > li:nth-child({i}) > '
+            title_selector = common_selector + 'div.content > a.liveurl > div.title'
+            topic_selector = common_selector + 'div.content > a.liveurl > div.topic'
+            href_selector = common_selector + 'div.content > a.liveurl'
+            icon_selector = common_selector + 'div.content > a.liveurl > div.image_user > img'
+            image_selector = common_selector + 'a > span > img'
+            site_selector = common_selector + 'div.content > a.siteicon > img'
+            viewers_selector = common_selector + 'div > div.count'
+            progress_selector = common_selector + 'div.content > div.progress'
+
+            if i < 11:
+                live = {
+                    # 'title': driver.find_element_by_css_selector(title_selector).text,
+                    # 'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    # 'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    # 'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('src'),
+                    # 'image': driver.find_element_by_css_selector(image_selector).get_attribute('src'),
+                    # 'site': driver.find_element_by_css_selector(site_selector).get_attribute('src')
+                    'title': soup.select_one(title_selector).get_text(),
+                    'topic': soup.select_one(topic_selector).get_text(),
+                    'url': soup.select_one(href_selector).get('href'),
+                    'image': soup.select_one(image_selector).get('src'),
+                    'icon': soup.select_one(icon_selector).get('src'),
+                    'site': soup.select_one(site_selector).get('src'),
+                    'viewers': soup.select_one(viewers_selector).get_text(),
+                    'progress': soup.select_one(progress_selector).get_text()
+                }
+                live_list.append(live)
+            else:
+                live = {
+                    # 'title': driver.find_element_by_css_selector(title_selector).text,
+                    # 'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    # 'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    # 'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('data-src'),
+                    # 'image': driver.find_element_by_css_selector(image_selector).get_attribute('data-src'),
+                    # 'site': driver.find_element_by_css_selector(site_selector).get_attribute('src')
+                    'title': soup.select_one(title_selector).get_text(),
+                    'topic': soup.select_one(topic_selector).get_text(),
+                    'url': soup.select_one(href_selector).get('href'),
+                    'image': soup.select_one(image_selector).get('data-src'),
+                    'icon': soup.select_one(icon_selector).get('data-src'),
+                    'site': soup.select_one(site_selector).get('src'),
+                    'viewers': soup.select_one(viewers_selector).get_text(),
+                    'progress': soup.select_one(progress_selector).get_text()
+                }
+                live_list.append(live)
+        youtube_live_df = pd.DataFrame(live_list)
+        context = {
+            'youtube_live_df': youtube_live_df
+        }
+
+        return context
+
+
+class TwicasRanking(TemplateView):
+    """ちくわちゃんランキング"""
+    template_name = 'twicas_ranking.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        driver = webdriver.Chrome(options=options)
+        driver.get('http://www.chikuwachan.com/live/CAS/')
+        html = driver.page_source
+
+        soup = BeautifulSoup(html, 'lxml')
+        live_list = []
+        for i in range(1, 31):
+            common_selector = f'#ranking > div > ul > li:nth-child({i}) > '
+            title_selector = common_selector + 'div.content > a.liveurl > div.title'
+            topic_selector = common_selector + 'div.content > a.liveurl > div.topic'
+            href_selector = common_selector + 'div.content > a.liveurl'
+            icon_selector = common_selector + 'div.content > a.liveurl > div.image_user > img'
+            image_selector = common_selector + 'a > span > img'
+            site_selector = common_selector + 'div.content > a.siteicon > img'
+            viewers_selector = common_selector + 'div > div.count'
+            progress_selector = common_selector + 'div.content > div.progress'
+
+            if i < 11:
+                live = {
+                    # 'title': driver.find_element_by_css_selector(title_selector).text,
+                    # 'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    # 'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    # 'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('src'),
+                    # 'image': driver.find_element_by_css_selector(image_selector).get_attribute('src'),
+                    # 'site': driver.find_element_by_css_selector(site_selector).get_attribute('src')
+                    'title': soup.select_one(title_selector).get_text(),
+                    'topic': soup.select_one(topic_selector).get_text(),
+                    'url': soup.select_one(href_selector).get('href'),
+                    'image': soup.select_one(image_selector).get('src'),
+                    'icon': soup.select_one(icon_selector).get('src'),
+                    'site': soup.select_one(site_selector).get('src'),
+                    'viewers': soup.select_one(viewers_selector).get_text(),
+                    'progress': soup.select_one(progress_selector).get_text()
+                }
+                live_list.append(live)
+            else:
+                live = {
+                    # 'title': driver.find_element_by_css_selector(title_selector).text,
+                    # 'topic': driver.find_element_by_css_selector(topic_selector).text,
+                    # 'url': driver.find_element_by_css_selector(href_selector).get_attribute('href'),
+                    # 'icon': driver.find_element_by_css_selector(icon_selector).get_attribute('data-src'),
+                    # 'image': driver.find_element_by_css_selector(image_selector).get_attribute('data-src'),
+                    # 'site': driver.find_element_by_css_selector(site_selector).get_attribute('src')
+                    'title': soup.select_one(title_selector).get_text(),
+                    'topic': soup.select_one(topic_selector).get_text(),
+                    'url': soup.select_one(href_selector).get('href'),
+                    'image': soup.select_one(image_selector).get('data-src'),
+                    'icon': soup.select_one(icon_selector).get('data-src'),
+                    'site': soup.select_one(site_selector).get('src'),
+                    'viewers': soup.select_one(viewers_selector).get_text(),
+                    'progress': soup.select_one(progress_selector).get_text()
+                }
+                live_list.append(live)
+        twicas_live_df = pd.DataFrame(live_list)
+        context = {
+            'twicas_live_df': twicas_live_df
+        }
+
+        return context
+
+
+
 import asyncio
 from pornhub_api.backends.aiohttp import AioHttpBackend
 from pornhub_api import PornhubApi
