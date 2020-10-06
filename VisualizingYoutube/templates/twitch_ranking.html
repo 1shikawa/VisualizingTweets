@@ -44,7 +44,7 @@
 
         <!-- 一覧 -->
         <div class="col-md-12">
-            {% for index, live in youtube_live_df.iterrows %}
+            {% for index, live in twitch_live_df.iterrows %}
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-header">{{ forloop.counter }}.&nbsp;<img src={{ live.site }}>&nbsp;

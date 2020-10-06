@@ -10,9 +10,10 @@
     <div class="row">
        <div class="col-md-12">
             <h3>国内ライブ配信ランキング</h3>
-            <a class="btn btn-sm btn-primary" href="{% url 'VisualizingYoutube:all_live_ranking' %}">ALL</a>&nbsp;
-            <a class="btn btn-sm btn-primary" href="{% url 'VisualizingYoutube:youtube_ranking' %}">Youtube</a>&nbsp;
-            <a class="btn btn-sm btn-primary" href="{% url 'VisualizingYoutube:twicas_ranking' %}">Twicas</a>&nbsp;
+            <a href="{% url 'VisualizingYoutube:all_live_ranking' %}"><i class="fas fa-broadcast-tower fa-3x"></i></a>&nbsp;&nbsp;
+            <a href="{% url 'VisualizingYoutube:youtube_ranking' %}"><i class="fab fa-youtube fa-3x"></i></a>&nbsp;&nbsp;
+            <a href="{% url 'VisualizingYoutube:twicas_ranking' %}"><i class="fab fa-twitter fa-3x"></i></a>&nbsp;&nbsp;
+            <a href="{% url 'VisualizingYoutube:twitch_ranking' %}"><i class="fab fa-twitch fa-3x"></i></a>&nbsp;&nbsp;
         </div>
     </div>
 
@@ -43,7 +44,7 @@
 
         <!-- 一覧 -->
         <div class="col-md-12">
-            {% for index, live in live_df.iterrows %}
+            {% for index, live in all_live_df.iterrows %}
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-header">{{ forloop.counter }}.&nbsp;<img src={{ live.site }}>&nbsp;
