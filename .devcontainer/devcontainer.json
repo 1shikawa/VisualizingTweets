@@ -7,7 +7,7 @@
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
 	"dockerComposeFile": [
-		"..\\docker-compose.ci.yml",
+		"..\\docker-compose.yml",
 		"docker-compose.yml"
 	],
 
@@ -17,7 +17,7 @@
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/workspace",
+	"workspaceFolder": "/code",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
@@ -25,7 +25,32 @@
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": []
+	"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"batisteo.vscode-django",
+				// "atisteo.vscode-django",
+				"bibhasdn.django-snippets",
+				"bibhasdn.django-html",
+				"editorconfig.editorconfig",
+				"donjayamanne.githistory",
+				"eamodio.gitlens",
+				"hookyqr.beautify",
+				"esbenp.prettier-vscode",
+				"alefragnani.bookmarks",
+				"lacroixdavid1.vscode-format-context-menu",
+				"oderwat.indent-rainbow",
+				"ionutvmi.path-autocomplete",
+				"ms-azuretools.vscode-docker",
+				"coenraads.bracket-pair-colorizer",
+				"coenraads.bracket-pair-colorizer-2",
+				"abusaidm.html-snippets",
+				"oderwat.indent-rainbow",
+				"ms-edgedevtools.vscode-edge-devtools",
+				"ibm.output-colorizer",
+				"njpwerner.autodocstring",
+				"shardulm94.trailing-spaces"
+	]
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
