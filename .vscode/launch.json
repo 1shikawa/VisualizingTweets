@@ -9,7 +9,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/local_manage.py",
-      "args": ["runserver", "--noreload", "--nothreading", "--settings=config.local_settings", "0.0.0.0:8080"],
+      "args": ["runserver", "--settings=config.local_settings", "0.0.0.0:8080"],
       "django": true
     }
   ]

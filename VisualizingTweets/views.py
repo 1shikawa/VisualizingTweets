@@ -61,17 +61,18 @@ class Index(TemplateView):
         with concurrent.futures.ThreadPoolExecutor(max_workers=3, thread_name_prefix='thread') as executor:
             jp_twitter_trend = executor.submit(get_twitter_trend_df, jp_area_code)
             us_twitter_trend = executor.submit(get_twitter_trend_df, us_area_code)
-            yahoo_news = executor.submit(scrapying_news)
+            yahoo_news = executor.submit(scraping_yahoo_news)
         # logger.info(jp_twitter_trend_df)
         context = {
             'jp_twitter_trend_df': jp_twitter_trend.result(),
             'us_twitter_trend_df': us_twitter_trend.result(),
             'yahoo_news_df': yahoo_news.result(),
         }
+        logger.info('Twitter trend and Yahoo news completed')
         return context
 
 
-def scrapying_news():
+def scraping_yahoo_news() -> pd.DataFrame:
     # Yahooニュースコメントランキングからスクレイピング
     YAHOO_NEWS_URL = 'https://news.yahoo.co.jp/ranking/comment'
     html = requests.get(YAHOO_NEWS_URL)
@@ -98,8 +99,11 @@ def scrapying_news():
     return yahoo_news_df
 
 
-def get_twitter_trend_df(parentid: str):
-    """parentidから各国のTwitterトレンドを取得"""
+def get_twitter_trend_df(parentid: str) -> pd.DataFrame:
+    """parentidから各国のTwitterトレンドを取得
+    arument: 地域コード
+    return: DataFrame
+    """
     trends = api.trends_place(parentid)
     # # columns定義したDataFrameを作成
     twitter_trend_df = pd.DataFrame(columns=twitter_trend_columns)
@@ -212,6 +216,7 @@ class timelineSearch(TemplateView):
                     'profile': profile,
                     'display_number': display_number,
                 }
+                logging.info(f'screen_name: {screen_name} timeline is OK')
                 return context
         except:
             # messages.error(self.request, 'エラーが発生しました。')
@@ -277,7 +282,7 @@ class KeyWordSearch(TemplateView):
                 'sorted_df': sorted_df,
                 'display_number': display_number
             }
-
+            logging.info(f'search keyword: {keyword} is OK')
             return context
 
         except:
@@ -291,6 +296,7 @@ class StockList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Stock.objects.filter(stock_user=self.request.user)
+        logging.info(f'display {self.request.user}\'s stock list')
         return queryset
 
 
@@ -305,6 +311,7 @@ class StockAdd(LoginRequiredMixin, CreateView):
         tweet_id = self.kwargs['tweet_id']
         if Stock.objects.filter(tweet_id=tweet_id, stock_user=str(self.request.user)).exists():
             messages.warning(self.request, '既にストック済みです。')
+            logging.info(f'{tweet_id} has been saved')
         # tweet_idからツイート情報取得
         tweet = api.get_status(id=tweet_id, tweet_mode="extended")
         if tweet.entities['urls']:
@@ -349,10 +356,12 @@ class StockUpdate(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         stock = form.save()
         messages.success(self.request, f'ID：{stock.pk}のストックを更新しました。')
+        logging.info(f'pk: {stock.pk} stock updated')
         return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, 'ストックの更新に失敗しました。')
+        logging.error(f'pk: {stock.pk} stock update failure')
         return super().form_invalid(form)
 
 
@@ -363,6 +372,7 @@ class StockDelete(LoginRequiredMixin, DeleteView):
     # 確認画面を省略するためにgetをpostにショートカット
     def get(self, *args, **kwargs):
         messages.success(self.request, '対象ストックを削除しました。')
+        logging.info(f'pk: {stock.pk} stock deleted')
         return self.post(*args, **kwargs)
 
 
@@ -382,6 +392,7 @@ class SpecifiedUrl(LoginRequiredMixin, TemplateView):
 
             if Stock.objects.filter(tweet_id=tweet_id, stock_user=str(self.request.user)).exists():
                 messages.warning(self.request, '既にストック済みです。')
+                logging.info(f'{tweet_id} stock has been saved')
                 return context
 
             else:
@@ -416,7 +427,10 @@ class SpecifiedUrl(LoginRequiredMixin, TemplateView):
 
 
 def get_tweet_id(url: str) -> str:
-    """TweetURLからscreen_nameとstatus_idを取得"""
+    """TweetURLからscreen_nameとstatus_idを取得
+    argment: ツイッターURL
+    return: ツイート固有ID(status)
+    """
     url = url.replace('https://twitter.com/','')
     data = url.split('/')
     screen_name = data[0]

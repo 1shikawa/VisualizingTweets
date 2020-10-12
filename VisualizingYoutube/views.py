@@ -15,11 +15,12 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException
 import pytz
 from bs4 import BeautifulSoup
-import pprint
 
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 # from oauth2client.tools import argparser
+
+logger = logging.getLogger(__name__)
 
 # YouTube APIの各種設定
 YOUTUBE_API_KEY = settings.YOUTUBE_API_KEY
@@ -205,57 +206,60 @@ class AllliveRanking(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         ALL_LIVE_URL = 'http://www.chikuwachan.com/twicas/'
-        all_live_df = live_scraping(ALL_LIVE_URL)
+        all_live_df = scrape_chikuwachan_ranking(ALL_LIVE_URL)
         context = {
             'all_live_df': all_live_df
         }
+        logger.info('chikuwachan ranking: fullspec')
         return context
 
 
 class YoutubeRanking(TemplateView):
-    """ちくわちゃんランキング"""
+    """Youtube by ちくわちゃんランキング"""
     template_name = 'youtube_ranking.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         YOUTUBE_LIVE_URL = 'http://www.chikuwachan.com/live/TUB/'
-        youtube_live_df = live_scraping(YOUTUBE_LIVE_URL)
+        youtube_live_df = scrape_chikuwachan_ranking(YOUTUBE_LIVE_URL)
         context = {
             'youtube_live_df': youtube_live_df
         }
+        logger.info('chikuwachan ranking: Youtube')
         return context
 
 
 class TwicasRanking(TemplateView):
-    """ちくわちゃんランキング"""
+    """Twicas by ちくわちゃんランキング"""
     template_name = 'twicas_ranking.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         TWICAS_LIVE_URL = 'http://www.chikuwachan.com/live/CAS/'
-        twicas_live_df = live_scraping(TWICAS_LIVE_URL)
+        twicas_live_df = scrape_chikuwachan_ranking(TWICAS_LIVE_URL)
         context = {
             'twicas_live_df': twicas_live_df
         }
+        logger.info('chikuwachan ranking: Twicas')
         return context
 
 
 class TwitchRanking(TemplateView):
-    """ちくわちゃんランキング"""
+    """Twitch by ちくわちゃんランキング"""
     template_name = 'twitch_ranking.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         TWITCH_LIVE_URL = 'http://www.chikuwachan.com/live/TCH/'
-        twitch_live_df = live_scraping(TWITCH_LIVE_URL)
+        twitch_live_df = scrape_chikuwachan_ranking(TWITCH_LIVE_URL)
         context = {
             'twitch_live_df': twitch_live_df
         }
+        logger.info('chikuwachan ranking: Twitch')
         return context
 
 
-
-def live_scraping(URL: str) -> pd.DataFrame:
+def scrape_chikuwachan_ranking(URL: str) -> pd.DataFrame:
     '''selenium-> BeautifulSoupでのスクレイピング
         argment: URL
         return: DataFrame
@@ -282,6 +286,7 @@ def live_scraping(URL: str) -> pd.DataFrame:
         progress_selector = common_selector + 'div.content > div.progress'
 
         if i < 11:
+            "10位以下と以上で要素が異なるため"
             live = {
                 # 'title': driver.find_element_by_css_selector(title_selector).text,
                 # 'topic': driver.find_element_by_css_selector(topic_selector).text,
@@ -318,13 +323,8 @@ def live_scraping(URL: str) -> pd.DataFrame:
             }
             live_list.append(live)
     live_df = pd.DataFrame(live_list)
+    logger.info('scraping completed')
     return live_df
-
-
-import asyncio
-from pornhub_api.backends.aiohttp import AioHttpBackend
-from pornhub_api import PornhubApi
-import pprint
 
 
 class pornConfirm(TemplateView):
@@ -337,40 +337,50 @@ class PornhubRanking(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        api = PornhubApi()
-        video_ids =[]
-        data = api.search.search(
-            # "japanese",
-            period="day",
-            category=["japanese"]
-            # tags=["japanese"],
-            # ordering="rating"
-            )
-        THUMBNAIL_URL = 'https://ci.phncdn.com/'
-        video_list = []
-        for video in data.videos[:30]:
-            data = {
-                'title': video.title,
-                'publish_date': video.publish_date,
-                'views': video.views,
-                'rating': float(video.rating),
-                'duration': video.duration,
-                'url': 'https://www.pornhub.com/view_video.php?' + video.url.query,
-                'image1': THUMBNAIL_URL + video.thumbs[0].src.path,
-                'image2': THUMBNAIL_URL + video.thumbs[2].src.path,
-                'image3': THUMBNAIL_URL + video.thumbs[4].src.path,
-                'image4': THUMBNAIL_URL + video.thumbs[6].src.path,
-                'image5': THUMBNAIL_URL + video.thumbs[8].src.path,
-                'image6': THUMBNAIL_URL + video.thumbs[10].src.path,
-                'image7': THUMBNAIL_URL + video.thumbs[12].src.path,
-                'image8': THUMBNAIL_URL + video.thumbs[14].src.path,
-            }
-            video_list.append(data)
-        video_list_df = pd.DataFrame(video_list) #辞書のリストからDF生成
-        video_list_df = video_list_df.sort_values(['rating','views'], ascending=False)
-
+        video_list_df =get_pornhub(26)
         context = {
             'video_list_df': video_list_df
         }
         return context
 
+def get_pornhub(count: int) -> pd.DataFrame:
+    '''Pornhub API でのvideo取得
+        argment: 取得数
+        return: DataFrame
+    '''
+    from pornhub_api.backends.aiohttp import AioHttpBackend
+    from pornhub_api import PornhubApi
+
+    api = PornhubApi()
+    category = 'japanese'
+    data = api.search.search(
+        # "japanese",
+        period="day",
+        category=[category]
+        # tags=["japanese"],
+        # ordering="rating"
+        )
+    THUMBNAIL_URL = 'https://ci.phncdn.com/'
+    video_list = []
+    for video in data.videos[:count]:
+        data = {
+            'title': video.title,
+            'publish_date': video.publish_date,
+            'views': video.views,
+            'rating': float(video.rating),
+            'duration': video.duration,
+            'url': 'https://www.pornhub.com/view_video.php?' + video.url.query,
+            'image1': THUMBNAIL_URL + video.thumbs[0].src.path,
+            'image2': THUMBNAIL_URL + video.thumbs[2].src.path,
+            'image3': THUMBNAIL_URL + video.thumbs[4].src.path,
+            'image4': THUMBNAIL_URL + video.thumbs[6].src.path,
+            'image5': THUMBNAIL_URL + video.thumbs[8].src.path,
+            'image6': THUMBNAIL_URL + video.thumbs[10].src.path,
+            'image7': THUMBNAIL_URL + video.thumbs[12].src.path,
+            'image8': THUMBNAIL_URL + video.thumbs[14].src.path,
+        }
+        video_list.append(data)
+    video_list_df = pd.DataFrame(video_list) #辞書のリストからDF生成
+    video_list_df = video_list_df.sort_values(['rating','views'], ascending=False)
+    logger.info(f'pornhub video category: {category}')
+    return video_list_df
