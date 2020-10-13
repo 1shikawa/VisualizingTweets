@@ -13,7 +13,6 @@ import logging
 import pandas as pd
 import tweepy
 from bs4 import BeautifulSoup
-import pprint
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +67,7 @@ class Index(TemplateView):
             'us_twitter_trend_df': us_twitter_trend.result(),
             'yahoo_news_df': yahoo_news.result(),
         }
-        logger.info('Twitter trend and Yahoo news completed')
+        logger.info('Twitter trend and Yahoo news scraping completed')
         return context
 
 
@@ -460,6 +459,7 @@ def create_stock(request, tweet_id):
         )
         stock.save()
         messages.success(request, 'ストックしました。')
+        logging.info(f'tweet_id: {tweet_id} stocked')
         return redirect('VisualizingTweets:specified_url')
     else:
         return redirect('VisualizingTweets:specified_url')
