@@ -170,7 +170,7 @@ class timelineSearch(TemplateView):
                     return redirect('Visualizing:timeline_search', form)
 
                 # Tweepy,Statusオブジェクトからツイート情報取得
-                for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, trim_user=True, include_entities=True, include_rts=False, tweet_mode="extended").items(display_number):
+                for tweet in tweepy.Cursor(api.user_timeline, screen_name=screen_name, exclude_replies=True, trim_user=True, include_entities=True, include_rts=False, result_type="mixed", tweet_mode="extended").items(display_number):
                     try:
                         if not "RT @" in tweet.full_text and tweet.favorite_count != 0:
                             se = pd.Series([
@@ -252,7 +252,7 @@ class KeyWordSearch(TemplateView):
         tweets_df = pd.DataFrame(columns=keysearch_columns)
 
         try:
-            for tweet in tweepy.Cursor(api.search, q=keyword, lang=lang, include_entities=True, include_rts=False, tweet_mode="extended").items(display_number):
+            for tweet in tweepy.Cursor(api.search, q=keyword, lang=lang, include_entities=True, include_rts=False, result_type="mixed", tweet_mode="extended").items(display_number):
                 if not tweet.full_text.startswith('RT @'):
                     se = pd.Series([
                         # ツイート情報
@@ -312,7 +312,7 @@ class StockAdd(LoginRequiredMixin, CreateView):
             messages.warning(self.request, '既にストック済みです。')
             logging.info(f'{tweet_id} has been saved')
         # tweet_idからツイート情報取得
-        tweet = api.get_status(id=tweet_id, tweet_mode="extended")
+        tweet = api.get_status(id=tweet_id, result_type="mixed", tweet_mode="extended")
         if tweet.entities['urls']:
             expanded_url = tweet.entities['urls'][0]['expanded_url']
         else:
@@ -395,7 +395,7 @@ class SpecifiedUrl(LoginRequiredMixin, TemplateView):
                 return context
 
             else:
-                tweet = api.get_status(id=tweet_id, tweet_mode="extended")
+                tweet = api.get_status(id=tweet_id, result_type="mixed", tweet_mode="extended")
                 if tweet.entities['urls']:
                     expanded_url = tweet.entities['urls'][0]['expanded_url']
                 else:
@@ -439,7 +439,7 @@ def get_tweet_id(url: str) -> str:
 
 def create_stock(request, tweet_id):
     if request.method == 'POST':
-        tweet = api.get_status(id=tweet_id, tweet_mode="extended")
+        tweet = api.get_status(id=tweet_id, result_type="mixed", tweet_mode="extended")
         if tweet.entities['urls']:
             expanded_url = tweet.entities['urls'][0]['expanded_url']
         else:
