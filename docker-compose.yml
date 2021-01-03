@@ -4,8 +4,8 @@ services:
   app:
     container_name: visualizingTweets-django
     build: ./app
-    # restart: on-failure
-    # command: bash -c "python manage.py runserver 0.0.0.0:8080"
+    restart: on-failure
+    command: bash -c "python manage.py runserver 0.0.0.0:8080"
     # command: >
     #   bash -c "python local_manage.py makemigrations
     #   && python local_manage.py migrate

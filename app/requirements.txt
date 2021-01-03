@@ -25,5 +25,5 @@ pornhub-api
 aiohttp
 oauth2client
 selenium
-chromedriver-binary==85.*
+chromedriver-binary==87.*
 lxml
