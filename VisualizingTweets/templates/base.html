@@ -67,6 +67,7 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{% url 'VisualizingTweets:keyword_search' %}">Twitterキーワード検索</a>
             <a class="dropdown-item" href="{% url 'VisualizingTweets:timeline_search' %}">Twitterタイムライン検索</a>
+            <a class="dropdown-item" href="{% url 'VisualizingTweets:follow_users' %}">Twitterフォロー検索</a>
             <a class="dropdown-item" href="{% url 'VisualizingTweets:specified_url' %}">Twitter指定ストック</a>
             <a class="dropdown-item" href="{% url 'VisualizingYoutube:video_search' %}">Youtube動画検索</a>
             <a class="dropdown-item" href="{% url 'VisualizingYoutube:youtubelive_ranking' %}">YoutubeLiveランキング</a>
@@ -123,6 +124,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'VisualizingTweets:timeline_search' %}">Twitterタイムライン検索</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'VisualizingTweets:follow_users' %}">Twitterフォローユーザー検索</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'VisualizingTweets:specified_url' %}">Twitter指定ストック</a>

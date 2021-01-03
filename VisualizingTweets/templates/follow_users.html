@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load humanize %}
+{% load url_customize %}
+
+{% block head %}
+{% endblock %}
+
+{% block contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>フォローユーザー検索</h3>
+            <p>指定したユーザーがフォローしているユーザーを一覧できます。</p>
+                <form class="form-inline" method="GET" action="{% url 'VisualizingTweets:follow_users' %}">
+                    {% bootstrap_form form %}
+                    <button type="submit" class="btn btn-primary">取得</button>
+                </form>
+        </div>
+    </div>
+<br>
+    <!-- メッセージフレームワーク-->
+    {% if messages %}
+    <div class="container" style="margin-top:1rem;">
+        <div class="message">
+            {% for message in messages %}
+                {% if message.tags == "success" %}
+                    <div class="alert alert-success" role="alert">
+                {% elif message.tags == "warning" %}
+                    <div class="alert alert-warning" role="alert">
+                {% elif message.tags == "error" %}
+                    <div class="alert alert-danger" role="alert">
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                {% endif %}
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <!-- メッセージフレームワーク-->
+
+    <h4>指定ユーザーがフォローしているユーザーでフォロワーが多い順に表示します。</h4>
+    <div class="row">
+        {% for index, row in follow_users_df.iterrows %}
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ row.image }}" width="50px">
+                    <a href="https://twitter.com/{{ row.screen_name }}" id="copyarea" type="text" value="{{ row.screen_name }}" target="_blank">@{{ row.screen_name }}</a>
+                    <button type="button" class="btn sm-btn copybtn" data-copy="copyarea" title="スクリーン名をコピー">
+                        <i class="fas fa-clipboard"></i>
+                    </button>
+                    <p>{{ row.name }}</p>
+                    <a>{{ row.description }}</a>
+                    <p>{{ row.created_at }}</p>
+                    <div>ツイート数：{{ row.statuses_count | intcomma }}</div>
+                    <div>フォロワー数：{{ row.followers_count | intcomma }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+{% block script %}
+<script>
+const copybtns = document.getElementsByClassName('copybtn'); // コピーするボタンのクラス名
+
+const clipCopy = () =>{
+  if( copybtns.length > 0 ){
+    for(let i = 0; i < copybtns.length ; i++){
+      copybtns[i].addEventListener('click', ()=>{
+        const copytextarea = document.createElement("textarea");
+        const id = copybtns[i].getAttribute('data-copy');
+        const copyarea = document.getElementById(id);
+        const copytext = copyarea.textContent;
+        copytextarea.textContent = copytext;
+        document.body.appendChild(copytextarea);
+        copytextarea.select();
+        const results = document.execCommand('copy');
+        document.body.removeChild(copytextarea);
+        if( results ){
+          alert(copytext+'コピーしました。');
+        }else{
+          alert("コピーに失敗しました。")
+        }
+      });
+    }
+  }
+}
+
+clipCopy();
+
+</script>
+{% endblock %}
+{% endblock %}
