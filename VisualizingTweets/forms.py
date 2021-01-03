@@ -72,13 +72,13 @@ class KeyWordSearchForm(forms.Form):
 
 
 class FollowUsersForm(forms.Form):
-    """Twitterキーワード検索フォーム"""
-    keyword = forms.CharField(label='キーワード', required=True,)
+    """Twitterスクリーン名検索フォーム"""
+    screen_name = forms.CharField(label='スクリーン名', required=True,)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['keyword'].widget.attrs['class'] = 'form-control'
-        self.fields['keyword'].widget.attrs['placeholder'] = 'キーワード'
+        self.fields['screen_name'].widget.attrs['class'] = 'form-control'
+        self.fields['screen_name'].widget.attrs['placeholder'] = 'スクリーン名'
 
 
 class StockCreateForm(forms.ModelForm):

@@ -295,43 +295,35 @@ class FollowUsers(TemplateView):
         context = super().get_context_data(**kwargs)
         form = FollowUsersForm(self.request.GET or None)
         if form.is_valid():
-            keyword = form.cleaned_data.get('keyword')
+            screen_name = form.cleaned_data.get('screen_name')
         context['form'] = form
-        cursor = -1
-        i = 0
         users_info = []
         try:
-            while cursor != 0:
-                if i < 2:
-                    itr = tweepy.Cursor(api.friends_ids, id=keyword, cursor=cursor).pages()
-                    for friends_ids in itr.next():
-                        try:
-                            user = api.get_user(friends_ids)
-                            user_info = {
-                                'screen_name': user.screen_name,
-                                'name': user.name,
-                                'statuses_count': int(user.statuses_count),
-                                'followers_count': int(user.followers_count),
-                                'created_at': user.created_at,
-                                'image': user.profile_image_url,
-                                'description': user.description,
-                            }
-                            users_info.append(user_info)
-                        except tweepy.error.TweepyError as e:
-                            print(e.reason)
-                    i += 1
-                    cursor = itr.next_cursor
+            for friends_ids in tweepy.Cursor(api.friends_ids, screen_name=screen_name).items(24):
+                try:
+                    user = api.get_user(friends_ids)
+                    user_info = {
+                        'screen_name': user.screen_name,
+                        'name': user.name,
+                        'statuses_count': int(user.statuses_count),
+                        'followers_count': int(user.followers_count),
+                        'created_at': user.created_at,
+                        'image': user.profile_image_url,
+                        'description': user.description,
+                    }
+                    users_info.append(user_info)
+                except tweepy.error.TweepyError as e:
+                    print(e.reason)
 
-                else:
-                    break
             follow_users_df = pd.DataFrame(users_info)
             # フォロワー数が多い順にソート
             follow_users_df = follow_users_df.sort_values(['followers_count'], ascending=False)
             context = {
                 'form': FollowUsersForm(), # フォーム初期化
+                'keyword': screen_name,
                 'follow_users_df': follow_users_df,
             }
-            logging.info(f'search users: {keyword} is OK')
+            logging.info(f'search users: {screen_name} is OK')
             return context
 
         except:

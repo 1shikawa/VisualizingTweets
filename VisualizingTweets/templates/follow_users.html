@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-12">
             <h3>フォローユーザー検索</h3>
-            <p>指定したユーザーがフォローしているユーザーを一覧できます。</p>
+            <p>Twitterのスクリーン名(@以下)で検索すると、フォローしているユーザーを一覧できます。</p>
                 <form class="form-inline" method="GET" action="{% url 'VisualizingTweets:follow_users' %}">
                     {% bootstrap_form form %}
                     <button type="submit" class="btn btn-primary">取得</button>
@@ -44,7 +44,8 @@
     {% endif %}
     <!-- メッセージフレームワーク-->
 
-    <h4>指定ユーザーがフォローしているユーザーでフォロワーが多い順に表示します。</h4>
+    {% if follow_users_df.iterrows %}
+    <h4>{{ keyword }}が直近フォローしたユーザーで、フォロワーが多い順に表示します。</h4>
     <div class="row">
         {% for index, row in follow_users_df.iterrows %}
         <div class="col-md-3">
@@ -65,6 +66,7 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
 {% block script %}
 <script>
