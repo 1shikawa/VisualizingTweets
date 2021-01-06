@@ -11,6 +11,7 @@ import logging
 import pandas as pd
 from datetime import datetime
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException
 import pytz
@@ -260,15 +261,19 @@ class TwitchRanking(TemplateView):
 
 
 def scrape_chikuwachan_ranking(URL: str) -> pd.DataFrame:
-    '''selenium-> BeautifulSoupでのスクレイピング
-        argment: URL
-        return: DataFrame
-    '''
+    """ちくわちゃんランキングから生放送情報をスクレイピングする
+
+    Args:
+        URL (str): スクレイピング対象URL
+
+    Returns:
+        pd.DataFrame: pandasのDataFrame型でスクレイピング情報を返却
+    """
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install(),options=options)
     driver.get(URL)
     html = driver.page_source
 
@@ -344,10 +349,14 @@ class PornhubRanking(TemplateView):
         return context
 
 def get_pornhub(count: int) -> pd.DataFrame:
-    '''Pornhub API でのvideo取得
-        argment: 取得数
-        return: DataFrame
-    '''
+    """PornHUB APIからビデオ情報を取得する
+
+    Args:
+        count (int): 取得件数
+
+    Returns:
+        pd.DataFrame: API取得したビデオ情報を返却
+    """
     from pornhub_api.backends.aiohttp import AioHttpBackend
     from pornhub_api import PornhubApi
 
