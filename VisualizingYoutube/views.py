@@ -1,24 +1,27 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
-from django.contrib import messages
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
-from django.http import Http404, HttpResponse
-from django.conf import settings
-from .forms import VideoSearchForm
+import logging
+from datetime import datetime
+
+import pandas as pd
+import pytz
 # from .forms import LiveSearchForm
 import requests
-import logging
-import pandas as pd
-from datetime import datetime
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import NoSuchElementException
-import pytz
-from bs4 import BeautifulSoup
-
 from apiclient.discovery import build
 from apiclient.errors import HttpError
+from bs4 import BeautifulSoup
+from django.conf import settings
+from django.contrib import messages
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import (CreateView, DeleteView, ListView,
+                                  TemplateView, UpdateView)
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+from .forms import VideoSearchForm
+
 # from oauth2client.tools import argparser
 
 logger = logging.getLogger(__name__)
@@ -185,8 +188,15 @@ class YoutubeLiveRanking(TemplateView):
         return context
 
 
-# ISO時間（文字列）を日本時間（datetime型）に変換
 def iso_to_jstdt(iso_str: str) -> str:
+    """ISO時間（文字列）を日本時間（datetime型）に変換
+
+    Args:
+        iso_str (str):ISO時間
+
+    Returns:
+        str: 日本時間
+    """
     dt = None
     try:
         dt = datetime.strptime(iso_str, '%Y-%m-%dT%H:%M:%S.%fZ')
@@ -357,8 +367,8 @@ def get_pornhub(count: int) -> pd.DataFrame:
     Returns:
         pd.DataFrame: API取得したビデオ情報を返却
     """
-    from pornhub_api.backends.aiohttp import AioHttpBackend
     from pornhub_api import PornhubApi
+    from pornhub_api.backends.aiohttp import AioHttpBackend
 
     api = PornhubApi()
     category = 'japanese'

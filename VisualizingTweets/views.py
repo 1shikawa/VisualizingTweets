@@ -1,18 +1,22 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
-from django.contrib import messages
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
-from django.http import Http404, HttpResponse
-from django.conf import settings
-from .models import Stock
-from .forms import SearchForm, KeyWordSearchForm, FollowUsersForm, StockCreateForm, StockUpdateForm, SpecifiedUrlForm
-import requests
 import concurrent.futures
 import logging
+
 import pandas as pd
+import requests
 import tweepy
 from bs4 import BeautifulSoup
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import (CreateView, DeleteView, ListView,
+                                  TemplateView, UpdateView)
+
+from .forms import (FollowUsersForm, KeyWordSearchForm, SearchForm,
+                    SpecifiedUrlForm, StockCreateForm, StockUpdateForm)
+from .models import Stock
 
 logger = logging.getLogger(__name__)
 
@@ -100,8 +104,12 @@ def scraping_yahoo_news() -> pd.DataFrame:
 
 def get_twitter_trend_df(parentid: str) -> pd.DataFrame:
     """parentidから各国のTwitterトレンドを取得
-    arument: 地域コード
-    return: DataFrame
+
+    Args:
+        parentid (str): 地域コード
+
+    Returns:
+        pd.DataFrame: 指定地域のトレンド情報DataFrame
     """
     trends = api.trends_place(parentid)
     # # columns定義したDataFrameを作成
@@ -469,9 +477,13 @@ class SpecifiedUrl(LoginRequiredMixin, TemplateView):
 
 
 def get_tweet_id(url: str) -> str:
-    """TweetURLからscreen_nameとstatus_idを取得
-    argment: ツイッターURL
-    return: ツイート固有ID(status)
+    """twitterURLからtwitterId取得
+
+    Args:
+        url (str): ツイートURL
+
+    Returns:
+        str: twitterId
     """
     url = url.replace('https://twitter.com/','')
     data = url.split('/')
