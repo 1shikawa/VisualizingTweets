@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load humanize %}
+{% load url_customize %}
+
+{% block head %}
+{% endblock %}
+
+{% block contents %}
+    <div class="row">
+       <div class="col-md-12">
+            <h3>Youtube動画コメント取得</h3>
+            <p>指定したYoutube動画IDからコメントを一覧できます。</p>
+            <form class="form-inline" method="GET" action="{% url 'VisualizingYoutube:youtube_comment' %}">
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-primary">取得</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- メッセージフレームワーク-->
+    {% if messages %}
+    <div class="container" style="margin-top:1rem;">
+        <div class="message">
+            {% for message in messages %}
+                {% if message.tags == "success" %}
+                    <div class="alert alert-success" role="alert">
+                {% elif message.tags == "warning" %}
+                    <div class="alert alert-warning" role="alert">
+                {% elif message.tags == "error" %}
+                    <div class="alert alert-danger" role="alert">
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                {% endif %}
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <!-- メッセージフレームワーク-->
+
+        <!-- 一覧 -->
+        <div class="col-md-12">
+            {% for index, row in comment_df.iterrows %}
+            <a>{{ forloop.counter }}</a></br>
+                    <a>{{ row.text | linebreaksbr }}</a></br>
+                    <a>高評価数：{{ row.like_cnt }} 返信数：{{ row.reply_cnt }}</a> </br></br>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
