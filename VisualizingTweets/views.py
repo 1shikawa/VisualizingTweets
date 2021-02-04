@@ -11,11 +11,22 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DeleteView, ListView,
-                                  TemplateView, UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 
-from .forms import (FollowUsersForm, KeyWordSearchForm, SearchForm,
-                    SpecifiedUrlForm, StockCreateForm, StockUpdateForm)
+from .forms import (
+    FollowUsersForm,
+    KeyWordSearchForm,
+    SearchForm,
+    SpecifiedUrlForm,
+    StockCreateForm,
+    StockUpdateForm,
+)
 from .models import Stock
 
 logger = logging.getLogger(__name__)
@@ -35,11 +46,6 @@ api = tweepy.API(auth)
 
 # Twitter URL
 TWITTER_URL = "https://twitter.com/"
-
-# dataframeのカラム定義
-twitter_trend_columns = ["name", "tweet_volume", "url"]
-
-yahoo_comment_columns = ["rank", "title", "time", "comment_volume", "url"]
 
 
 class Index(TemplateView):
@@ -81,6 +87,7 @@ def scraping_yahoo_news() -> pd.DataFrame:
     topics = topicsindex.find_all("li")
 
     # columns定義したDataFrameを作成
+    yahoo_comment_columns = ["rank", "title", "time", "comment_volume", "url"]
     yahoo_news_df = pd.DataFrame(columns=yahoo_comment_columns)
     for topic in topics:
         se = pd.Series(
@@ -100,7 +107,7 @@ def scraping_yahoo_news() -> pd.DataFrame:
     return yahoo_news_df
 
 
-def get_twitter_trend_df(parentid: str) -> pd.DataFrame:
+def get_twitter_trend_df(parent_id: str) -> pd.DataFrame:
     """parentidから各国のTwitterトレンドを取得
 
     Args:
@@ -109,8 +116,9 @@ def get_twitter_trend_df(parentid: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: 指定地域のトレンド情報DataFrame
     """
-    trends = api.trends_place(parentid)
+    trends = api.trends_place(parent_id)
     # # columns定義したDataFrameを作成
+    twitter_trend_columns = ["name", "tweet_volume", "url"]
     twitter_trend_df = pd.DataFrame(columns=twitter_trend_columns)
     for trend in trends[0]["trends"]:
         se = pd.Series(
@@ -122,19 +130,6 @@ def get_twitter_trend_df(parentid: str) -> pd.DataFrame:
     twitter_trend_df = twitter_trend_df.sort_values(["tweet_volume"], ascending=False)
 
     return twitter_trend_df
-
-
-# dataframeのカラム定義
-timeline_columns = [
-    "screen_name",
-    "tweet_id",
-    "created_at",
-    "full_text",
-    "fav",
-    "retweets",
-    "tweet_url",
-    # 'media_url'
-]
 
 
 class timelineSearch(TemplateView):
@@ -149,6 +144,17 @@ class timelineSearch(TemplateView):
             display_number = int(form.cleaned_data.get("display_number"))
         context["form"] = form
         # columns定義したDataFrameを作成
+        timeline_columns = [
+            "screen_name",
+            "tweet_id",
+            "created_at",
+            "full_text",
+            "fav",
+            "retweets",
+            "tweet_url",
+            # 'media_url'
+        ]
+
         tweets_df = pd.DataFrame(columns=timeline_columns)
         try:
             if screen_name and display_number:
@@ -246,22 +252,6 @@ class timelineSearch(TemplateView):
             return context
 
 
-# dataframeのカラム定義
-keysearch_columns = [
-    "screen_name",
-    "user_name",
-    "tweet_id",
-    "created_at",
-    "full_text",
-    "fav",
-    "retweets",
-    "url",
-    "user_image",
-    "statuses_count",
-    "followers_count",
-]
-
-
 class KeyWordSearch(TemplateView):
     template_name = "keyword_search.html"
 
@@ -275,6 +265,20 @@ class KeyWordSearch(TemplateView):
         context["form"] = form
 
         # columns定義したDataFrameを作成
+        keysearch_columns = [
+            "screen_name",
+            "user_name",
+            "tweet_id",
+            "created_at",
+            "full_text",
+            "fav",
+            "retweets",
+            "url",
+            "user_image",
+            "statuses_count",
+            "followers_count",
+        ]
+
         tweets_df = pd.DataFrame(columns=keysearch_columns)
 
         try:
@@ -533,9 +537,9 @@ def get_tweet_id(url: str) -> int:
     Returns:
         str: twitterId
     """
-    url = url.replace("https://twitter.com/", "")
+    TWITTER_URL = "https://twitter.com/"
+    url = url.replace(TWITTER_URL, "")
     data = url.split("/")
-    screen_name = data[0]
     tweet_id = int(data[2])
     return tweet_id
 

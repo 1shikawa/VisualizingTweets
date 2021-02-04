@@ -4,6 +4,7 @@ from typing import Optional
 
 import pandas as pd
 import pytz
+
 # from .forms import LiveSearchForm
 import requests
 from apiclient.discovery import build
@@ -14,8 +15,13 @@ from django.contrib import messages
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DeleteView, ListView,
-                                  TemplateView, UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service
@@ -23,29 +29,12 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 from .forms import VideoIdForm, VideoSearchForm
 
-# from oauth2client.tools import argparser
-
 logger = logging.getLogger(__name__)
 
 # YouTube APIの各種設定
 YOUTUBE_API_KEY = settings.YOUTUBE_API_KEY
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
-
-# dataframeのカラム定義
-video_columns = [
-    "channelId",
-    "channelTitle",
-    "channelURL",
-    "title",
-    "description",
-    "publishedAt",
-    "videoId",
-    "viewCount",
-    "likeCount",
-    "dislikeCount",
-    "commentCount",
-]
 
 
 class videoSearch(TemplateView):
@@ -72,6 +61,20 @@ class videoSearch(TemplateView):
         # videoIdのリストを定義
         videos = []
         # columns定義したDataFrameを作成
+        video_columns = [
+            "channelId",
+            "channelTitle",
+            "channelURL",
+            "title",
+            "description",
+            "publishedAt",
+            "videoId",
+            "viewCount",
+            "likeCount",
+            "dislikeCount",
+            "commentCount",
+        ]
+
         video_df = pd.DataFrame(columns=video_columns)
 
         try:
@@ -91,7 +94,8 @@ class videoSearch(TemplateView):
             for search_result in search_response.get("items", []):
                 if (
                     search_result["id"]["kind"] == "youtube#video"
-                    and search_result["snippet"]["liveBroadcastContent"] == "none"):
+                    and search_result["snippet"]["liveBroadcastContent"] == "none"
+                ):
                     videos.append(search_result["id"]["videoId"])
 
             for video in videos:
@@ -127,7 +131,6 @@ class videoSearch(TemplateView):
                     video_df = video_df.append(se, ignore_index=True)
             # 再生回数で降順
             sorted_video_df = video_df.sort_values(["viewCount"], ascending=False)
-            print(sorted_video_df["viewCount"])
             context = {
                 "form": VideoSearchForm(),  # フォーム初期化
                 "sorted_video_df": sorted_video_df,
@@ -141,18 +144,6 @@ class videoSearch(TemplateView):
         except:
             # messages.error(self.request, 'エラーが発生しました。')
             return context
-
-
-# dataframeのカラム定義
-live_columns = [
-    "channelTitle",
-    "channelUrl",
-    "title",
-    "description",
-    "videoId",
-    "actualStartTime",
-    "concurrentViewers",
-]
 
 
 class YoutubeLiveRanking(TemplateView):
@@ -188,6 +179,16 @@ class YoutubeLiveRanking(TemplateView):
             if search_result["snippet"]["liveBroadcastContent"] == "live":
                 videos.append(search_result["id"]["videoId"])
 
+        # 生放送情報のカラム定義
+        live_columns = [
+            "channelTitle",
+            "channelUrl",
+            "title",
+            "description",
+            "videoId",
+            "actualStartTime",
+            "concurrentViewers",
+        ]
         live_df = pd.DataFrame(columns=live_columns)
         for video in videos:
             search_video = (
@@ -276,7 +277,7 @@ class RetrieveYoutubeComment(TemplateView):
             comment_df = comment_df.sort_values(["like_cnt"], ascending=False)
             context = {
                 "form": VideoIdForm(),  # フォーム初期化
-                'comment_df': comment_df,
+                "comment_df": comment_df,
             }
             return context
 
@@ -294,7 +295,7 @@ def retrieve_video_commnet(video_id: str, n: int) -> pd.DataFrame:
     Returns:
         pd.DataFrame: 取得したコメント情報のDataFrame
     """
-    URL = "https://www.googleapis.com/youtube/v3/"
+    YOUTUBE_URL = "https://www.googleapis.com/youtube/v3/"
     params = {
         "key": YOUTUBE_API_KEY,
         "part": "snippet",
@@ -304,24 +305,28 @@ def retrieve_video_commnet(video_id: str, n: int) -> pd.DataFrame:
         "maxResults": n,
     }
 
-    response = requests.get(URL + "commentThreads", params=params)
+    response = requests.get(YOUTUBE_URL + "commentThreads", params=params)
     resource = response.json()
 
     comment_list = []
     for comment_info in resource["items"]:
         comment = {
             # コメント
-            "text": comment_info["snippet"]["topLevelComment"]["snippet"]["textDisplay"],
+            "text": comment_info["snippet"]["topLevelComment"]["snippet"][
+                "textDisplay"
+            ],
             # グッド数
-            "like_cnt": comment_info["snippet"]["topLevelComment"]["snippet"]["likeCount"],
+            "like_cnt": comment_info["snippet"]["topLevelComment"]["snippet"][
+                "likeCount"
+            ],
             # 返信数
             "reply_cnt": comment_info["snippet"]["totalReplyCount"],
         }
         comment_list.append(comment)
 
     comment_df = pd.DataFrame(comment_list)
-
     return comment_df
+
 
 class AllliveRanking(TemplateView):
     """ちくわちゃんランキング"""
