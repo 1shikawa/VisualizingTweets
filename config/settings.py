@@ -182,6 +182,12 @@ ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 YOUTUBE_API_KEY = os.environ['YOUTUBE_API_KEY']
 
 
+######################
+# FanzaAPI setting #
+######################
+FANZA_API_ID = os.environ['FANZA_API_ID']
+FANZA_AFFILIATE_ID = os.environ['FANZA_AFFILIATE_ID']
+
 ##########################
 # Email SendGrid setting #
 ##########################

@@ -12,5 +12,6 @@ urlpatterns = [
     path('AllliveRanking/', views.AllliveRanking.as_view(), name='all_live_ranking'),
     path('YoutubeRanking/', views.YoutubeRanking.as_view(), name='youtube_ranking'),
     path('TwicasRanking/', views.TwicasRanking.as_view(), name='twicas_ranking'),
-    path('TwitchRanking/', views.TwitchRanking.as_view(), name='twitch_ranking')
+    path('TwitchRanking/', views.TwitchRanking.as_view(), name='twitch_ranking'),
+    path('fanzaRanking/', views.FanzaRanking.as_view(), name='fanza_ranking')
 ]

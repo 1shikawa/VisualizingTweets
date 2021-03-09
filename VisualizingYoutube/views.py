@@ -519,3 +519,52 @@ def get_pornhub(count: int) -> pd.DataFrame:
     video_list_df = video_list_df.sort_values(["rating", "views"], ascending=False)
     logger.info(f"pornhub video category: {category}")
     return video_list_df
+
+
+class FanzaRanking(TemplateView):
+    """Fanzaランキング"""
+
+    template_name = "fanza_ranking.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        video_list_df = get_fanza(20)
+        context = {"video_list_df": video_list_df}
+        return context
+
+
+def get_fanza(count: int) -> pd.DataFrame:
+    """Fanza APIからビデオ情報を取得する
+
+    Args:
+        count (int): 取得件数
+
+    Returns:
+        pd.DataFrame: API取得したビデオ情報を返却
+    """
+    import dmm
+    import datetime
+
+    api_id = settings.FANZA_API_ID
+    affiliate_id = settings.FANZA_AFFILIATE_ID
+
+    # インスタンスを作成
+    api = dmm.API(api_id=api_id, affiliate_id=affiliate_id)
+
+    now = datetime.datetime.now()
+    av_list = []
+    items = api.item_search(site="FANZA", service="digital", lte_date=now.strftime("%Y-%m-%dT%H:%M:%S"), hits=count)
+    for i in items["result"]["items"]:
+        av_dict = {
+            "content_id": i["content_id"],
+            "title": i["title"],
+            "date": i["date"],
+            "affiliateURL": i["affiliateURL"],
+            "sampleMovieURL": i.get("sampleMovieURL", {}).get("size_644_414", None),
+            "review_average": float(i.get('review', {}).get('average', 0)),
+            "review_count": int(i.get('review', {}).get('count', 0))
+        }
+        av_list.append(av_dict)
+    av_df = pd.DataFrame(av_list)
+    av_sorted_df = av_df.sort_values(by=["review_count", "review_average"], ascending=False)
+    return av_sorted_df
