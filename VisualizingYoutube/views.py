@@ -285,12 +285,12 @@ class RetrieveYoutubeComment(TemplateView):
             return context
 
 
-def retrieve_video_commnet(video_id: str, n: int) -> pd.DataFrame:
+def retrieve_video_commnet(video_id: str, comment_cnt: int) -> pd.DataFrame:
     """YouTube動画IDからコメントを取得する
 
     Args:
         video_id (str): Youtube動画ID
-        n (int): 取得コメント数
+        comment_cnt (int): 取得コメント数
 
     Returns:
         pd.DataFrame: 取得したコメント情報のDataFrame
@@ -302,7 +302,7 @@ def retrieve_video_commnet(video_id: str, n: int) -> pd.DataFrame:
         "videoId": video_id,
         "order": "relevance",
         "textFormat": "plaintext",
-        "maxResults": n,
+        "maxResults": comment_cnt,
     }
 
     response = requests.get(YOUTUBE_URL + "commentThreads", params=params)
@@ -528,7 +528,7 @@ class FanzaRanking(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        video_list_df = get_fanza(20)
+        video_list_df = get_fanza(10)
         context = {"video_list_df": video_list_df}
         return context
 
