@@ -59,7 +59,7 @@ class videoSearch(TemplateView):
             order = form.cleaned_data.get("order")
         context["form"] = form
         # videoIdのリストを定義
-        videos = []
+        videos: list[str] = []
         # columns定義したDataFrameを作成
         video_columns = [
             "channelId",
@@ -174,7 +174,7 @@ class YoutubeLiveRanking(TemplateView):
             .execute()
         )
 
-        videos = []
+        videos: list[str] = []
         for search_result in search_response.get("items", []):
             if search_result["snippet"]["liveBroadcastContent"] == "live":
                 videos.append(search_result["id"]["videoId"])
@@ -212,14 +212,11 @@ class YoutubeLiveRanking(TemplateView):
                         search_video_result["snippet"]["description"],
                         search_video_result["id"],
                         iso_to_jstdt(
-                            search_video_result["liveStreamingDetails"][
-                                "actualStartTime"
-                            ]
+                            search_video_result["liveStreamingDetails"]["actualStartTime"]
                         ),
                         int(
-                            search_video_result["liveStreamingDetails"][
-                                "concurrentViewers"
-                            ]
+                            # search_video_result["liveStreamingDetails"]["concurrentViewers"]
+                            search_video_result.get("liveStreamingDetails", {}).get("concurrentViewers", 0)
                         ),
                     ],
                     live_columns,
@@ -308,7 +305,7 @@ def retrieve_video_commnet(video_id: str, comment_cnt: int) -> pd.DataFrame:
     response = requests.get(YOUTUBE_URL + "commentThreads", params=params)
     resource = response.json()
 
-    comment_list = []
+    comment_list: list[str] = []
     for comment_info in resource["items"]:
         comment = {
             # コメント
@@ -402,7 +399,7 @@ def scrape_chikuwachan_ranking(URL: str) -> pd.DataFrame:
     html = driver.page_source
 
     soup = BeautifulSoup(html, "lxml")
-    live_list = []
+    live_list: list[str] = []
     for i in range(1, 26):
         common_selector = f"#ranking > div > ul > li:nth-child({i}) > "
         title_selector = common_selector + "div.content > a.liveurl > div.title"
@@ -496,7 +493,7 @@ def get_pornhub(count: int) -> pd.DataFrame:
         # ordering="rating"
     )
     THUMBNAIL_URL = "https://ci.phncdn.com/"
-    video_list = []
+    video_list: list[str] = []
     for video in data.videos[:count]:
         data = {
             "title": video.title,
@@ -552,7 +549,7 @@ def get_fanza(count: int) -> pd.DataFrame:
     api = dmm.API(api_id=api_id, affiliate_id=affiliate_id)
 
     now = datetime.datetime.now()
-    av_list = []
+    av_list: list[str] = []
     items = api.item_search(site="FANZA", service="digital", lte_date=now.strftime("%Y-%m-%dT%H:%M:%S"), hits=count)
     for i in items["result"]["items"]:
         av_dict = {

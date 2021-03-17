@@ -92,9 +92,7 @@ def scraping_yahoo_news() -> pd.DataFrame:
     for topic in topics:
         se = pd.Series(
             [
-                topic.find("span", attrs={"class": "newsFeed_item_rankNum"}).contents[
-                    0
-                ],
+                topic.find("span", attrs={"class": "newsFeed_item_rankNum"}).contents[0],
                 topic.find("div", attrs={"class": "newsFeed_item_title"}).contents[0],
                 topic.find("time", attrs={"class": "newsFeed_item_date"}).contents[0],
                 int(topic.find("em").contents[0]),
@@ -340,7 +338,7 @@ class FollowUsers(TemplateView):
         if form.is_valid():
             screen_name = form.cleaned_data.get("screen_name")
         context["form"] = form
-        users_info = []
+        users_info :list[str] = []
         try:
             for friends_ids in tweepy.Cursor(
                 api.friends_ids, screen_name=screen_name
