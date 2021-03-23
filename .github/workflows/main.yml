@@ -37,8 +37,12 @@ jobs:
     - name: Push to Heroku
       run: git push -f https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP }}.git origin/master:master
 
+
   marp-to-pdf:
+    name: make slide pdf by Marp
     runs-on: ubuntu-latest
+
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt-get update & sudo apt-get install jq
