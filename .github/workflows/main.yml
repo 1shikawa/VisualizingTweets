@@ -3,29 +3,28 @@ name: docker-compose build,test,deploy to Heroku
 on: [push]
 
 jobs:
-
   build:
     name: build,test
     runs-on: ubuntu-latest
     env:
       DJANGO_SETTINGS_MODULE: config.ci_settings
-      CONSUMER_KEY : ${{ secrets.CONSUMER_KEY }}
-      CONSUMER_SECRET : ${{ secrets.CONSUMER_SECRET }}
-      ACCESS_TOKEN : ${{ secrets.ACCESS_TOKEN }}
-      ACCESS_TOKEN_SECRET : ${{ secrets.ACCESS_TOKEN_SECRET }}
-      YOUTUBE_API_KEY : ${{ secrets.YOUTUBE_API_KEY }}
+      CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+      CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Build the docker-compose stack
-      run: docker-compose -f docker-compose.ci.yml up -d
-    - name: Check running containers
-      run: docker ps -a
-    - name: Check logs
-      run: docker logs visualizingTweets-django
+      - uses: actions/checkout@v1
+      - name: Build the docker-compose stack
+        run: docker-compose -f docker-compose.ci.yml up -d
+      - name: Check running containers
+        run: docker ps -a
+      - name: Check logs
+        run: docker logs visualizingTweets-django
 
     # - name: Run test suite
-      # run: docker exec visualizingTweets-django python manage.py test
+    # run: docker exec visualizingTweets-django python manage.py test
 
   deploy:
     name: deploy to Heroku
@@ -33,10 +32,9 @@ jobs:
 
     needs: [build]
     steps:
-    - uses: actions/checkout@v1
-    - name: Push to Heroku
-      run: git push -f https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP }}.git origin/master:master
-
+      - uses: actions/checkout@v1
+      - name: Push to Heroku
+        run: git push -f https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP }}.git origin/master:master
 
   marp-to-pdf:
     name: make slide pdf by Marp
@@ -53,10 +51,22 @@ jobs:
           echo "::set-output name=FORMAT::${output_format}"
         id: config
       - run: docker run --rm -u root --init -v "$(pwd):/home/marp/app/"
-              -e LANG=$LANG marpteam/marp-cli ${{steps.config.outputs.DIR}}/slide.md
-              --${{steps.config.outputs.FORMAT}}
-              -o ${{steps.config.outputs.DIR}}.${{steps.config.outputs.FORMAT}}
+          -e LANG=$LANG marpteam/marp-cli ${{steps.config.outputs.DIR}}/slide.md
+          --${{steps.config.outputs.FORMAT}}
+          -o ${{steps.config.outputs.DIR}}.${{steps.config.outputs.FORMAT}}
       - uses: actions/upload-artifact@v2
         with:
           name: output_slide
           path: ${{steps.config.outputs.DIR}}.${{steps.config.outputs.FORMAT}}
+
+  slack-notification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+
+    needs: [deploy, marp-to-pdf]
+    steps:
+      - uses: weseek/ghaction-release-slack-notification@master
+        with:
+          channel: "#個人開発"
+          url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          # created_tag: "${{ github.event.pull_request.title }}"
