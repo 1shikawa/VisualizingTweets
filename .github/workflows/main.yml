@@ -59,14 +59,31 @@ jobs:
           name: output_slide
           path: ${{steps.config.outputs.DIR}}.${{steps.config.outputs.FORMAT}}
 
-  slack-notification:
-    name: Slack Notification
+  slack-notification1:
+    name: Slack Notification1
     runs-on: ubuntu-latest
 
     needs: [deploy, marp-to-pdf]
     steps:
       - uses: weseek/ghaction-release-slack-notification@master
+        if: always() # (1)
         with:
           channel: "#個人開発"
           url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          # created_tag: "${{ github.event.pull_request.title }}"
+
+  slack-notification2:
+    name: Slack Notification2
+    runs-on: ubuntu-latest
+
+    needs: [slack-notification1]
+      - name: Notificate Slack Channel
+        uses: rtCamp/action-slack-notify@v2
+        if: always() # (1)
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }} # (2)
+          SLACK_COLOR: ${{ job.status }} # (3)
+          SLACK_MESSAGE: "Job Result: ${{ job.status }}" # (4)
+          SLACK_TITLE: Job Result
+          SLACK_USERNAME: Job Result Bot
           # created_tag: "${{ github.event.pull_request.title }}"
