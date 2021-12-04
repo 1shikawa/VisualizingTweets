@@ -14,9 +14,9 @@ pytz
 psycopg2-binary==2.8.2
 requests
 urllib3
-certifi==2019.3.9
-chardet==3.0.4
-idna==2.8
+certifi
+chardet
+idna
 mysqlclient
 gunicorn==19.9.0
 google-api-python-client
@@ -29,3 +29,4 @@ selenium
 webdriver_manager
 lxml
 dmm-search3
+nicovideo-api-client
