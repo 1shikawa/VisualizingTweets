@@ -30,5 +30,4 @@ selenium
 webdriver_manager
 lxml
 dmm-search3
-nicovideo-api-client
 django-heroku
