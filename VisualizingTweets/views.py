@@ -114,7 +114,7 @@ def get_twitter_trend_df(parent_id: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: 指定地域のトレンド情報DataFrame
     """
-    trends = api.trends_place(parent_id)
+    trends = api.get_place_trends(parent_id)
     # # columns定義したDataFrameを作成
     twitter_trend_columns = ["name", "tweet_volume", "url"]
     twitter_trend_df = pd.DataFrame(columns=twitter_trend_columns)
